@@ -497,6 +497,11 @@ DONT_KILL_CORTEX()
 	for i in $PIDOFCORTEX; do
 		echo "-950" > /proc/${i}/oom_score_adj;
 	done;
+	PIDOFMALI=`pgrep -f "ru.services.malistatus"`;
+        for i in $PIDOFMALI; do
+                echo "-950" > /proc/${i}/oom_score_adj;
+        done;
+
 	log -p 10 i -t $FILE_NAME "*** DONT_KILL_CORTEX ***";
 }
 

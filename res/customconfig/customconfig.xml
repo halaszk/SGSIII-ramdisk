@@ -567,7 +567,7 @@
 	<spinnerItem name="Force MTP Mode" value="mtp-adb"/>
 	</spinner>
       <seekBar description="AC,CDP,Dock charge currents (default 1000)" 
-		name="AC Charge" action="chargecurrent_ac" unit="mA" min="500" reversed="false" step="100" max="1200"/>
+		name="AC Charge" action="chargecurrent_ac" unit="mA" min="500" reversed="false" step="50" max="1200"/>
       <seekBar description="USB charge current (default 475)" 
 		name="USB Charge" action="chargecurrent_usb" unit="mA" min="450" reversed="false" step="25" max="1000"/>
 		<button description="Clean the media cache on your sdcard. Push once to clean, push again to abort. You have to reboot for action to work!" name="Clean media-cache" action="push-actions/fix_media" label="FIX MEDIA ON/OFF"/>

@@ -29,7 +29,7 @@
 	<settingsPane description=""
 	name="CPU Undervolting">
       <spinner description="Sets the CPU undervolting value which will be applied during boot time only. It will not have any effect until you restart your device. Remember: if you change this value and your device doesn't boot you will have to reset extweaks settings using CWM recovery. This value will be applied to all CPU steps before any script or app execution. If you use any script or voltage control app this setting may be overriden by those." 
-	  name="CPU Undervolting" action="generic /tmp/cpu_undervolting">
+	  name="CPU Undervolting" action="cpu-voltage cpu_undervolting">
              <spinnerItem name="No Undervolting" value="0"/>
              <spinnerItem name=" -25 mV" value="25"/>
              <spinnerItem name=" -50 mV" value="50"/>
@@ -355,6 +355,7 @@
              <spinnerItem name="266MHz" value="266"/> 
              <spinnerItem name="160MHz" value="160"/> 
       </spinner>
+	  </settingsPane>
     <settingsPane description="GPU Voltage Levels: The defaults are 875, 900, 950, 1025 and 1075." name="GPU Voltage Levels">
       <seekBar description="GPU Voltage for the first (lowest) step" 
 		name="GPU Voltage Level1" action="gpu-voltage 1" unit="mV" min="600" reversed="false" step="25" max="1200"/>
@@ -477,6 +478,9 @@
              <spinnerItem name="500MHz" value="13"/>
              <spinnerItem name="200MHz (disabled)" value="16"/>
        </spinner>
+       <checkbox description="Enable slide2wake feature which will let you unlock the phone by swiping your finger straight over the screen from left to right. Enabling this feature may decrease your battery life." name="Slide2Wake" action="generic01 /sys/devices/virtual/sec/tsp/tsp_slide2wake" label="Slide2Wake"/>
+       <seekBar description="FB earlysuspend delay to run CRT animation when you turn the screen off."
+	name="FB Earlysuspend Delay" action="generickmem fbearlysuspend_delay 0 int" unit=" ms" min="0" reversed="false" step="100" max="500"/>
     </settingsPane>
 	<settingsPane description="Here you can control kernel screen gestures, set at /data/gesture_set.sh. More can be added by user. This tweak depends on cortex background service to be ON"
 	name="Gestures Panel">

@@ -142,3 +142,5 @@ cpu_online_bias_down_threshold=30
 auto_mount_sd=on
 gpu_res_freq=160
 mali_resume_enable=0
+fbearlysuspend_delay0=0
+tsp_slide2wake=off

@@ -62,16 +62,16 @@
        <seekBar description="Scaling maximum frequency (Samsung default: 1400000)"
                 name="scaling_max_freq" action="generic /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq" unit=" kHz" min="800000" reversed="false" step="100000" max="1800000"/>
        <seekBar description="Scaling minimum frequency (Samsung default: 200000)"
-                name="scaling_min_freq" action="generic /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq" unit=" kHz" min="200000" reversed="false" step="100000" max="500000"/>
+                name="scaling_min_freq" action="generic /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq" unit=" kHz" min="100000" reversed="false" step="100000" max="500000"/>
 	<seekBar description="Maximum DEEP SLEEP CPU Speed. Default is Linux Kernel default value: 600000. Samsung default value is 800000. Setting this too low will stuck your device!"
 		name="scaling_max_suspend_freq" action="generic /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_suspend_freq"
-		unit="kHz" min="200000" reversed="false" step="100000" max="1000000"/>
+		unit="kHz" min="100000" reversed="false" step="100000" max="1000000"/>
 	<seekBar description="Minimum DEEP SLEEP CPU Speed (default is 200000)"
 		name="scaling_min_suspend_freq" action="generic /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_suspend_freq"
-		unit="kHz" min="200000" reversed="false" step="100000" max="1000000"/>
+		unit="kHz" min="100000" reversed="false" step="100000" max="1000000"/>
 	<seekBar description="Minimum Standby (music playing on screen off) CPU Speed. Default is 200000kHz. If music still shutter, rise to 300000/400000kHz"
 		name="scaling_min_standby_freq" action="generic /tmp/standby_freq"
-		unit="kHz" min="200000" reversed="false" step="100000" max="1000000"/>
+		unit="kHz" min="100000" reversed="false" step="100000" max="1000000"/>
 	<seekBar description="For developer debug only! You can add small delay to cortex wakeup/sleep script. This will delay all function changes and the wakeup! Default value is 0."
 		name="Cortex Wakeup Delay" action="generic /tmp/wakeup_delay"
 		unit="Sec" min="0" reversed="false" step="1" max="5"/>
@@ -280,10 +280,12 @@
   </settingsTab>
   <settingsTab name="GPU">
     <settingsPane description="GPU Frequency Settings. Default frequencies are: 160, 266, 350, 440MHz and 533MHz. Warning: Changing GPU frequency or voltages may cause lockups or damage on your device." name="GPUFreq">
-	<seekBar description="Here you can change GPU utilization timeout calculation. Closer to 100 (1sec) and you'll get faster GPU response in steps jump on load, but more battery is drained. CM10 default: 250(2.5sec)"
+
+		<seekBar description="Here you can change GPU utilization timeout calculation. Closer to 100 (1sec) and you'll get faster GPU response in steps jump on load, but more battery is drained. CM10 default: 250(2.5sec)"
 		name="GPU Utilization Timeout" action="generic /sys/module/mali/parameters/mali_gpu_utilization_timeout"
 		unit="MSec" min="100" reversed="false" step="50" max="500"/>
-	<spinner description="Changes the first (lowest) GPU frequency step" name="GPU Freq Step1" action="gpu-freq 1">
+	
+		<spinner description="Changes the first (lowest) GPU frequency step" name="GPU Freq Step1" action="gpu-freq 1">
              <spinnerItem name="266MHz" value="266"/> 
              <spinnerItem name="200MHz" value="200"/> 
              <spinnerItem name="160MHz" value="160"/> 
@@ -371,7 +373,6 @@
       <seekBar description="GPU Voltage for the fifth step" 
 		name="GPU Voltage Level5" action="gpu-voltage 5" unit="mV" min="600" reversed="false" step="25" max="1200"/>
     </settingsPane>
-
     <settingsPane description="GPU load thresholds to change between frequency steps." name="GPU Thresholds">
       <seekBar description="GPU threshold to jump up from first to second step" 
 		name="GPU Threshold 1-UP" action="gpu-thresh 1UP" unit="%" min="0" reversed="false" step="5" max="100"/>
@@ -464,6 +465,7 @@
   <settingsTab name="Screen">
     <settingsPane description="Other screen related settings" name="Other Settings">
        <checkbox description="mDNIe sharpness tweaks from hardcore. Requires reboot to be effective." name="mDNIe Sharpness Tweaks" action="generic /tmp/mdniemod" label="mDNIe Sharpness Tweaks"/>
+	   <checkbox description="Enable inverting the screen colors by quickly pressing Home button 4 times" name="mDNIe Negative Toggle" action="generic01 /sys/module/gpio_keys/parameters/mdnie_shortcut_enabled" label="mDNIe Negative Toggle"/>
 	<checkbox description="Enables or disables the mechanic, disabled by default" name="LCDfreq_enable" action="generic01 /sys/devices/system/cpu/cpufreq/pegasusq/lcdfreq_enable" label="Dynamic Screen Frequency Scaling for CPU Governors"/>
 <seekBar description="Setting min_bl higher will result in staying lowest brightness level for brighter conditions (default 30)"
 	name="min_bl" action="generic /sys/class/misc/brightness_curve/min_bl" unit="" min="0" reversed="false" step="10" max="150"/>

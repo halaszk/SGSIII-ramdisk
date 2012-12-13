@@ -669,9 +669,13 @@ name="STweaks Settings Backup/Restore">
 <button description="Backup STweaks User Settings!" name="Settings Backup" action="push-actions/config_backup_restore 1" label="BACKUP NOW"/>
 <button description="Restore STweaks User Settings!" name="Settings Restore" action="push-actions/config_backup_restore 2" label="RESTORE NOW"/>
 </settingsPane>
-<settingsPane description="Here you can Reinstall/Update your STweak app to one that's added in the kernel. It will be installed to /system and if you had STweaks in /data, it will be removed. Application will close and you'll have it back from kernel in 5sec."
+<settingsPane description="Here you can Reinstall/Update your STweaks app to one that's added in the kernel. It will be installed to /system and if you had STweaks in /data, it will be removed. Application will close and you'll have it back from kernel in 5sec."
 name="STweaks Reinstall/Update.">
 <button description="Push to Reinstall/Update STweaks app." name="STweaks Reinstall/Update" action="push-actions/stweaks_update" label="STweaks Reinstall/Update"/>
+</settingsPane>
+<settingsPane description="Here you can Reinstall/Update your V6 Supercharger app to one that's added in the kernel. It will be installed to /data. Application will close and you'll have it back from kernel in 5sec."
+name="V6 Supercharger Reinstall/Update.">
+<button description="Push to Reinstall/Update V6 Supercharger app." name="V6 Supercharger Reinstall/Update" action="push-actions/supercharger_update" label="V6 Supercharger Reinstall/Update"/>
 </settingsPane>
 <settingsPane description='Here you can Add/Update/Remove AD Blocker! You need ROOT to do the tweak! If you want to update the blocker, you can push the "UPDATE AD NOW" button, to get the new one installed! If you install a new ROM, and you want to use AD BLOCKER, then push "UPDATE AD NOW" and REBOOT. If you need to REMOVE AD-BLOCKER use the REMOVE button and REBOOT' name="AD Blocker menu.">
 <button description="ADD/UPDATE AD BLOCKER" name="AD-B UPDATE/ADD" action="push-actions/ad_update" label="UPDATE AD-B NOW"/>

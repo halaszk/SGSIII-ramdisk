@@ -4,7 +4,7 @@ mount -o remount,rw /;
 mount -o remount,rw /system;
 
 TMPFILE=$(mktemp -t);
-CONTROL_SCRIPT_DATA="/data/V6_SuperCharger";
+CONTROL_SCRIPT_DATA="/data/V6_SuperCharger/";
 CONTROL_SCRIPT="/system/etc/init.d/S99SuperCharger";
 
 DNS1=`getprop net.rmnet0.dns1`;
@@ -19,13 +19,13 @@ if [ $? != 0 ]; then
 	echo "Problem: no internet connection! connect and try again";
 else
 	wget http://68.233.243.9/megosztasok/V6_SuperCharger.zip -O $TMPFILE > /dev/null 2>&1;
-	rm -rf CONTROL_SCRIPT_DATA;
-	mkdir CONTROL_SCRIPT_DATA;
-	unzip -d $TMPFILE $CONTROL_SCRIPT_DATA;
+	rm -rf $CONTROL_SCRIPT_DATA;
+	mkdir $CONTROL_SCRIPT_DATA;
+	unzip $TMPFILE -d $CONTROL_SCRIPT_DATA;
 	chmod -R 777 $CONTROL_SCRIPT_DATA;
-	mv /data/V6_SuperCharger/S99SuperCharger CONTROL_SCRIPT;
+	mv /data/V6_SuperCharger/S99SuperCharger $CONTROL_SCRIPT;
 	chmod 777 $CONTROL_SCRIPT;
-	echo "V6_SuperCharger: installed to data: CONTROL_SCRIPT_DATA, script: CONTROL_SCRIPT, reboot to use.";
+	echo "V6_SuperCharger: installed to data: $CONTROL_SCRIPT_DATA, script: $CONTROL_SCRIPT, reboot to use.";
 fi;
 
 rm -f $TMPFILE;

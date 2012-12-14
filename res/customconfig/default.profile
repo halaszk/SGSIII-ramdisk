@@ -107,6 +107,7 @@ cortexbrain_kernel_tweaks=on
 cortexbrain_io=on
 sleep_scheduler=noop
 init_d=off
+exfat=off
 freq_for_responsiveness=400000
 freq_for_fast_down=1200000
 sampling_rate=120000

@@ -54,7 +54,10 @@ pkill -f "/data/gesture_set.sh";
 pkill -f "/sys/devices/virtual/misc/touch_gestures/wait_for_gesture";
 nohup /sbin/busybox sh /data/gesture_set.sh;
 fi;
-
+if [ "$exfat" == on ]; then
+insmod /lib/modules/exfat_core.ko
+insmod /lib/modules/exfat_fs.ko
+fi;
 # for ntfs automounting
 insmod /lib/modules/fuse.ko
 mount -o remount,rw /

@@ -334,6 +334,7 @@
       </spinner>
       <spinner description="Changes the fifth GPU frequency step" name="GPU Freq Step5" action="gpu-freq 5">
              <spinnerItem name="800MHz" value="800"/> 
+			 <spinnerItem name="700MHz" value="700"/>
              <spinnerItem name="666MHz" value="666"/> 
              <spinnerItem name="640MHz" value="640"/> 
              <spinnerItem name="600MHz" value="600"/> 
@@ -512,6 +513,8 @@ name="LCD POWER" action="generic01 /sys/class/lcd/panel/power_reduce" label="LCD
 	</spinner>
 	<checkbox description="Enable or Disable INIT.D scripts RUN on boot. Many new ROMS are running the init.d scripts automatically. You can also force running the scripts, but if you run them and ROM runs them too, we have a problem: all scripts are running X2 times! To avoid conflicts, Stweaks RUN-control is disabled by default. If you know that your ROM is NOT supporting init.d script running, then turn it ON here and reboot."
 	name="INIT.D Scripts RUN control" action="generic /tmp/init_d" label="Enable INIT.D scripts RUN-control"/>
+	<checkbox description="Enable or Disable EXFAT support on boot. Stweaks exfat is disabled by default. If you know that your USB disk formatted to exfat turn it ON here and reboot."
+	name="EXFAT RUN control" action="generic /tmp/exfat" label="Enable EXFAT module"/>
 	<checkbox description="Here you can Allow WIFI to use full PWR when screen is OFF, by default we use LOW PWR and get slow speed on wifi transfers, Only when screen is OFF, checked=LOW PWR, not checked=HIGH PWR"
 	name="WIFI LOW POWER SWITCH" action="generic_wifi_pwr /tmp/wifi_pwr" label="WIFI LOW PWR"/>
 	<checkbox description="Enables or disables the mechanic, disabled by default. Lets the hypervisor system share identical memory pages amongst different processes or virtualized guests. This is done by scanning through the memory finding duplicate page." name="KSM_enable" action="generic01 /sys/kernel/mm/ksm/run" label="Kernel SamePage Merging"/>

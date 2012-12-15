@@ -548,7 +548,8 @@ name="LCD POWER" action="generic01 /sys/class/lcd/panel/power_reduce" label="LCD
              <spinnerItem name="deadline" value="deadline"/> 
              <spinnerItem name="vr" value="vr"/> 
              <spinnerItem name="cfq" value="cfq"/> 
-			 <spinnerItem name="zen" value="zen"/>
+	     <spinnerItem name="zen" value="zen"/>
+	    <spinnerItem name="row" value="row"/>
       </spinner>
 	  	<spinner description="This will set the STANDBY/DEEPSLEEP I/O scheduler for internal, system, data and external sdcard. Default is NOOP"
 	name="STANDBY/DEEPSLEEP I/O Scheduler" action="generic_sleep_scheduler /tmp/sleep_scheduler">
@@ -558,6 +559,7 @@ name="LCD POWER" action="generic01 /sys/class/lcd/panel/power_reduce" label="LCD
              <spinnerItem name="vr" value="vr"/> 
              <spinnerItem name="cfq" value="cfq"/> 
 			 <spinnerItem name="zen" value="zen"/>
+	<spinnerItem name="row" value="row"/>
 		</spinner>
 	  <spinner description="This will set the default I/O scheduler Read_Ahead. Default I/O scheduler Read Ahead will only be set during early stages of booting (before init.d execution) and can be overriden by later scripts or apps." name="Default I/O Scheduler Read Ahead" action="read_ahead_kb">
              <spinnerItem name="512KB" value="512"/> 

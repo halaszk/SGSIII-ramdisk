@@ -22,8 +22,8 @@ FILE_NAME=$0;
 PIDOFCORTEX=$$;
 
 # default settings (1000 = 10 seconds)
-dirty_expire_centisecs_default=250;
-dirty_writeback_centisecs_default=500;
+dirty_expire_centisecs_default=1000;
+dirty_writeback_centisecs_default=1000;
 
 # battery settings
 dirty_expire_centisecs_battery=0;

@@ -56,6 +56,7 @@
              <spinnerItem name="ondemand" value="ondemand"/>
 	     <spinnerItem name="ondemandq" value="ondemandq"/>
 	     <spinnerItem name="pegasusq" value="pegasusq"/> 
+		 <spinnerItem name="zzmoove" value="zzmoove"/>
 	     <spinnerItem name="abyssplug" value="abyssplug"/>
              <spinnerItem name="performance" value="performance"/>
        </spinner>

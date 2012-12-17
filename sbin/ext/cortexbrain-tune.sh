@@ -136,7 +136,7 @@ IO_TWEAKS;
 KERNEL_TWEAKS()
 {
 	if [ "$cortexbrain_kernel_tweaks" == on ]; then
-		echo "0" > /proc/sys/vm/oom_kill_allocating_task;
+		echo "1" > /proc/sys/vm/oom_kill_allocating_task;
 		sysctl -w vm.panic_on_oom=0;
 		echo "65536" > /proc/sys/kernel/msgmax;
 		echo "2048" > /proc/sys/kernel/msgmni;
@@ -160,7 +160,7 @@ SYSTEM_TWEAKS()
 	if [ "$cortexbrain_system" == on ]; then
 		# render UI with GPU
 		setprop hwui.render_dirty_regions false;
-		setprop windowsmgr.max_events_per_sec 150;
+		setprop windowsmgr.max_events_per_sec 100;
 		# enable Hardware Rendering
 	setprop video.accelerate.hw 1;
 	setprop debug.performance.tuning 1;
@@ -240,7 +240,6 @@ SYSTEM_TWEAKS()
   echo "12288" > /proc/sys/vm/min_free_kbytes
   echo "1500" > /proc/sys/vm/dirty_writeback_centisecs
   echo "200" > /proc/sys/vm/dirty_expire_centisecs
-  echo "60" > /proc/sys/vm/swappiness
 
 		log -p 10 i -t $FILE_NAME "*** SYSTEM_TWEAKS ***: enabled";
 	fi;
@@ -320,7 +319,25 @@ MEMORY_TWEAKS()
 		echo "128 128" > /proc/sys/vm/lowmem_reserve_ratio;
 		echo "3" > /proc/sys/vm/page-cluster; # default: 3
 		echo "8192" > /proc/sys/vm/min_free_kbytes;
-
+		if [ "$cortexbrain_multitaskingfix" == on ]; then
+		#Low memory killer tweaks
+		#ALL OPENED APPS IN LATEST 4 SECONDS ARE LOCKED IN MEMORY EVERY 4 SECONDS so the possibility of killed apps is now ridicolous! (0 battery drain!!)
+		#Better performance without any lags up to 12 apps running in same time (MAX 20 APPS RUNNING IN SAME TIME WITH A 301 APPS INSTALLED IN MY SCENARIO!)
+		#Optimized for multiwindow use!
+		#Minfree changed for best performaced and quick app load!
+		echo "2560,5120,6912,12800,15104,17152" > /sys/module/lowmemorykiller/parameters/minfree;
+		x=1
+		while [ $x -le 5 ]
+		do
+		for i in `find /proc -maxdepth 1 -type d`; do
+		if [ -f  $i/oom_score ]; then
+				echo "-17" > $i/oom_adj;
+				echo "0" > $i/oom_score;
+		fi;
+		done | sort -n -k2
+		sleep 4
+		done
+		fi;
 		# =========
 # VM Settings
 # =========

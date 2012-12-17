@@ -104,6 +104,7 @@ cortexbrain_battery=on
 cortexbrain_system=on
 cortexbrain_kernel_tweaks=on
 cortexbrain_io=on
+cortexbrain_multitaskingfix=on
 sleep_scheduler=deadline
 init_d=off
 exfat=off

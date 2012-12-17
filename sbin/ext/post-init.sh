@@ -30,6 +30,8 @@ fi
 # Cortex parent should be ROOT/INIT and not STweaks
 nohup /sbin/ext/cortexbrain-tune.sh; 
 
+nohup /sbin/ext/multitaskfix.sh; 
+
 if [ "$logger" == "on" ];then
 insmod /lib/modules/logger.ko
 fi

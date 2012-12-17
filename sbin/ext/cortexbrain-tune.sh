@@ -319,25 +319,6 @@ MEMORY_TWEAKS()
 		echo "128 128" > /proc/sys/vm/lowmem_reserve_ratio;
 		echo "3" > /proc/sys/vm/page-cluster; # default: 3
 		echo "8192" > /proc/sys/vm/min_free_kbytes;
-		if [ "$cortexbrain_multitaskingfix" == on ]; then
-		#Low memory killer tweaks
-		#ALL OPENED APPS IN LATEST 4 SECONDS ARE LOCKED IN MEMORY EVERY 4 SECONDS so the possibility of killed apps is now ridicolous! (0 battery drain!!)
-		#Better performance without any lags up to 12 apps running in same time (MAX 20 APPS RUNNING IN SAME TIME WITH A 301 APPS INSTALLED IN MY SCENARIO!)
-		#Optimized for multiwindow use!
-		#Minfree changed for best performaced and quick app load!
-		echo "2560,5120,6912,12800,15104,17152" > /sys/module/lowmemorykiller/parameters/minfree;
-		x=1
-		while [ $x -le 5 ]
-		do
-		for i in `find /proc -maxdepth 1 -type d`; do
-		if [ -f  $i/oom_score ]; then
-				echo "-17" > $i/oom_adj;
-				echo "0" > $i/oom_score;
-		fi;
-		done | sort -n -k2
-		sleep 4
-		done
-		fi;
 		# =========
 # VM Settings
 # =========
@@ -358,6 +339,29 @@ fi;
 }
 MEMORY_TWEAKS;
 
+MULTITASKFIX()
+{
+		if [ "$cortexbrain_multitaskingfix" == on ]; then
+		#Low memory killer tweaks
+		#ALL OPENED APPS IN LATEST 4 SECONDS ARE LOCKED IN MEMORY EVERY 4 SECONDS so the possibility of killed apps is now ridicolous! (0 battery drain!!)
+		#Better performance without any lags up to 12 apps running in same time (MAX 20 APPS RUNNING IN SAME TIME WITH A 301 APPS INSTALLED IN MY SCENARIO!)
+		#Optimized for multiwindow use!
+		#Minfree changed for best performaced and quick app load!
+		echo "2560,5120,6912,12800,15104,17152" > /sys/module/lowmemorykiller/parameters/minfree;
+		(
+	MULTITASK_CHECK=`pgrep -f "/sbin/ext/multitaskfix.sh" | wc -l`;
+	if [ "$MULTITASK_CHECK" == 0 ]; then
+	nohup /sbin/ext/multitaskfix.sh > /dev/null 2>&1;
+	fi;
+)&
+
+		log -p i -t $FILE_NAME "*** MULTITASKFIX ***: enabled";
+		fi;
+	if [ "$cortexbrain_multitaskingfix" == off ]; then
+	pkill -f "/sbin/ext/multitaskfix.sh";
+	fi;
+}
+MULTITASKFIX;
 # ==============================================================
 # TCP-TWEAKS
 # ==============================================================

@@ -348,11 +348,12 @@ MULTITASKFIX()
 		#Optimized for multiwindow use!
 		#Minfree changed for best performaced and quick app load!
 		echo "2560,5120,6912,12800,15104,17152" > /sys/module/lowmemorykiller/parameters/minfree;
+(
 	MULTITASK_CHECK=`pgrep -f "/sbin/ext/multitaskfix.sh" | wc -l`;
 	if [ "$MULTITASK_CHECK" == 0 ]; then
 	nohup /sbin/ext/multitaskfix.sh > /dev/null 2>&1;
 	fi;
-
+)&
 		log -p i -t $FILE_NAME "*** MULTITASKFIX ***: enabled";
 		fi;
 		

@@ -348,15 +348,14 @@ MULTITASKFIX()
 		#Optimized for multiwindow use!
 		#Minfree changed for best performaced and quick app load!
 		echo "2560,5120,6912,12800,15104,17152" > /sys/module/lowmemorykiller/parameters/minfree;
-		(
 	MULTITASK_CHECK=`pgrep -f "/sbin/ext/multitaskfix.sh" | wc -l`;
 	if [ "$MULTITASK_CHECK" == 0 ]; then
 	nohup /sbin/ext/multitaskfix.sh > /dev/null 2>&1;
 	fi;
-)&
 
 		log -p i -t $FILE_NAME "*** MULTITASKFIX ***: enabled";
 		fi;
+		
 	if [ "$cortexbrain_multitaskingfix" == off ]; then
 	pkill -f "/sbin/ext/multitaskfix.sh";
 	fi;
@@ -510,6 +509,29 @@ DISABLE_GESTURES()
 	log -p i -t $FILE_NAME "*** GESTURE ***: disabled";
 }
 
+ENABLE_KSM()
+{
+if [ "$run" == "1" ]; then
+	# enable KSM on screen ON.
+	KSM="/sys/kernel/mm/ksm/run";
+	if [ -e "$KSM" ]; then
+	echo "1" > $KSM;
+	fi;
+	log -p i -t $FILE_NAME "*** KSM ***: enabled";
+fi;
+}
+
+DISABLE_KSM()
+{
+if [ "$run" == "0" ]; then
+	# disable KSM on screen OFF
+	KSM="/sys/kernel/mm/ksm/run";
+	if [ -e "$KSM" ]; then
+	echo "0" > $KSM;
+	fi;
+	log -p i -t $FILE_NAME "*** KSM ***: disabled";
+fi;
+}
 
 # please don't kill "cortexbrain"
 DONT_KILL_CORTEX()
@@ -739,6 +761,10 @@ fi;
 	AUTO_BRIGHTNESS;
 
 	DONT_KILL_CORTEX;
+	
+	ENABLE_KSM;
+	
+	SWAPPINESS;
 
 	log -p i -t $FILE_NAME "*** AWAKE Normal Mode ***";
 }
@@ -771,6 +797,8 @@ SLEEP_MODE()
 	SWAPPINESS;
 	
 	ENABLE_WIFI_PM;
+	
+	DISABLE_KSM;
 
 	if [ "$cortexbrain_cpu_boost" == on ]; then
 
@@ -804,7 +832,6 @@ fi;
 		log -p i -t $FILE_NAME "*** SLEEP mode ***";
 
 		DISABLE_LOGGER;
-		log -p i -t $FILE_NAME "*** SCREEN OFF BUT POWERED mode ***";
 }
 
 # ==============================================================

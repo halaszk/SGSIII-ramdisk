@@ -334,7 +334,7 @@
              <spinnerItem name="200MHz" value="200"/> 
       </spinner>
       <spinner description="Changes the fifth GPU frequency step" name="GPU Freq Step5" action="gpu-freq 5">
-	<spinnerItem name="900MHz" value="900"/>
+			 <spinnerItem name="900MHz" value="900"/>
              <spinnerItem name="800MHz" value="800"/> 
 			 <spinnerItem name="700MHz" value="700"/>
              <spinnerItem name="666MHz" value="666"/> 

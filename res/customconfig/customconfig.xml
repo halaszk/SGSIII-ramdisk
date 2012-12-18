@@ -480,7 +480,9 @@ name="LCD POWER" action="generic01 /sys/class/lcd/panel/power_reduce" label="LCD
 	<checkbox description="Here you can Allow WIFI to use full PWR when screen is OFF, by default we use LOW PWR and get slow speed on wifi transfers, Only when screen is OFF, checked=LOW PWR, not checked=HIGH PWR"
 	name="WIFI LOW POWER SWITCH" action="generic_wifi_pwr /tmp/wifi_pwr" label="WIFI LOW PWR"/>
 	<checkbox description="Enables or disables the mechanic, disabled by default. Lets the hypervisor system share identical memory pages amongst different processes or virtualized guests. This is done by scanning through the memory finding duplicate page." name="KSM_enable" action="generic01 /sys/kernel/mm/ksm/run" label="Kernel SamePage Merging"/>
-		<checkbox description="Sys kernel interface to configure linux printk logging." name="Linux printk logging" action="generic01 /sys/kernel/printk_mode" label="Linux printk logging enable or disable"/>
+	<checkbox description="Sys kernel interface to configure linux printk logging." name="Linux printk logging" action="generic01 /sys/kernel/printk_mode" label="Linux printk logging enable or disable"/>
+	<seekBar description="Vibration force level. Default: 75"
+	name="Vibration force" action="generic /sys/vibrator/pwm_val" unit="%" min="0" reversed="false" step="5" max="100"/>
 	<spinner description="GPS Time Zone for faster LOCK! Use your region to fix GPS location!" name="GPS Region" action="gpsregion">
 	<spinnerItem name="No GPS Zone changes (default)" value="No_GPS_Zone_changes"/>
 	<spinnerItem name="Set Asia" value="Asia"/>

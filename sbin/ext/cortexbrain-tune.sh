@@ -252,6 +252,17 @@ SYSTEM_TWEAKS;
 BATTERY_TWEAKS()
 {
 	if [ "$cortexbrain_battery" == on ]; then
+	
+	if [ "$power_reduce" == on ]; then
+	# LCD Power-Reduce
+	if [ -e /sys/class/lcd/panel/power_reduce ]; then
+	echo "1" > /sys/class/lcd/panel/power_reduce;
+	fi;
+	else
+	if [ -e /sys/class/lcd/panel/power_reduce ]; then
+	echo "0" > /sys/class/lcd/panel/power_reduce;
+	fi;
+		fi;
 
 		# USB power support
 		for i in `ls /sys/bus/usb/devices/*/power/level`; do
@@ -593,6 +604,8 @@ fi;
 MEGA_BOOST_CPU_TWEAKS()
 {
 if [ "$cortexbrain_cpu_boost" == on ]; then
+# GPU utilization to min delay
+echo "100" > /sys/module/mali/parameters/mali_gpu_utilization_timeout;
 
 echo "1400000" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq;
 echo "1400000" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq;
@@ -717,7 +730,6 @@ AWAKE_MODE()
 	WAKEUP_DELAY;
 	
 #	echo "$scaling_governor" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor;
-#	cp -a /tmp/$scaling_governor/* /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor/$scaling_governor;
 	
 	MEGA_BOOST_CPU_TWEAKS;
 	
@@ -753,9 +765,10 @@ fi;
 
 	# set wifi.supplicant_scan_interval
 	setprop wifi.supplicant_scan_interval $supplicant_scan_interval;
-
+	
+	echo "$mali_gpu_utilization_timeout" > /sys/module/mali/parameters/mali_gpu_utilization_timeout;
 	# set the vibrator - force in case it's has been reseted
-#	echo "$pwm_val" > /sys/vibrator/pwm_val;
+	echo "$pwm_val" > /sys/vibrator/pwm_val;
 
 	ENABLE_NMI;
 
@@ -784,6 +797,8 @@ SLEEP_MODE()
 	if [ "$cortexbrain_cpu_boost" == on ]; then
 	echo "$standby_freq" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq;
 	fi;
+
+	echo "500" > /sys/module/mali/parameters/mali_gpu_utilization_timeout;
 
 	KERNEL_SCHED_SLEEP;
 

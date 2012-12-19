@@ -146,6 +146,7 @@ KERNEL_TWEAKS()
 		echo "2097152" > /proc/sys/kernel/shmall;
 		echo "268435456" > /proc/sys/kernel/shmmax;
 		echo "524288" > /proc/sys/kernel/threads-max;
+  		/sbin/busybox sysctl -w kernel.panic=10;
 	
 		log -p i -t $FILE_NAME "*** KERNEL_TWEAKS ***: enabled";
 	fi;
@@ -166,7 +167,7 @@ SYSTEM_TWEAKS()
 	setprop debug.performance.tuning 1;
 	setprop debug.sf.hw 1;
 	setprop persist.sys.use_dithering 1;
-	setprop persist.sys.ui.hw true; # ->reported as problem maker in some roms.
+#	setprop persist.sys.ui.hw true; # ->reported as problem maker in some roms.
 
 	# render UI with GPU
 	setprop hwui.render_dirty_regions false;
@@ -185,61 +186,27 @@ SYSTEM_TWEAKS()
 	# =========
 	# Optimized Audio and Video Settings
 	# =========
-	setprop ro.media.enc.jpeg.quality 100
-	setprop ro.media.dec.jpeg.memcap 8000000
-	setprop ro.media.enc.hprof.vid.bps 8000000
-	setprop ro.media.capture.maxres 8m
+	setprop ro.media.enc.jpeg.quality 100;
+	setprop ro.media.dec.jpeg.memcap 8000000;
+	setprop ro.media.enc.hprof.vid.bps 8000000;
+	setprop ro.media.capture.maxres 8m;
 	#setprop ro.media.capture.fast.fps 4
 	#setprop ro.media.capture.slow.fps 120
 	#setprop ro.media.capture.flashMinV 3300000
 	#setprop ro.media.capture.torchIntensity 40
 	#setprop ro.media.capture.flashIntensity 70
-	setprop ro.media.panorama.defres 3264x1840
-	setprop ro.media.panorama.frameres 1280x720
-	setprop ro.camcorder.videoModes true
-	setprop ro.media.enc.hprof.vid.fps 65
+	setprop ro.media.panorama.defres 3264x1840;
+	setprop ro.media.panorama.frameres 1280x720;
+	setprop ro.camcorder.videoModes true;
+	setprop ro.media.enc.hprof.vid.fps 65;
 	#setprop ro.service.swiqi.supported true
 	#setprop persist.service.swiqi.enable 1
-	setprop media.stagefright.enable-player true 
-	setprop media.stagefright.enable-meta true 
-	setprop media.stagefright.enable-scan true
-	setprop media.stagefright.enable-http true
-	setprop media.stagefright.enable-rtsp=true
-	setprop media.stagefright.enable-record false
-
-
-	# file system tweaks
-	/sbin/busybox sysctl -w fs.inotify.max_queued_events=32000
-	/sbin/busybox sysctl -w fs.file-max=524288
-	/sbin/busybox sysctl -w fs.inotify.max_user_instances=256
-	/sbin/busybox sysctl -w fs.inotify.max_user_watches=10240
-	/sbin/busybox sysctl -w fs.lease-break-time=10
-
-  # kernel setting tweaks
-  /sbin/busybox sysctl -w kernel.msgmax=65536
-  /sbin/busybox sysctl -w kernel.panic=10
-  /sbin/busybox sysctl -w kernel.threads-max=524288
-
-  # net tweaks
-  /sbin/busybox sysctl -w net.core.rmem_max=524288
-  /sbin/busybox sysctl -w net.core.wmem_max=524288
-  /sbin/busybox sysctl -w net.ipv4.tcp_rmem='6144 87380 524288'
-  /sbin/busybox sysctl -w net.ipv4.tcp_tw_recycle=1
-  /sbin/busybox sysctl -w net.ipv4.tcp_wmem='6144 87380 524288'
-
-  # vm tweaks
-  /sbin/busybox sysctl -w vm.dirty_background_ratio=70
-  /sbin/busybox sysctl -w vm.dirty_expire_centisecs=250
-  /sbin/busybox sysctl -w vm.dirty_ratio=90
-  /sbin/busybox sysctl -w vm.dirty_writeback_centisecs=500
-  /sbin/busybox sysctl -w vm.min_free_kbytes=4096
-  /sbin/busybox sysctl -w vm.vfs_cache_pressure=10
-
-# System tweaks: Hardcore speedmod
-  # vm tweaks
-  echo "12288" > /proc/sys/vm/min_free_kbytes
-  echo "1500" > /proc/sys/vm/dirty_writeback_centisecs
-  echo "200" > /proc/sys/vm/dirty_expire_centisecs
+	setprop media.stagefright.enable-player true;
+	setprop media.stagefright.enable-meta true;
+	setprop media.stagefright.enable-scan true;
+	setprop media.stagefright.enable-http true;
+	setprop media.stagefright.enable-rtsp=true;
+	setprop media.stagefright.enable-record false;
 
 		log -p i -t $FILE_NAME "*** SYSTEM_TWEAKS ***: enabled";
 	fi;
@@ -252,6 +219,16 @@ SYSTEM_TWEAKS;
 BATTERY_TWEAKS()
 {
 	if [ "$cortexbrain_battery" == on ]; then
+	  # vm tweaks
+	  /sbin/busybox sysctl -w vm.dirty_background_ratio=70;
+	  /sbin/busybox sysctl -w vm.dirty_ratio=90;
+	  /sbin/busybox sysctl -w vm.vfs_cache_pressure=10;
+
+	# System tweaks: Hardcore speedmod
+	  # vm tweaks
+	  echo "12288" > /proc/sys/vm/min_free_kbytes
+	  echo "1500" > /proc/sys/vm/dirty_writeback_centisecs
+	  echo "200" > /proc/sys/vm/dirty_expire_centisecs
 	
 	if [ "$power_reduce" == on ]; then
 	# LCD Power-Reduce
@@ -294,23 +271,23 @@ BATTERY_TWEAKS()
 CPU_GOV_TWEAKS()
 {
 	if [ "$cortexbrain_cpu" == on ]; then
-  echo "500000" > /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_freq_1_1
-  echo "800000" > /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_freq_2_1
-  echo "800000" > /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_freq_3_1
-  echo "400000" > /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_freq_2_0
-  echo "600000" > /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_freq_3_0
-  echo "600000" > /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_freq_4_0
-  echo "100" > /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_rq_1_1
-  echo "100" > /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_rq_2_0
-  echo "200" > /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_rq_2_1
-  echo "200" > /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_rq_3_0
-  echo "300" > /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_rq_3_1
-  echo "300" > /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_rq_4_0
-  echo "80" > /sys/devices/system/cpu/cpufreq/pegasusq/up_threshold
-  echo "$max_cpu_lock" > /sys/devices/system/cpu/cpufreq/pegasusq/max_cpu_lock
-  echo "80" > /sys/devices/system/cpu/cpufreq/pegasusq/up_threshold_at_min_freq
-  echo "10" > /sys/devices/system/cpu/cpufreq/pegasusq/cpu_down_rate
-  echo "$lcdfreq_enable" > /sys/devices/system/cpu/cpufreq/peqasusq/lcdfreq_enable
+  echo "500000" > /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_freq_1_1;
+  echo "800000" > /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_freq_2_1;
+  echo "800000" > /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_freq_3_1;
+  echo "400000" > /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_freq_2_0;
+  echo "600000" > /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_freq_3_0;
+  echo "600000" > /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_freq_4_0;
+  echo "100" > /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_rq_1_1;
+  echo "100" > /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_rq_2_0;
+  echo "200" > /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_rq_2_1;
+  echo "200" > /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_rq_3_0;
+  echo "300" > /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_rq_3_1;
+  echo "300" > /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_rq_4_0;
+  echo "80" > /sys/devices/system/cpu/cpufreq/pegasusq/up_threshold;
+  echo "$max_cpu_lock" > /sys/devices/system/cpu/cpufreq/pegasusq/max_cpu_lock;
+  echo "80" > /sys/devices/system/cpu/cpufreq/pegasusq/up_threshold_at_min_freq;
+  echo "10" > /sys/devices/system/cpu/cpufreq/pegasusq/cpu_down_rate;
+  echo "$lcdfreq_enable" > /sys/devices/system/cpu/cpufreq/peqasusq/lcdfreq_enable;
 
 		log -p i -t $FILE_NAME "*** CPU_GOV_TWEAKS ***: enabled";
 	fi;
@@ -383,29 +360,29 @@ TCP_TWEAKS()
 		# =========
 # Optimized for 3G/Edge speed and AGPS
 # =========
-	setprop ro.ril.hsxpa 3
-	setprop ro.ril.gprsclass 10
-	setprop ro.ril.hep 1
-	setprop ro.ril.enable.dtm 1
-	setprop ro.ril.hsdpa.category 10
-	setprop ro.ril.hsupa.category 5
-	setprop ro.ril.enable.a53 1
+	setprop ro.ril.hsxpa 3;
+	setprop ro.ril.gprsclass 10;
+	setprop ro.ril.hep 1;
+	setprop ro.ril.enable.dtm 1;
+	setprop ro.ril.hsdpa.category 10;
+	setprop ro.ril.hsupa.category 5;
+	setprop ro.ril.enable.a53 1;
 	#setprop ro.ril.enable.a52 1
-	setprop ro.ril.enable.3g.prefix 1
-	setprop ro.ril.htcmaskw1.bitmask 4294967295
-	setprop ro.ril.htcmaskw1 14449
+	setprop ro.ril.enable.3g.prefix 1;
+	setprop ro.ril.htcmaskw1.bitmask 4294967295;
+	setprop ro.ril.htcmaskw1 14449;
 	#setprop ro.ril.def.agps.mode 2
 	#setprop ro.ril.def.agps.feature 1
 	#setprop ro.ril.enable.sdr 1
 	#setprop ro.ril.enable.gea3 1
 	#setprop ro.ril.enable.fd.plmn.prefix 23402,23410,23411
-	setprop ro.ril.enable.amr.wideband 1
-	setprop ro.ril.fast.dormancy.rule 1
+	setprop ro.ril.enable.amr.wideband 1;
+	setprop ro.ril.fast.dormancy.rule 1;
 	#setprop ro.ril.disable.mcc.filter 1
 	#setprop ro.ril.emc.mode 1
-	setprop ro.config.hw_fast_dormancy 1
+	setprop ro.config.hw_fast_dormancy 0;
 	#setprop ro.config.vc_call_steps 20
-	setprop persist.cust.tel.eons 1
+	setprop persist.cust.tel.eons 1;
 
 		echo "0" > /proc/sys/net/ipv4/tcp_timestamps;
 		echo "1" > /proc/sys/net/ipv4/tcp_tw_reuse;
@@ -427,6 +404,11 @@ TCP_TWEAKS()
 		echo "6144 87380 524288" > /proc/sys/net/ipv4/tcp_rmem;
 		echo "4096" > /proc/sys/net/ipv4/udp_rmem_min;
 		echo "4096" > /proc/sys/net/ipv4/udp_wmem_min;
+	  /sbin/busybox sysctl -w net.core.rmem_max=524288;
+	  /sbin/busybox sysctl -w net.core.wmem_max=524288;
+	  /sbin/busybox sysctl -w net.ipv4.tcp_rmem='6144 87380 524288';
+	  /sbin/busybox sysctl -w net.ipv4.tcp_tw_recycle=1;
+	  /sbin/busybox sysctl -w net.ipv4.tcp_wmem='6144 87380 524288';
 
 		log -p i -t $FILE_NAME "*** TCP_TWEAKS ***: enabled";
 	fi;
@@ -484,7 +466,7 @@ ENABLE_LOGGER()
 {
 	if [ "$android_logger" == auto ] || [ "$android_logger" == debug ]; then
 		if [ -e /dev/log-sleep ] && [ ! -e /dev/log ]; then
-			mv /dev/log-sleep/ /dev/log/
+			mv /dev/log-sleep/ /dev/log/;
 			log -p i -t $FILE_NAME "*** LOGGER ***: enabled";
 		fi;
 	fi;
@@ -651,11 +633,11 @@ TUNE_IPV6()
 	CISCO_VPN=`find /data/data/com.cisco.anyconnec* | wc -l`;
 	if [ "$cortexbrain_ipv6" == on ] || [ "$CISCO_VPN" != 0 ]; then
 		echo "0" > /proc/sys/net/ipv6/conf/wlan0/disable_ipv6;
-		sysctl -w net.ipv6.conf.all.disable_ipv6=0
+		sysctl -w net.ipv6.conf.all.disable_ipv6=0;
 		log -p i -t $FILE_NAME "*** TUNE_IPV6 ***: enabled";
 	else
 		echo "1" > /proc/sys/net/ipv6/conf/wlan0/disable_ipv6;
-		sysctl -w net.ipv6.conf.all.disable_ipv6=1
+		sysctl -w net.ipv6.conf.all.disable_ipv6=1;
 		log -p i -t $FILE_NAME "*** TUNE_IPV6 ***: disabled";
 	fi;
 }
@@ -664,19 +646,19 @@ KERNEL_SCHED_AWAKE()
 {
 	case "${cfs_tweaks}" in
   0)
-    sysctl -w kernel.sched_min_granularity_ns=750000 > /dev/null
-    sysctl -w kernel.sched_latency_ns=10000000 > /dev/null
-    sysctl -w kernel.sched_wakeup_granularity_ns=2000000 > /dev/null
+    sysctl -w kernel.sched_min_granularity_ns=750000 > /dev/null;
+    sysctl -w kernel.sched_latency_ns=10000000 > /dev/null;
+    sysctl -w kernel.sched_wakeup_granularity_ns=2000000 > /dev/null;
     ;;
   1)
-    sysctl -w kernel.sched_min_granularity_ns=750000 > /dev/null
-    sysctl -w kernel.sched_latency_ns=6000000 > /dev/null
-    sysctl -w kernel.sched_wakeup_granularity_ns=1000000 > /dev/null
+    sysctl -w kernel.sched_min_granularity_ns=750000 > /dev/null;
+    sysctl -w kernel.sched_latency_ns=6000000 > /dev/null;
+    sysctl -w kernel.sched_wakeup_granularity_ns=1000000 > /dev/null;
     ;;
   2)
-    sysctl -w kernel.sched_min_granularity_ns=200000 > /dev/null
-    sysctl -w kernel.sched_latency_ns=400000 > /dev/null
-    sysctl -w kernel.sched_wakeup_granularity_ns=100000 > /dev/null
+    sysctl -w kernel.sched_min_granularity_ns=200000 > /dev/null;
+    sysctl -w kernel.sched_latency_ns=400000 > /dev/null;
+    sysctl -w kernel.sched_wakeup_granularity_ns=100000 > /dev/null;
     ;;
 esac;
 

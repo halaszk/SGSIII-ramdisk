@@ -5,26 +5,44 @@
 #exec >>/data/user.log
 #exec 2>&1
 
-mkdir /data/.siyah
-chmod 777 /data/.siyah
+BB="/sbin/busybox";
+
+# first mod the partitions then boot
+$BB sh /sbin/ext/system_tune_on_init.sh;
+
+PIDOFINIT=`pgrep -f "/sbin/ext/post-init.sh"`;
+for i in $PIDOFINIT; do
+echo "-600" > /proc/$i/oom_score_adj;
+done;
+
+if [ ! -d /data/.siyah ]; then
+$BB mkdir -p /data/.siyah;
+fi;
+
 ccxmlsum=`md5sum /res/customconfig/customconfig.xml | awk '{print $1}'`
 if [ "a${ccxmlsum}" != "a`cat /data/.siyah/.ccxmlsum`" ];
 then
 #  rm -f /data/.siyah/*.profile
-  echo ${ccxmlsum} > /data/.siyah/.ccxmlsum
+  echo ${ccxmlsum} > /data/.siyah/.ccxmlsum;
 fi
-[ ! -f /data/.siyah/default.profile ] && cp /res/customconfig/default.profile /data/.siyah
-[ ! -f /data/.siyah/battery.profile ] && cp /res/customconfig/battery.profile /data/.siyah/battery.profile
-[ ! -f /data/.siyah/performance.profile ] && cp /res/customconfig/performance.profile /data/.siyah/performance.profile
+[ ! -f /data/.siyah/default.profile ] && cp /res/customconfig/default.profile /data/.siyah;
+[ ! -f /data/.siyah/battery.profile ] && cp /res/customconfig/battery.profile /data/.siyah/battery.profile;
+[ ! -f /data/.siyah/performance.profile ] && cp /res/customconfig/performance.profile /data/.siyah/performance.profile;
 
-. /res/customconfig/customconfig-helper
-read_defaults
-read_config
+$BB chmod 0777 /data/.siyah/ -R;
 
-#echo "${cpu_undervolting}" > /sys/devices/system/cpu/cpu0/cpufreq/vdd_levels
+. /res/customconfig/customconfig-helper;
+read_defaults;
+read_config;
+
+# CM 10.1 tweaks.
+/sbin/setprop dalvik.vm.heaptargetutilization 0.75
+/sbin/setprop dalvik.vm.heapminfree 512k
+/sbin/setprop dalvik.vm.heapmaxfree 2m
+
 #mdnie sharpness tweak
 if [ "$mdniemod" == "on" ];then
-. /sbin/ext/mdnie-sharpness-tweak.sh
+. /sbin/ext/mdnie-sharpness-tweak.sh;
 fi
 
 # Cortex parent should be ROOT/INIT and not STweaks
@@ -39,61 +57,67 @@ fi
 # disable debugging on some modules
 if [ "$logger" == "off" ];then
   rm -rf /dev/log
-  echo 0 > /sys/module/ump/parameters/ump_debug_level
-  echo 0 > /sys/module/mali/parameters/mali_debug_level
-  echo 0 > /sys/module/kernel/parameters/initcall_debug
-  echo 0 > /sys//module/lowmemorykiller/parameters/debug_level
-  echo 0 > /sys/module/earlysuspend/parameters/debug_mask
-  echo 0 > /sys/module/alarm/parameters/debug_mask
-  echo 0 > /sys/module/alarm_dev/parameters/debug_mask
-  echo 0 > /sys/module/binder/parameters/debug_mask
-  echo 0 > /sys/module/xt_qtaguid/parameters/debug_mask
+  echo 0 > /sys/module/ump/parameters/ump_debug_level;
+  echo 0 > /sys/module/mali/parameters/mali_debug_level;
+  echo 0 > /sys/module/kernel/parameters/initcall_debug;
+  echo 0 > /sys//module/lowmemorykiller/parameters/debug_level;
+  echo 0 > /sys/module/earlysuspend/parameters/debug_mask;
+  echo 0 > /sys/module/alarm/parameters/debug_mask;
+  echo 0 > /sys/module/alarm_dev/parameters/debug_mask;
+  echo 0 > /sys/module/binder/parameters/debug_mask;
+  echo 0 > /sys/module/xt_qtaguid/parameters/debug_mask;
 fi
 
 	if [ "$gesture_tweak" == on ]; then
 echo "1" > /sys/devices/virtual/misc/touch_gestures/gestures_enabled;
 pkill -f "/data/gesture_set.sh";
 pkill -f "/sys/devices/virtual/misc/touch_gestures/wait_for_gesture";
-nohup /sbin/busybox sh /data/gesture_set.sh;
+nohup $BB sh /data/gesture_set.sh;
 fi;
 if [ "$exfat" == on ]; then
-insmod /lib/modules/exfat_core.ko
-insmod /lib/modules/exfat_fs.ko
+insmod /lib/modules/exfat_core.ko;
+insmod /lib/modules/exfat_fs.ko;
 fi;
 # for ntfs automounting
-insmod /lib/modules/fuse.ko
+insmod /lib/modules/fuse.ko;
 mount -o remount,rw /
 mkdir -p /mnt/ntfs
 chmod 777 /mnt/ntfs
 mount -o mode=0777,gid=1000 -t tmpfs tmpfs /mnt/ntfs
 mount -o remount,ro /
 
-/sbin/busybox sh /sbin/ext/install.sh
-
-##### Early-init phase tweaks #####
-/sbin/busybox sh /sbin/ext/tweaks.sh
+(
+	$BB sh /sbin/ext/install.sh
+)&
 
 (
+##### Early-init phase tweaks #####
+	$BB sh /sbin/ext/tweaks.sh
+)&
+
+# enable kmem interface for everyone by GM
+echo "0" > /proc/sys/kernel/kptr_restrict;
+(
 # Stop uci.sh from running all the PUSH Buttons in stweaks on boot.
-mount -o remount,rw rootfs;
-chown root:system /res/customconfig/actions/ -R;
-chmod 6755 /res/customconfig/actions/*;
-chmod 6755 /res/customconfig/actions/push-actions/*;
-mv /res/customconfig/actions/push-actions/* /res/no-push-on-boot/;
+$BB mount -o remount,rw rootfs;
+$BB chown root:system /res/customconfig/actions/ -R;
+$BB chmod 6755 /res/customconfig/actions/*;
+$BB chmod 6755 /res/customconfig/actions/push-actions/*;
+$BB mv /res/customconfig/actions/push-actions/* /res/no-push-on-boot/;
 
 # set root access script.
-chmod 6755 /sbin/ext/cortexbrain-tune.sh;
+$BB chmod 6755 /sbin/ext/cortexbrain-tune.sh;
 
 # apply STweaks settings
 echo "booting" > /data/.siyah/booting;
 pkill -f "com.gokhanmoral.stweaks.app";
-sh /res/uci.sh restore;
+$BB sh /res/uci.sh restore;
 
 # restore all the PUSH Button Actions back to there location
-mount -o remount,rw rootfs;
-mv /res/no-push-on-boot/* /res/customconfig/actions/push-actions/;
+$BB mount -o remount,rw rootfs;
+$BB mv /res/no-push-on-boot/* /res/customconfig/actions/push-actions/;
 pkill -f "com.gokhanmoral.stweaks.app";
-rm -f /data/.siyah/booting;
+$BB rm -f /data/.siyah/booting;
 # ==============================================================
 # STWEAKS FIXING
 # ==============================================================
@@ -101,16 +125,13 @@ rm -f /data/.siyah/booting;
 /res/customconfig/actions/usb-mode ${usb_mode};
 )&
 
-/sbin/busybox mount -t rootfs -o remount,rw rootfs
+	$BB mount -t rootfs -o remount,rw rootfs;
 
 ##### EFS Backup #####
 (
-/sbin/busybox sh /sbin/ext/efs-backup.sh
+	$BB sh /sbin/ext/efs-backup.sh;
 ) &
 
-# apply STweaks defaults
-sleep 12
-/res/uci.sh apply
 
 PIDOFACORE=`pgrep -f "android.process.acore"`;
 for i in $PIDOFACORE; do
@@ -122,7 +143,8 @@ done;
 ##### init scripts #####
 
 if [ $init_d == on ]; then
-/sbin/busybox sh /sbin/ext/run-init-scripts.sh;
+$BB sh /sbin/ext/run-init-scripts.sh;
 fi;
-/sbin/busybox sh /sbin/ext/partitions-tune.sh
+# run partitions tune after full boot
+$BB sh /sbin/ext/partitions-tune.sh
 

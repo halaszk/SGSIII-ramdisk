@@ -97,7 +97,7 @@ chown 0.0 /system/app/STweaks.apk;
 chmod 644 /system/app/STweaks.apk;
 fi;
 }
-GMTWEAKS;
+#GMTWEAKS;
 
 EXTWEAKS_CLEAN()
 {

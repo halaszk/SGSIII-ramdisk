@@ -589,6 +589,9 @@ if [ "$cortexbrain_cpu_boost" == on ]; then
 # GPU utilization to min delay
 echo "100" > /sys/module/mali/parameters/mali_gpu_utilization_timeout;
 
+	# bus freq to 400MHZ in low load
+echo "25" > /sys/devices/system/cpu/cpufreq/busfreq_up_threshold;
+
 echo "1400000" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq;
 echo "1400000" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq;
 if [ "$mali_resume_enable" == on ]; then
@@ -738,6 +741,9 @@ fi;
 	TUNE_IPV6;
 
 	#CPU_GOV_TWEAKS;
+
+	# bus freq back to normal
+	echo "$busfreq_up_threshold" > /sys/devices/system/cpu/cpufreq/busfreq_up_threshold;
 	
 	if [ "$cortexbrain_cpu_boost" == on ]; then
 	# set CPU speed
@@ -779,7 +785,8 @@ SLEEP_MODE()
 	if [ "$cortexbrain_cpu_boost" == on ]; then
 	echo "$standby_freq" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq;
 	fi;
-
+	# bus freq to min 133Mhz
+	echo "90" > /sys/devices/system/cpu/cpufreq/busfreq_up_threshold;
 	echo "500" > /sys/module/mali/parameters/mali_gpu_utilization_timeout;
 
 	KERNEL_SCHED_SLEEP;

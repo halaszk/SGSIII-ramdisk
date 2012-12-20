@@ -24,7 +24,7 @@
              <spinnerItem name="Single core mode" value="1"/> 
       </spinner>-->
       <seekBar description="Sets the sched_mc value which changes the cpu scheduler behaviour for multi-cpu systems. 0 is Samsung kernel's default value which turns sched_mc off. Setting it to 1 means that the first core will be tried to be loaded more and setting it to 2 will bias task wake-ups to semi-idle cpu package for power savings. (default: 0)" name="sched_mc" action="generic /sys/devices/system/cpu/sched_mc_power_savings" unit="" min="0" reversed="false" step="1" max="2"/>
-      <seekBar description="This is for CPU BUS-FREQ UP-FREQ-Scaling, based on CPU load! default=23%" name="busfreq_up_threshold" action="generic /sys/devices/system/cpu/busfreq/up_threshold" unit="%" min="20" reversed="false" step="1" max="90"/>
+      	<seekBar description="This is for CPU BUS-FREQ UP-FREQ-Scaling, based on CPU load. It sets the the load threshold on which BUS frequency will rise. Default: 80%" name="busfreq_up_threshold" action="generic /sys/devices/system/cpu/cpufreq/busfreq_up_threshold" unit="%" min="23" reversed="false" step="1" max="90"/>
     </settingsPane>
 	<settingsPane description=""
 	name="CPU Undervolting">
@@ -38,7 +38,7 @@
       </spinner>
 	  <button description="Use this button to see CPU Voltage that used right now!" name="Check Active CPU Voltage" action="push-actions/check_cpu_voltage" label="Check CPU Voltage"/>
     </settingsPane>
-	<settingsPane description=""
+<!--	<settingsPane description=""
 	name="CPU BUS Undervolting">
       <spinner description="Sets the CPU undervolting value which will be applied during boot time only. It will not have any effect until you restart your device. Remember: if you change this value and your device doesn't boot you will have to reset extweaks settings using CWM recovery. This value will be applied to all CPU steps before any script or app execution. If you use any script or voltage control app this setting may be overriden by those." 
 	  name="CPU BUS Undervolting" action="cpu_bus-voltage cpu_bus_undervolting">
@@ -49,7 +49,7 @@
              <spinnerItem name="-100 mV" value="100"/>
       </spinner>
 	  <button description="Use this button to see CPU BusFreq-Voltage that used right now!" name="Check Active CPU BusFreq-Voltage" action="push-actions/check_cpu_bus_voltage" label="Check CPU BusFreq-Voltage"/>
-    </settingsPane>
+    </settingsPane>-->
     <settingsPane description=""
 		name="CPU Scaling Settings">
        <spinner description="This will set the default CPU governor. Default CPU governor will only be set during early stages of booting (before init.d execution) and can be overriden by later scripts or apps." name="Default CPU Governor" action="generic /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor">

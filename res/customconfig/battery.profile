@@ -113,7 +113,6 @@ freq_for_responsiveness=400000
 freq_for_fast_down=1200000
 sampling_rate=120000
 sampling_down_factor=1
-up_threshold=82
 down_differential=5
 up_threshold_at_min_freq=40
 up_threshold_at_fast_down=95

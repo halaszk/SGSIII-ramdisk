@@ -167,7 +167,7 @@ SYSTEM_TWEAKS()
 	setprop debug.performance.tuning 1;
 	setprop debug.sf.hw 1;
 	setprop persist.sys.use_dithering 1;
-#	setprop persist.sys.ui.hw true; # ->reported as problem maker in some roms.
+	setprop persist.sys.ui.hw true; # ->reported as problem maker in some roms.
 
 	# render UI with GPU
 	setprop hwui.render_dirty_regions false;
@@ -377,7 +377,7 @@ TCP_TWEAKS()
 	#setprop ro.ril.enable.gea3 1
 	#setprop ro.ril.enable.fd.plmn.prefix 23402,23410,23411
 	setprop ro.ril.enable.amr.wideband 1;
-	setprop ro.ril.fast.dormancy.rule 1;
+	setprop ro.ril.fast.dormancy.rule 0;
 	#setprop ro.ril.disable.mcc.filter 1
 	#setprop ro.ril.emc.mode 1
 	setprop ro.config.hw_fast_dormancy 0;
@@ -592,7 +592,7 @@ echo "$scaling_governor" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
 echo "100" > /sys/module/mali/parameters/mali_gpu_utilization_timeout;
 
 	# bus freq to 400MHZ in low load
-echo "30" > /sys/devices/system/cpu/cpufreq/busfreq_up_threshold;
+echo "30" > /sys/devices/system/cpu/busfreq/up_threshold;
 
 echo "1400000" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq;
 echo "1400000" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq;
@@ -752,7 +752,7 @@ fi;
 	setprop wifi.supplicant_scan_interval $supplicant_scan_interval;
 	
 	# bus freq back to normal
-	echo "$busfreq_up_threshold" > /sys/devices/system/cpu/cpufreq/busfreq_up_threshold;
+	echo "$up_threshold" > /sys/devices/system/cpu/busfreq/up_threshold;
 	echo "$mali_gpu_utilization_timeout" > /sys/module/mali/parameters/mali_gpu_utilization_timeout;
 	# set the vibrator - force in case it's has been reseted
 	echo "$pwm_val" > /sys/vibrator/pwm_val;
@@ -787,7 +787,7 @@ SLEEP_MODE()
 	echo "$standby_freq" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq;
 	fi;
 	# bus freq to min 133Mhz
-	echo "80" > /sys/devices/system/cpu/cpufreq/busfreq_up_threshold;
+	echo "80" > /sys/devices/system/cpu/cpufreq/up_threshold;
 	echo "500" > /sys/module/mali/parameters/mali_gpu_utilization_timeout;
 
 	KERNEL_SCHED_SLEEP;

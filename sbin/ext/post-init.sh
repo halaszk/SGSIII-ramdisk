@@ -36,9 +36,9 @@ read_defaults;
 read_config;
 
 # CM 10.1 tweaks.
-/sbin/setprop dalvik.vm.heaptargetutilization 0.75
-/sbin/setprop dalvik.vm.heapminfree 512k
-/sbin/setprop dalvik.vm.heapmaxfree 2m
+#/sbin/setprop dalvik.vm.heaptargetutilization 0.75
+#/sbin/setprop dalvik.vm.heapminfree 512k
+#/sbin/setprop dalvik.vm.heapmaxfree 2m
 
 #mdnie sharpness tweak
 if [ "$mdniemod" == "on" ];then

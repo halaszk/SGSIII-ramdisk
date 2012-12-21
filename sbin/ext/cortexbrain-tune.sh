@@ -586,6 +586,8 @@ fi;
 MEGA_BOOST_CPU_TWEAKS()
 {
 if [ "$cortexbrain_cpu_boost" == on ]; then
+
+echo "$scaling_governor" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor;
 # GPU utilization to min delay
 echo "100" > /sys/module/mali/parameters/mali_gpu_utilization_timeout;
 
@@ -714,8 +716,6 @@ AWAKE_MODE()
 	
 	WAKEUP_DELAY;
 	
-#	echo "$scaling_governor" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor;
-	
 	MEGA_BOOST_CPU_TWEAKS;
 	
 	MOUNT_SD_CARD;
@@ -741,9 +741,6 @@ fi;
 	TUNE_IPV6;
 
 	#CPU_GOV_TWEAKS;
-
-	# bus freq back to normal
-	echo "$busfreq_up_threshold" > /sys/devices/system/cpu/cpufreq/busfreq_up_threshold;
 	
 	if [ "$cortexbrain_cpu_boost" == on ]; then
 	# set CPU speed
@@ -783,10 +780,12 @@ SLEEP_MODE()
 	WAKEUP_DELAY_SLEEP;
 
 	if [ "$cortexbrain_cpu_boost" == on ]; then
+		# set CPU-Governor
+	echo "$deep_sleep" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor;
 	echo "$standby_freq" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq;
 	fi;
 	# bus freq to min 133Mhz
-	echo "65" > /sys/devices/system/cpu/cpufreq/busfreq_up_threshold;
+	echo "80" > /sys/devices/system/cpu/cpufreq/busfreq_up_threshold;
 	echo "500" > /sys/module/mali/parameters/mali_gpu_utilization_timeout;
 
 	KERNEL_SCHED_SLEEP;

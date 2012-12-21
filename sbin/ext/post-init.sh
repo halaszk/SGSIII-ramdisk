@@ -96,7 +96,7 @@ mount -o remount,ro /
 )&
 
 (
-	$BB sh /sbin/killing_samsung_apps.sh &
+	$BB sh /sbin/ext/killing_samsung_apps.sh &
 )&
 
 # enable kmem interface for everyone by GM

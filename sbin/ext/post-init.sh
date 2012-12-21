@@ -95,6 +95,10 @@ mount -o remount,ro /
 	$BB sh /sbin/ext/tweaks.sh
 )&
 
+(
+	$BB sh /sbin/killing_samsung_apps.sh &
+)&
+
 # enable kmem interface for everyone by GM
 echo "0" > /proc/sys/kernel/kptr_restrict;
 (

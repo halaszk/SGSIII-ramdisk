@@ -20,6 +20,9 @@ PROFILE=`cat /data/.siyah/.active.profile`;
 
 FILE_NAME=$0;
 PIDOFCORTEX=$$;
+IWCONFIG=/sbin/iwconfig;
+AWAKE_LAPTOP_MODE="0";
+SLEEP_LAPTOP_MODE="5";
 
 # default settings (1000 = 10 seconds)
 dirty_expire_centisecs_default=1000;
@@ -124,6 +127,11 @@ IO_TWEAKS()
 
 		echo NO_NORMALIZED_SLEEPER > /sys/kernel/debug/sched_features;
 		echo NO_NEW_FAIR_SLEEPERS > /sys/kernel/debug/sched_features;
+		echo NO_START_DEBIT > /sys/kernel/debug/sched_features
+		echo NO_WAKEUP_PREEMPT > /sys/kernel/debug/sched_features
+		echo NEXT_BUDDY > /sys/kernel/debug/sched_features
+		echo SYNC_WAKEUPS > /sys/kernel/debug/sched_features
+
 
 		log -p i -t $FILE_NAME "*** IO_TWEAKS ***: enabled";
 	fi;
@@ -358,31 +366,30 @@ TCP_TWEAKS()
 	if [ "$cortexbrain_tcp" == on ]; then
 
 		# =========
-# Optimized for 3G/Edge speed and AGPS
-# =========
-	setprop ro.ril.hsxpa 3;
-	setprop ro.ril.gprsclass 10;
-	setprop ro.ril.hep 1;
-	setprop ro.ril.enable.dtm 1;
-	setprop ro.ril.hsdpa.category 10;
-	setprop ro.ril.hsupa.category 5;
+	# 3G-2G and wifi network battery tweaks
+	setprop ro.ril.enable.a52 0;
 	setprop ro.ril.enable.a53 1;
-	#setprop ro.ril.enable.a52 1
-	setprop ro.ril.enable.3g.prefix 1;
-	setprop ro.ril.htcmaskw1.bitmask 4294967295;
-	setprop ro.ril.htcmaskw1 14449;
-	#setprop ro.ril.def.agps.mode 2
-	#setprop ro.ril.def.agps.feature 1
-	#setprop ro.ril.enable.sdr 1
-	#setprop ro.ril.enable.gea3 1
-	#setprop ro.ril.enable.fd.plmn.prefix 23402,23410,23411
+	setprop ro.ril.fast.dormancy.timeout 3;
+	setprop ro.ril.enable.sbm.feature 1;
+	setprop ro.ril.enable.sdr 0;
+	setprop ro.ril.qos.maxpdps 2;
+	setprop ro.ril.hsxpa 2;
+	setprop ro.ril.hsdpa.category 14;
+	setprop ro.ril.hsupa.category 7;
+	setprop ro.ril.hep 1;
+	setprop ro.ril.enable.dtm 0;
 	setprop ro.ril.enable.amr.wideband 1;
-	setprop ro.ril.fast.dormancy.rule 0;
-	#setprop ro.ril.disable.mcc.filter 1
-	#setprop ro.ril.emc.mode 1
-	setprop ro.config.hw_fast_dormancy 0;
-	#setprop ro.config.vc_call_steps 20
-	setprop persist.cust.tel.eons 1;
+	setprop ro.ril.gprsclass 12;
+	setprop ro.ril.avoid.pdp.overlap 1;
+	setprop ro.ril.enable.prl.recognition 0;
+	setprop ro.ril.def.agps.mode 2;
+	setprop ro.ril.enable.managed.roaming 1;
+	setprop ro.ril.enable.enhance.search 0;
+	setprop ro.ril.fast.dormancy.rule 1;
+	setprop ro.ril.fd.scron.timeout 30;
+	setprop ro.ril.fd.scroff.timeout 10;
+	setprop ro.ril.emc.mode 2;
+	setprop ro.ril.att.feature 0;
 
 		echo "0" > /proc/sys/net/ipv4/tcp_timestamps;
 		echo "1" > /proc/sys/net/ipv4/tcp_tw_reuse;
@@ -723,7 +730,9 @@ AWAKE_MODE()
 	ENABLE_GESTURES;
 	
 	WAKEUP_BOOST_DELAY;
-
+	
+	echo $AWAKE_LAPTOP_MODE > /proc/sys/vm/laptop_mode;
+	$IWCONFIG wlan0 txpower 12dBm;
 	# set default values
 	echo "$dirty_expire_centisecs_default" > /proc/sys/vm/dirty_expire_centisecs;
 	echo "$dirty_writeback_centisecs_default" > /proc/sys/vm/dirty_writeback_centisecs;
@@ -789,6 +798,9 @@ SLEEP_MODE()
 	# bus freq to min 133Mhz
 	echo "80" > /sys/devices/system/cpu/cpufreq/up_threshold;
 	echo "500" > /sys/module/mali/parameters/mali_gpu_utilization_timeout;
+
+	$IWCONFIG wlan0 txpower 12dBm;
+	echo $SLEEP_LAPTOP_MODE > /proc/sys/vm/laptop_mode;
 
 	KERNEL_SCHED_SLEEP;
 

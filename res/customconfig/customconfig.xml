@@ -617,6 +617,8 @@ name="Firewall-Tweaks" action="generic_cortex /tmp/cortexbrain_firewall" label="
 name="TCP-Tweaks" action="generic_cortex /tmp/cortexbrain_tcp" label="TCP-Tweaks"/>
 <checkbox description='Enable or Disable "IPv6 Network". (Default is OFF. To update after change, turn OFF screen and then turn it ON after 3sec!)'
 name="IPv6 Tweaks" action="generic_cortex /tmp/cortexbrain_ipv6" label="IPv6"/>
+<checkbox description='Enable or Disable "CPU-Tweaks". (To update after change, turn OFF screen and turn it ON after 3sec!)'
+name="CPU-Tweaks" action="generic_cortex /tmp/cortexbrain_cpu" label="CPU-Tweaks"/>
 <checkbox description='Enable or Disable "CPU-WakeUP Tweaks". (To update after change, turn OFF screen and turn it ON after 3sec!)'
 name="CPU-WakeUp Tweaks" action="generic_cortex /tmp/cortexbrain_cpu_boost" label="CPU-BoostTweaks"/>
 <checkbox description='Enable or Disable "Multitaskingfix". (To update after change REBOOT)'

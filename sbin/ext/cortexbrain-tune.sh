@@ -93,7 +93,7 @@ IO_TWEAKS()
 			fi;
 
 			if [ -e $i/queue/nr_requests ]; then
-				echo "20" > $i/queue/nr_requests; # default: 128
+				echo "8182" > $i/queue/nr_requests; # default: 128
 			fi;
 
 			if [ -e $i/queue/iosched/back_seek_penalty ]; then
@@ -106,6 +106,10 @@ IO_TWEAKS()
 
 			if [ -e $i/queue/iosched/fifo_batch ]; then
 				echo "1" > $i/queue/iosched/fifo_batch;
+			fi;
+
+			if [ -e $i/queue/iosched/low_latency ]; then
+				echo "1" > $i/queue/iosched/low_latency; 
 			fi;
 
 		done;
@@ -279,23 +283,40 @@ BATTERY_TWEAKS()
 CPU_GOV_TWEAKS()
 {
 	if [ "$cortexbrain_cpu" == on ]; then
-  echo "500000" > /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_freq_1_1;
-  echo "800000" > /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_freq_2_1;
-  echo "800000" > /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_freq_3_1;
-  echo "400000" > /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_freq_2_0;
-  echo "600000" > /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_freq_3_0;
-  echo "600000" > /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_freq_4_0;
-  echo "100" > /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_rq_1_1;
-  echo "100" > /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_rq_2_0;
-  echo "200" > /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_rq_2_1;
-  echo "200" > /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_rq_3_0;
-  echo "300" > /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_rq_3_1;
-  echo "300" > /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_rq_4_0;
-  echo "80" > /sys/devices/system/cpu/cpufreq/pegasusq/up_threshold;
-  echo "$max_cpu_lock" > /sys/devices/system/cpu/cpufreq/pegasusq/max_cpu_lock;
-  echo "80" > /sys/devices/system/cpu/cpufreq/pegasusq/up_threshold_at_min_freq;
-  echo "10" > /sys/devices/system/cpu/cpufreq/pegasusq/cpu_down_rate;
-  echo "$lcdfreq_enable" > /sys/devices/system/cpu/cpufreq/peqasusq/lcdfreq_enable;
+
+	SYSTEM_GOVERNOR=`cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor`;
+        echo $freq_for_responsiveness > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_for_responsiveness
+        echo $freq_for_fast_down > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_for_fast_down
+        echo $sampling_rate > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/sampling_rate
+	echo $sampling_down_factor > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/sampling_down_factor
+	echo $up_threshold > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/up_threshold
+	echo $down_differential > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/down_differential
+	echo $up_threshold_at_min_freq > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/up_threshold_at_min_freq
+	echo $up_threshold_at_fast_down > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/up_threshold_at_fast_down
+	echo $freq_step > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_step
+	echo $up_threshold_diff > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/up_threshold_diff
+	echo $freq_step_dec > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_step_dec
+	echo $cpu_up_rate > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_up_rate
+	echo $cpu_down_rate > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_down_rate
+	echo $up_nr_cpus > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/up_nr_cpus
+	echo $hotplug_freq_1_1 > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_freq_1_1
+	echo $hotplug_freq_2_0 > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_freq_2_0
+	echo $hotplug_freq_2_1 > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_freq_2_1
+	echo $hotplug_freq_3_0 > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_freq_3_0
+	echo $hotplug_freq_3_1 > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_freq_3_1
+	echo $hotplug_freq_4_0 > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_freq_4_0
+	echo $hotplug_rq_1_1 > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_rq_1_1
+	echo $hotplug_rq_2_0 > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_rq_2_0
+	echo $hotplug_rq_2_1 > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_rq_2_1
+	echo $hotplug_rq_3_0 > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_rq_3_0
+	echo $hotplug_rq_3_1 > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_rq_3_1
+	echo $hotplug_rq_4_0 > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_rq_4_0
+	echo $flexrate_max_freq > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/flexrate_max_freq
+	echo $flexrate_forcerate > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/flexrate_forcerate
+	echo $cpu_online_bias_count > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_count
+	echo $cpu_online_bias_up_threshold > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_up_threshold
+	echo $cpu_online_bias_down_threshold > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_down_threshold
+fi
 
 		log -p i -t $FILE_NAME "*** CPU_GOV_TWEAKS ***: enabled";
 	fi;
@@ -594,7 +615,8 @@ MEGA_BOOST_CPU_TWEAKS()
 {
 if [ "$cortexbrain_cpu_boost" == on ]; then
 
-echo "$scaling_governor" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor;
+echo "performance" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor;
+
 # GPU utilization to min delay
 echo "100" > /sys/module/mali/parameters/mali_gpu_utilization_timeout;
 
@@ -736,6 +758,10 @@ AWAKE_MODE()
 	# set default values
 	echo "$dirty_expire_centisecs_default" > /proc/sys/vm/dirty_expire_centisecs;
 	echo "$dirty_writeback_centisecs_default" > /proc/sys/vm/dirty_writeback_centisecs;
+	
+	echo "$scaling_governor" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor;
+
+	CPU_GOV_TWEAKS;
 
 	# set I/O-Scheduler
 	echo "$scheduler" > /sys/block/mmcblk0/queue/scheduler;
@@ -749,8 +775,6 @@ fi;
 
 	TUNE_IPV6;
 
-	#CPU_GOV_TWEAKS;
-	
 	if [ "$cortexbrain_cpu_boost" == on ]; then
 	# set CPU speed
 	echo "$scaling_min_freq" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq;
@@ -825,7 +849,7 @@ echo "$scaling_min_suspend_freq" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_
 echo "$scaling_max_suspend_freq" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq;
 
 # set CPU-Tweak
-#CPU_GOV_TWEAKS;
+CPU_GOV_TWEAKS;
 fi;
 
 

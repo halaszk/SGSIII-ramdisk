@@ -99,6 +99,11 @@ mount -o remount,ro /
 	$BB sh /sbin/ext/killing_samsung_apps.sh &
 )&
 
+(
+        $BB sh /sbin/ext/smoothlauncher.sh &
+)&
+
+
 # enable kmem interface for everyone by GM
 echo "0" > /proc/sys/kernel/kptr_restrict;
 (

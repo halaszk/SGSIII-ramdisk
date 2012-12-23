@@ -83,7 +83,6 @@
 		name="Deep-Sleep! CPU Governor" action="generic /tmp/deep_sleep">
 	<spinnerItem name="zzmoove" value="zzmoove"/>
 	<spinnerItem name="ondemandq" value="ondemandq"/>
-	<spinnerItem name="powersave" value="powersave"/>
 	</spinner>
     </settingsPane>
   </settingsTab>

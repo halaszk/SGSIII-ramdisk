@@ -179,6 +179,5 @@ sync;
 umount -l /data;
 fi;
 
-
 exec /sbin/init2
 

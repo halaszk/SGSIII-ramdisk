@@ -147,3 +147,5 @@ mali_gpu_utilization_timeout=150
 fbearlysuspend_delay0=0
 tsp_slide2wake=off
 power_reduce=on
+disable_yournal=off
+

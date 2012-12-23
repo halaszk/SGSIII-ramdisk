@@ -434,7 +434,7 @@
     <settingsPane description="Other screen related settings" name="Other Settings">
        <checkbox description="mDNIe sharpness tweaks from hardcore. Requires reboot to be effective." name="mDNIe Sharpness Tweaks" action="generic /tmp/mdniemod" label="mDNIe Sharpness Tweaks"/>
 	   <checkbox description="Enable inverting the screen colors by quickly pressing Home button 4 times" name="mDNIe Negative Toggle" action="generic01 /sys/module/gpio_keys/parameters/mdnie_shortcut_enabled" label="mDNIe Negative Toggle"/>
-	<!--<checkbox description="Enables or disables the mechanic, disabled by default" name="LCDfreq_enable" action="generic01 /sys/devices/system/cpu/cpufreq/zzmoove/lcdfreq_enable" label="Dynamic Screen Frequency Scaling for CPU Governors"/>-->
+	<checkbox description="Enables or disables the mechanic, disabled by default" name="LCDfreq_enable" action="generic01 /sys/devices/system/cpu/cpufreq/peqasusq/lcdfreq_enable" label="Dynamic Screen Frequency Scaling for CPU Governors"/>
 	<checkbox description="LCD Power Reduce for backlight. If you like brighter screen in cost of battery drain, then turn it off. Default: On."
 name="LCD POWER" action="generic01 /sys/class/lcd/panel/power_reduce" label="LCD POWER REDUCE"/>
 <seekBar description="Setting min_bl higher will result in staying lowest brightness level for brighter conditions (default 30)"
@@ -478,6 +478,7 @@ name="LCD POWER" action="generic01 /sys/class/lcd/panel/power_reduce" label="LCD
 	<spinnerItem name="Set WIFI SCAN 240Sec" value="240"/>
 	<spinnerItem name="Set WIFI SCAN 360Sec" value="360"/>
 	</spinner>
+	<checkbox description="Enable or disable journaling for more speed on all partitions." name="Partitions Journaling" action="generic /tmp/disable_yournal" label="Partitions yournaling control"/>
 	<checkbox description="Enable or Disable INIT.D scripts RUN on boot. Many new ROMS are running the init.d scripts automatically. You can also force running the scripts, but if you run them and ROM runs them too, we have a problem: all scripts are running X2 times! To avoid conflicts, Stweaks RUN-control is disabled by default. If you know that your ROM is NOT supporting init.d script running, then turn it ON here and reboot."
 	name="INIT.D Scripts RUN control" action="generic /tmp/init_d" label="Enable INIT.D scripts RUN-control"/>
 	<checkbox description="Enable or Disable EXFAT support on boot. Stweaks exfat is disabled by default. If you know that your USB disk formatted to exfat turn it ON here and reboot."

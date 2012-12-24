@@ -45,22 +45,6 @@ if [ "$mdniemod" == "on" ];then
 . /sbin/ext/mdnie-sharpness-tweak.sh;
 fi
 
-if [ "$disable_yournal" == "on" ];then
-umount /cache;
-/sbin/e2fsck1 -yf /dev/block/mmcblk0p8;
-/sbin/tune2fs -c -1 -i 0 -o journal_data_writeback -O ^has_journal /dev/block/mmcblk0p8;
-$BB mount -o rw,noatime,data=writeback /dev/block/mmcblk0p8 /cache;
-umount /system;
-sleep 1;
-/sbin/e2fsck1 -yf /dev/block/mmcblk0p9;
-/sbin/tune2fs -c -1 -i 0 -o journal_data_writeback -O ^has_journal /dev/block/mmcblk0p9;
-$BB mount -o remount,rw,noatime /system /system;
-umount /data;
-sleep 1;
-/sbin/e2fsck1 -yf /dev/block/mmcblk0p12;
-/sbin/tune2fs -c -1 -i 0 -o journal_data_writeback -O ^has_journal /dev/block/mmcblk0p12;
-$BB mount -o remount,rw,noatime /data /data;
-fi;
 # Cortex parent should be ROOT/INIT and not STweaks
 nohup /sbin/ext/cortexbrain-tune.sh; 
 

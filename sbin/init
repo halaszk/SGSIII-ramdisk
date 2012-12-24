@@ -179,5 +179,23 @@ sync;
 umount -l /data;
 fi;
 
+# only if asked by user via stweaks
+if [ -e /system/run_fix_yournaling ]; then
+umount /cache;
+/sbin/e2fsck1 -yf /dev/block/mmcblk0p8;
+/sbin/tune2fs -c -1 -i 0 -o journal_data_writeback -O ^has_journal /dev/block/mmcblk0p8;
+#busybox mount -o rw,noatime,data=writeback /dev/block/mmcblk0p8 /cache;
+umount /system;
+sleep 1;
+/sbin/e2fsck1 -yf /dev/block/mmcblk0p9;
+/sbin/tune2fs -c -1 -i 0 -o journal_data_writeback -O ^has_journal /dev/block/mmcblk0p9;
+#busybox mount -o remount,rw,noatime /system /system;
+umount /data;
+sleep 1;
+/sbin/e2fsck1 -yf /dev/block/mmcblk0p12;
+/sbin/tune2fs -c -1 -i 0 -o journal_data_writeback -O ^has_journal /dev/block/mmcblk0p12;
+#busybox mount -o remount,rw,noatime /data /data;
+fi;
+
 exec /sbin/init2
 

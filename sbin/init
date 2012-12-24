@@ -1,18 +1,20 @@
 #!/sbin/busybox sh
-cd /
+cd /;
 
-busybox mount -t proc proc /proc
-busybox mount -t sysfs sysfs /sys
+BB=/sbin/busybox
 
-if busybox grep -q 1 /sys/class/power_supply/battery/batt_lp_charging ; then
+$BB mount -t proc proc /proc;
+$BB mount -t sysfs sysfs /sys;
+
+if $BB grep -q 1 /sys/class/power_supply/battery/batt_lp_charging ; then
   # low power mode
-  echo 0 > /proc/sys/kernel/rom_feature_set
-  cp -a /res/misc/init.41/* /
-  chmod 755 /innt
-  chmod 644 /*.rc
-  chmod 644 /*.prop
-  exec /sbin/init2
-fi
+  echo 0 > /proc/sys/kernel/rom_feature_set;
+  $BB cp -a /res/misc/init.41/* /
+  $BB chmod 755 /innt
+  $BB chmod 644 /*.rc
+  $BB chmod 644 /*.prop
+  exec /sbin/init2;
+fi;
 
 SECONDROM=1
 NOBOOTLOGO=0
@@ -29,13 +31,13 @@ mknod /dev/block/mmcblk0p9 b 179 9
 mknod /dev/block/mmcblk0p12 b 179 12
 mknod /dev/block/loop0 b 7 0
 
-mkdir /mnt
-chmod 755 /mnt
-mkdir /.secondrom
-mount -t ext4 /dev/block/mmcblk0p12 /.secondrom
+mkdir /mnt;
+$BB chmod 755 /mnt;
+mkdir /.secondrom;
+$BB mount -t ext4 /dev/block/mmcblk0p12 /.secondrom;
 
 NEXTBOOT=`cat /.secondrom/media/.nextboot`
-rm -f /.secondrom/media/.nextboot
+$BB rm -f /.secondrom/media/.nextboot
 DEFAULTROM=`cat /.secondrom/media/.defaultrom`
 
 if grep -q bootmode=2 /proc/cmdline ; then
@@ -43,18 +45,18 @@ if grep -q bootmode=2 /proc/cmdline ; then
 fi
 
 if [ "$NEXTBOOT" == "0" ]; then
-  mv -f /res/etc /
-  umount /.secondrom
-  echo 0 > /proc/sys/kernel/rom_feature_set
-  mv -f /res/misc/init.41/* /
-  mv -f /res/misc/recovery/* /
-  chmod 755 /innt
-  chmod 644 /*.smdk4x12
-  chmod 644 /*.rc
-  chmod 644 /*.prop
-  chmod -R 755 /lib
+ $BB mv -f /res/etc /
+  $BB umount /.secondrom;
+  echo 0 > /proc/sys/kernel/rom_feature_set;
+  $BB mv -f /res/misc/init.41/* /
+  $BB mv -f /res/misc/recovery/* /
+  $BB chmod 755 /innt;
+  $BB chmod 644 /*.smdk4x12;
+  $BB chmod 644 /*.rc;
+  $BB chmod 644 /*.prop;
+  $BB chmod -R 755 /lib;
   exec /sbin/init2
-fi
+fi;
 
 SECONDROM=1
 NOBOOTLOGO=0
@@ -92,13 +94,13 @@ else
 fi
 
 if [ "$SECONDROM" == "1" ]; then
-  mount -t ext4 /.secondrom/media/.secondrom/system.img /system
+  $BB mount -t ext4 /.secondrom/media/.secondrom/system.img /system;
 else
-  mount -t ext4 /dev/block/mmcblk0p9 /system
-fi
+  $BB mount -t ext4 /dev/block/mmcblk0p9 /system;
+fi;
 
 # linking /system/bin to /bin for crond
-ln -s /system/bin/ /bin
+ln -s /system/bin/ /bin;
 
 MIUI=0
 CM10=0
@@ -110,92 +112,96 @@ CM101=0
 
 if [ "$CM101" == 1 ];
 then
-echo 3 > /proc/sys/kernel/rom_feature_set
-  mv -f /lib/modules/dhd_cm.ko /lib/modules/dhd.ko
-  mv -f /res/misc/init.cm10.1/* /
+echo 3 > /proc/sys/kernel/rom_feature_set;
+  $BB mv -f /lib/modules/dhd_cm.ko /lib/modules/dhd.ko;
+  $BB mv -f /res/misc/init.cm10.1/* /;
 else
 if [ "$CM10" == 1 ];
   then
-echo 3 > /proc/sys/kernel/rom_feature_set
-    mv -f /lib/modules/dhd_cm.ko /lib/modules/dhd.ko
-    mv -f /res/misc/init.cm10/* /
+echo 3 > /proc/sys/kernel/rom_feature_set;
+    $BB mv -f /lib/modules/dhd_cm.ko /lib/modules/dhd.ko;
+    $BB mv -f /res/misc/init.cm10/* /;
   else
-echo 2 > /proc/sys/kernel/rom_feature_set
-    mv -f /res/misc/init.41/* /
+echo 2 > /proc/sys/kernel/rom_feature_set;
+    $BB mv -f /res/misc/init.41/* /
   fi
 fi
 
 if [ "$SECONDROM" == "1" ];then
-  mv /init.smdk4x12.rc.2 /init.smdk4x12.rc
-  mv /init.rc.2 /init.rc
-  mv /fstab.smdk4x12.2 /fstab.smdk4x12
+  $BB mv /init.smdk4x12.rc.2 /init.smdk4x12.rc
+  $BB mv /init.rc.2 /init.rc
+  $BB mv /fstab.smdk4x12.2 /fstab.smdk4x12
 else
-  rm -f /init.rc.2 /init.smdk4x12.rc.2 /fstab.smdk4x12.2
+  $BB rm -f /init.rc.2 /init.smdk4x12.rc.2 /fstab.smdk4x12.2
 fi
 
-umount -f /system
-umount -f /.secondrom
+#$BB umount -f /system;
+$BB umount -f /.secondrom;
 	
-rm -rf /res/misc/init*
-chmod 755 /innt
-chmod 644 /*.smdk4x12
-chmod 644 /*.rc
-chmod 644 /*.prop
-chmod -R 755 /lib
+$BB rm -rf /res/misc/init*;
+$BB chmod 755 /innt;
+$BB chmod 644 /*.smdk4x12;
+$BB chmod 644 /*.rc;
+$BB chmod 644 /*.prop;
+$BB chmod -R 755 /lib;
 
 # misc mods for i9300
-insmod /lib/modules/m0_mods.ko
+insmod /lib/modules/m0_mods.ko;
 # cpu undervolting interfaces
-insmod /lib/modules/cpu_undervolting.ko
+insmod /lib/modules/cpu_undervolting.ko;
 # mali (gpu) interfaces
-insmod /lib/modules/mali_control.ko
+insmod /lib/modules/mali_control.ko;
 # additional CPU governors
-#insmod /lib/modules/cpufreq_hotplug.ko
-#insmod /lib/modules/cpufreq_lulzactiveq.ko
+#insmod /lib/modules/cpufreq_hotplug.ko;
+#insmod /lib/modules/cpufreq_lulzactiveq.ko;
 # additional I/O schedulers
-insmod /lib/modules/sio-iosched.ko
-insmod /lib/modules/vr-iosched.ko
+insmod /lib/modules/sio-iosched.ko;
+insmod /lib/modules/vr-iosched.ko;
 # audio enhancements
-insmod /lib/modules/kscoobydoo.ko devicename=scoobydoo_sound
+insmod /lib/modules/kscoobydoo.ko devicename=scoobydoo_sound;
 
 # only if asked by user via stweaks
 if [ -e /system/run_fix_media ]; then
 # data mount
-mount -t ext4 /dev/block/mmcblk0p12 /data;
+$BB mount -t ext4 /dev/block/mmcblk0p12 /data;
 
-rm /system/run_fix_media;
+$BB rm /system/run_fix_media;
 
 if [ -e /data/media/Android/data/ ]; then
-rm -rf /data/media/Android/data/com.cooliris.media;
-rm -rf /data/media/Android/data/com.android.gallery3d;
-rm -rf /data/media/Android/data/com.google.android.gallery3d;
-rm -rf /data/media/Android/data/com.android.providers.media;
-rm -rf /data/media/Android/data/com.google.android.music;
-rm -rf /data/data/com.android.providers.media/databases/*;
+$BB rm -rf /data/media/Android/data/com.cooliris.media;
+$BB rm -rf /data/media/Android/data/com.android.gallery3d;
+$BB rm -rf /data/media/Android/data/com.google.android.gallery3d;
+$BB rm -rf /data/media/Android/data/com.android.providers.media;
+$BB rm -rf /data/media/Android/data/com.google.android.music;
+$BB rm -rf /data/data/com.android.providers.media/databases/*;
 fi;
 
 # data unmount
 sync;
-umount -l /data;
+$BB umount -l /data;
 fi;
 
 # only if asked by user via stweaks
 if [ -e /system/run_fix_yournaling ]; then
-umount /cache;
+# CACHE partition
+$BB umount -f /cache;
 /sbin/e2fsck1 -yf /dev/block/mmcblk0p8;
 /sbin/tune2fs -c -1 -i 0 -o journal_data_writeback -O ^has_journal /dev/block/mmcblk0p8;
-#busybox mount -o rw,noatime,data=writeback /dev/block/mmcblk0p8 /cache;
-umount /system;
+#$BB mount -o rw,noatime,data=writeback /dev/block/mmcblk0p8 /cache;
+# SYSTEM partition
+$BB umount -f /system;
 sleep 1;
 /sbin/e2fsck1 -yf /dev/block/mmcblk0p9;
 /sbin/tune2fs -c -1 -i 0 -o journal_data_writeback -O ^has_journal /dev/block/mmcblk0p9;
-#busybox mount -o remount,rw,noatime /system /system;
-umount /data;
+#$BB mount -o remount,rw,noatime /system /system;
+# DATA partition
+$BB umount -f /data;
 sleep 1;
 /sbin/e2fsck1 -yf /dev/block/mmcblk0p12;
 /sbin/tune2fs -c -1 -i 0 -o journal_data_writeback -O ^has_journal /dev/block/mmcblk0p12;
-#busybox mount -o remount,rw,noatime /data /data;
+#$BB mount -o remount,rw,noatime /data /data;
 fi;
+$BB umount -f /system;
 
 exec /sbin/init2
 

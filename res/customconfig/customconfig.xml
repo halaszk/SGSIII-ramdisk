@@ -57,7 +57,6 @@
 	     <spinnerItem name="pegasusq" value="pegasusq"/>
 	<spinnerItem name="hydrxq" value="hydrxq"/>
 	<spinnerItem name="zzmoove" value="zzmoove"/>
-	     <spinnerItem name="abyssplug" value="abyssplug"/>
          <spinnerItem name="performance" value="performance"/>
        </spinner>
        <seekBar description="Scaling maximum frequency (Samsung default: 1400000)"
@@ -82,6 +81,8 @@
 	<spinner description="This will set the DEEP SLEEP (screen off) CPU governor. Depends on cortex background process to be enabled."
 		name="Deep-Sleep! CPU Governor" action="generic /tmp/deep_sleep">
 	<spinnerItem name="zzmoove" value="zzmoove"/>
+      <spinnerItem name="pegasusq" value="pegasusq"/>
+        <spinnerItem name="hydrxq" value="hydrxq"/>
 	<spinnerItem name="ondemandq" value="ondemandq"/>
 	</spinner>
     </settingsPane>

@@ -24,6 +24,10 @@ IWCONFIG=/sbin/iwconfig;
 AWAKE_LAPTOP_MODE="0";
 SLEEP_LAPTOP_MODE="5";
 
+# set not yet known values for functions
+power_performance=0;
+sleep_power_save=0;
+
 # default settings (1000 = 10 seconds)
 dirty_expire_centisecs_default=1000;
 dirty_writeback_centisecs_default=1000;
@@ -123,7 +127,7 @@ IO_TWEAKS()
 			echo $read_ahead_kb > $i/read_ahead_kb;
 		done;
 
-		echo "10" > /proc/sys/fs/lease-break-time;
+		echo "45" > /proc/sys/fs/lease-break-time;
 		echo "524288" > /proc/sys/fs/file-max;
 		echo "32000" > /proc/sys/fs/inotify/max_queued_events;
 		echo "256" > /proc/sys/fs/inotify/max_user_instances;
@@ -285,9 +289,59 @@ CPU_GOV_TWEAKS()
 	if [ "$cortexbrain_cpu" == on ]; then
 
 	SYSTEM_GOVERNOR=`cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor`;
-        echo $freq_for_responsiveness > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_for_responsiveness;
-        echo $freq_for_fast_down > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_for_fast_down;
-        echo $sampling_rate > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/sampling_rate;
+        
+		# power_performance
+	if [ "$power_performance" == 1 ]; then
+
+	echo "20000" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/sampling_rate;;
+	echo "10" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_up_rate;
+	echo "10" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_down_rate;
+	echo "40" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/up_threshold;
+	echo "20" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/up_threshold_at_min_freq;
+	echo "100" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_step;
+	echo "800000" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_for_responsiveness;
+
+		# sleep-settings
+	elif [ "$sleep_power_save" == 1 ]; then
+
+	echo $freq_for_responsiveness_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_for_responsiveness;
+    echo $freq_for_fast_down_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_for_fast_down;
+    echo $sampling_rate_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/sampling_rate;
+	echo $sampling_down_factor_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/sampling_down_factor;
+	echo $up_threshold_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/up_threshold;
+	echo $down_differential_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/down_differential;
+	echo $up_threshold_at_min_freq_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/up_threshold_at_min_freq;
+	echo $up_threshold_at_fast_down_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/up_threshold_at_fast_down;
+	echo $freq_step_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_step;
+	echo $up_threshold_diff_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/up_threshold_diff;
+	echo $freq_step_dec_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_step_dec;
+	echo $cpu_up_rate_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_up_rate;
+	echo $cpu_down_rate_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_down_rate;
+	echo $up_nr_cpus_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/up_nr_cpus;
+	echo $hotplug_freq_1_1_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_freq_1_1;
+	echo $hotplug_freq_2_0_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_freq_2_0;
+	echo $hotplug_freq_2_1_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_freq_2_1;
+	echo $hotplug_freq_3_0_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_freq_3_0;
+	echo $hotplug_freq_3_1_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_freq_3_1;
+	echo $hotplug_freq_4_0_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_freq_4_0;
+	echo $hotplug_rq_1_1_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_rq_1_1;
+	echo $hotplug_rq_2_0_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_rq_2_0;
+	echo $hotplug_rq_2_1_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_rq_2_1;
+	echo $hotplug_rq_3_0_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_rq_3_0;
+	echo $hotplug_rq_3_1_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_rq_3_1;
+	echo $hotplug_rq_4_0_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_rq_4_0;
+	echo $flexrate_max_freq_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/flexrate_max_freq;
+	echo $flexrate_forcerate_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/flexrate_forcerate;
+	echo $cpu_online_bias_count_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_count;
+	echo $cpu_online_bias_up_threshold_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_up_threshold;
+	echo $cpu_online_bias_down_threshold_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_down_threshold;
+	
+		# awake-settings
+	else
+	
+	echo $freq_for_responsiveness > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_for_responsiveness;
+    echo $freq_for_fast_down > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_for_fast_down;
+    echo $sampling_rate > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/sampling_rate;
 	echo $sampling_down_factor > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/sampling_down_factor;
 	echo $up_threshold > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/up_threshold;
 	echo $down_differential > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/down_differential;
@@ -316,6 +370,12 @@ CPU_GOV_TWEAKS()
 	echo $cpu_online_bias_count > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_count;
 	echo $cpu_online_bias_up_threshold > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_up_threshold;
 	echo $cpu_online_bias_down_threshold > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_down_threshold;
+	
+	fi;
+
+	# reset
+	power_performance=0;
+	sleep_power_save=0;
 
 		log -p i -t $FILE_NAME "*** CPU_GOV_TWEAKS ***: enabled";
 	fi;
@@ -614,8 +674,10 @@ MEGA_BOOST_CPU_TWEAKS()
 {
 if [ "$cortexbrain_cpu_boost" == on ]; then
 
-echo "performance" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor;
+power_performance=1;
 
+echo "performance" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor;
+CPU_GOV_TWEAKS;
 # GPU utilization to min delay
 echo "100" > /sys/module/mali/parameters/mali_gpu_utilization_timeout;
 
@@ -754,11 +816,16 @@ AWAKE_MODE()
 	
 	echo $AWAKE_LAPTOP_MODE > /proc/sys/vm/laptop_mode;
 	$IWCONFIG wlan0 txpower 12dBm;
+	
 	# set default values
 	echo "$dirty_expire_centisecs_default" > /proc/sys/vm/dirty_expire_centisecs;
 	echo "$dirty_writeback_centisecs_default" > /proc/sys/vm/dirty_writeback_centisecs;
 	
 	echo "$scaling_governor" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor;
+	
+	DISABLE_WIFI_PM;
+	
+	TUNE_IPV6;
 
 	CPU_GOV_TWEAKS;
 
@@ -769,10 +836,6 @@ if [ "$mali_resume_enable" == on ]; then
 	echo "$GPUFREQ1" > /sys/module/mali/parameters/step0_clk;
 fi;
 	echo "20" > /proc/sys/vm/vfs_cache_pressure;
-	
-	DISABLE_WIFI_PM;
-
-	TUNE_IPV6;
 
 	if [ "$cortexbrain_cpu_boost" == on ]; then
 	# set CPU speed
@@ -817,6 +880,13 @@ SLEEP_MODE()
 		# set CPU-Governor
 	echo "$deep_sleep" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor;
 	echo "$standby_freq" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq;
+	# reduce deepsleep CPU speed, SUSPEND mode
+	echo "$scaling_min_suspend_freq" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq;
+	echo "$scaling_max_suspend_freq" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq;
+
+		# set CPU-Tweak
+		sleep_power_save=1;
+		CPU_GOV_TWEAKS;
 	fi;
 	# bus freq to min 133Mhz
 	echo "80" > /sys/devices/system/cpu/cpufreq/up_threshold;
@@ -841,15 +911,6 @@ SLEEP_MODE()
 	
 	DISABLE_KSM;
 
-	if [ "$cortexbrain_cpu_boost" == on ]; then
-
-# reduce deepsleep CPU speed, SUSPEND mode
-echo "$scaling_min_suspend_freq" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq;
-echo "$scaling_max_suspend_freq" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq;
-
-# set CPU-Tweak
-CPU_GOV_TWEAKS;
-fi;
 
 
 		# set wifi.supplicant_scan_interval

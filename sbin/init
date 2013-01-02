@@ -185,23 +185,30 @@ fi;
 if [ -e /system/run_fix_yournaling ]; then
 # CACHE partition
 $BB umount -f /cache;
+if [ -e /system/run_fix_partitions ]; then
 /sbin/e2fsck1 -yf /dev/block/mmcblk0p8;
+fi;
 /sbin/tune2fs -c -1 -i 0 -o journal_data_writeback -O ^has_journal /dev/block/mmcblk0p8;
 #$BB mount -o rw,noatime,data=writeback /dev/block/mmcblk0p8 /cache;
 # SYSTEM partition
 $BB umount -f /system;
 sleep 1;
+if [ -e /system/run_fix_partitions ]; then
 /sbin/e2fsck1 -yf /dev/block/mmcblk0p9;
+fi;
 /sbin/tune2fs -c -1 -i 0 -o journal_data_writeback -O ^has_journal /dev/block/mmcblk0p9;
 #$BB mount -o remount,rw,noatime /system /system;
 # DATA partition
 $BB umount -f /data;
 sleep 1;
+if [ -e /system/run_fix_partitions ]; then
 /sbin/e2fsck1 -yf /dev/block/mmcblk0p12;
+fi;
 /sbin/tune2fs -c -1 -i 0 -o journal_data_writeback -O ^has_journal /dev/block/mmcblk0p12;
 #$BB mount -o remount,rw,noatime /data /data;
 fi;
 $BB umount -f /system;
+$BB rm /system/run_fix_partitions;
 
 exec /sbin/init2
 

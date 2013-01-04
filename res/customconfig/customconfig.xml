@@ -18,8 +18,8 @@
              <spinnerItem name="AFTR only" value="1"/> 
              <spinnerItem name="Idle only" value="0"/> 
       </spinner>
-      <spinner description="Sets the number of CPUs to be used in hotplugging (only for PegasusQ, ondemand)" name="Max CPU Lock" action="generic /sys/devices/system/cpu/cpufreq/pegasusq/max_cpu_lock">
-             <spinnerItem name="Quad core mode (unlocked,default)" value="0"/> 
+      <spinner description="Sets the number of CPUs to be used in hotplugging (only for PegasusQ, ondemand)" name="Max CPU Lock" action="cpu-governor max_cpu_lock">
+             <spinnerItem name="Auto" value="0"/> 
              <spinnerItem name="Dual core mode" value="3"/> 
              <spinnerItem name="Single core mode" value="1"/> 
       </spinner>
@@ -633,7 +633,7 @@
     <settingsPane description="Other screen related settings" name="Other Settings">
        <checkbox description="mDNIe sharpness tweaks from hardcore. Requires reboot to be effective." name="mDNIe Sharpness Tweaks" action="generic /tmp/mdniemod" label="mDNIe Sharpness Tweaks"/>
 	   <checkbox description="Enable inverting the screen colors by quickly pressing Home button 4 times" name="mDNIe Negative Toggle" action="generic01 /sys/module/gpio_keys/parameters/mdnie_shortcut_enabled" label="mDNIe Negative Toggle"/>
-	<checkbox description="Enables or disables the mechanic, disabled by default" name="LCDfreq_enable" action="generic01 /sys/devices/system/cpu/cpufreq/peqasusq/lcdfreq_enable" label="Dynamic Screen Frequency Scaling for CPU Governors"/>
+	<checkbox description="Enables or disables the mechanic, disabled by default" name="LCDfreq_enable" action="generic01 /sys/devices/system/cpu/cpufreq/pegasusq/lcdfreq_enable" label="Dynamic Screen Frequency Scaling for CPU Governors"/>
 	<checkbox description="LCD Power Reduce for backlight. If you like brighter screen in cost of battery drain, then turn it off. Default: On."
 name="LCD POWER" action="generic01 /sys/class/lcd/panel/power_reduce" label="LCD POWER REDUCE"/>
 <seekBar description="Setting min_bl higher will result in staying lowest brightness level for brighter conditions (default 30)"

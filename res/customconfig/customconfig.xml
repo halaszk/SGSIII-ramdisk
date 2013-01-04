@@ -747,7 +747,7 @@ name="LCD POWER" action="generic01 /sys/class/lcd/panel/power_reduce" label="LCD
 		name="AC Charge" action="chargecurrent_ac" unit="mA" min="500" reversed="false" step="50" max="1200"/>
       <seekBar description="USB charge current (default 475)" 
 		name="USB Charge" action="chargecurrent_usb" unit="mA" min="450" reversed="false" step="25" max="1000"/>
-		<checkbox description="If checked, before yournaling partition scan and fix all (SYSTEM, DATA, CACHE) partitions with fsck." name="partition repair" action="generic /tmp/partition_repair" label="Auto-Repair all partitions"/>
+		<button description="If checked, before yournaling partition scan and fix all (SYSTEM, DATA, CACHE) partitions with fsck." name="partition repair" action="push-actions/partition_repair" label="Auto-Repair all partitions"/>
 		<button description="Enable or disable journaling for more speed on all partitions. Push once to activate, push again to abort. You have to reboot for action to work!" name="Partitions Journaling" action="push-actions/part_yourn" label="PARTITIONS YOURNALING ON/OFF"/>
 		<button description="Clean the media cache on your sdcard. Push once to clean, push again to abort. You have to reboot for action to work!" name="Clean media-cache" action="push-actions/fix_media" label="FIX MEDIA ON/OFF"/>
 		<button description="Clean WIFI DHCP IP Lease. Push the botton to activate!" name="Clean WIFI Lease" action="push-actions/fix_wifi" label="Clean WIFI Lease"/>

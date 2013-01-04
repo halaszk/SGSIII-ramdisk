@@ -81,7 +81,7 @@ IO_TWEAKS()
 		for i in $MMC; do
 
 			if [ -e $i/queue/scheduler ]; then
-				echo $scheduler > $i/queue/scheduler;
+				echo "$scheduler" > $i/queue/scheduler;
 			fi;
 
 			if [ -e $i/queue/rotational ]; then
@@ -93,7 +93,7 @@ IO_TWEAKS()
 			fi;
 
 			if [ -e $i/queue/read_ahead_kb ]; then
-				echo $read_ahead_kb >  $i/queue/read_ahead_kb; # default: 128
+				echo "$read_ahead_kb" >  $i/queue/read_ahead_kb; # default: 128
 			fi;
 
 			if [ -e $i/queue/nr_requests ]; then
@@ -119,12 +119,12 @@ IO_TWEAKS()
 		done;
 
 		if [ -e /sys/devices/virtual/bdi/default/read_ahead_kb ]; then
-			echo $read_ahead_kb > /sys/devices/virtual/bdi/default/read_ahead_kb;
+			echo "$read_ahead_kb" > /sys/devices/virtual/bdi/default/read_ahead_kb;
 		fi;
 
 		SDCARDREADAHEAD=`ls -d /sys/devices/virtual/bdi/179*`;
 		for i in $SDCARDREADAHEAD; do
-			echo $read_ahead_kb > $i/read_ahead_kb;
+			echo "$read_ahead_kb" > $i/read_ahead_kb;
 		done;
 
 		echo "45" > /proc/sys/fs/lease-break-time;
@@ -183,7 +183,7 @@ SYSTEM_TWEAKS()
 	setprop debug.performance.tuning 1;
 	setprop debug.sf.hw 1;
 	setprop persist.sys.use_dithering 1;
-	setprop persist.sys.ui.hw true; # ->reported as problem maker in some roms.
+#	setprop persist.sys.ui.hw true; # ->reported as problem maker in some roms.
 
 	# render UI with GPU
 	setprop hwui.render_dirty_regions false;
@@ -293,7 +293,7 @@ CPU_GOV_TWEAKS()
 		# power_performance
 	if [ "$power_performance" == 1 ]; then
 
-	echo "20000" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/sampling_rate;;
+	echo "20000" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/sampling_rate;
 	echo "10" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_up_rate;
 	echo "10" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_down_rate;
 	echo "40" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/up_threshold;
@@ -304,72 +304,75 @@ CPU_GOV_TWEAKS()
 		# sleep-settings
 	elif [ "$sleep_power_save" == 1 ]; then
 
-	echo $freq_for_responsiveness_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_for_responsiveness;
-    echo $freq_for_fast_down_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_for_fast_down;
-    echo $sampling_rate_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/sampling_rate;
-	echo $sampling_down_factor_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/sampling_down_factor;
-	echo $up_threshold_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/up_threshold;
-	echo $down_differential_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/down_differential;
-	echo $up_threshold_at_min_freq_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/up_threshold_at_min_freq;
-	echo $up_threshold_at_fast_down_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/up_threshold_at_fast_down;
-	echo $freq_step_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_step;
-	echo $up_threshold_diff_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/up_threshold_diff;
-	echo $freq_step_dec_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_step_dec;
-	echo $cpu_up_rate_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_up_rate;
-	echo $cpu_down_rate_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_down_rate;
-	echo $up_nr_cpus_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/up_nr_cpus;
-	echo $hotplug_freq_1_1_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_freq_1_1;
-	echo $hotplug_freq_2_0_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_freq_2_0;
-	echo $hotplug_freq_2_1_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_freq_2_1;
-	echo $hotplug_freq_3_0_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_freq_3_0;
-	echo $hotplug_freq_3_1_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_freq_3_1;
-	echo $hotplug_freq_4_0_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_freq_4_0;
-	echo $hotplug_rq_1_1_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_rq_1_1;
-	echo $hotplug_rq_2_0_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_rq_2_0;
-	echo $hotplug_rq_2_1_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_rq_2_1;
-	echo $hotplug_rq_3_0_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_rq_3_0;
-	echo $hotplug_rq_3_1_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_rq_3_1;
-	echo $hotplug_rq_4_0_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_rq_4_0;
-	echo $flexrate_max_freq_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/flexrate_max_freq;
-	echo $flexrate_forcerate_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/flexrate_forcerate;
-	echo $cpu_online_bias_count_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_count;
-	echo $cpu_online_bias_up_threshold_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_up_threshold;
-	echo $cpu_online_bias_down_threshold_sleep > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_down_threshold;
+	echo "$freq_for_responsiveness_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_for_responsiveness;
+    echo "$freq_for_fast_down_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_for_fast_down;
+    echo "$sampling_rate_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/sampling_rate;
+	echo "$sampling_down_factor_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/sampling_down_factor;
+	echo "$up_threshold_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/up_threshold;
+	echo "$down_differential_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/down_differential;
+	echo "$up_threshold_at_min_freq_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/up_threshold_at_min_freq;
+	echo "$up_threshold_at_fast_down_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/up_threshold_at_fast_down;
+	echo "$freq_step_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_step;
+	echo "$up_threshold_diff_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/up_threshold_diff;
+	echo "$freq_step_dec_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_step_dec;
+	echo "$cpu_up_rate_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_up_rate;
+	echo "$cpu_down_rate_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_down_rate;
+	echo "$up_nr_cpus_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/up_nr_cpus;
+	echo "$hotplug_freq_1_1_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_freq_1_1;
+	echo "$hotplug_freq_2_0_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_freq_2_0;
+	echo "$hotplug_freq_2_1_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_freq_2_1;
+	echo "$hotplug_freq_3_0_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_freq_3_0;
+	echo "$hotplug_freq_3_1_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_freq_3_1;
+	echo "$hotplug_freq_4_0_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_freq_4_0;
+	echo "$hotplug_rq_1_1_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_rq_1_1;
+	echo "$hotplug_rq_2_0_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_rq_2_0;
+	echo "$hotplug_rq_2_1_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_rq_2_1;
+	echo "$hotplug_rq_3_0_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_rq_3_0;
+	echo "$hotplug_rq_3_1_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_rq_3_1;
+	echo "$hotplug_rq_4_0_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_rq_4_0;
+	echo "$flexrate_max_freq_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/flexrate_max_freq;
+	echo "$flexrate_forcerate_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/flexrate_forcerate;
+	echo "$cpu_online_bias_count_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_count;
+	echo "$cpu_online_bias_up_threshold_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_up_threshold;
+	echo "$cpu_online_bias_down_threshold_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_down_threshold;
 	
+	log -p i -t $FILE_NAME "*** CPU_GOV_SLEEP_TWEAKS ***: apply";
 		# awake-settings
 	else
 	
-	echo $freq_for_responsiveness > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_for_responsiveness;
-    echo $freq_for_fast_down > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_for_fast_down;
-    echo $sampling_rate > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/sampling_rate;
-	echo $sampling_down_factor > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/sampling_down_factor;
-	echo $up_threshold > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/up_threshold;
-	echo $down_differential > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/down_differential;
-	echo $up_threshold_at_min_freq > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/up_threshold_at_min_freq;
-	echo $up_threshold_at_fast_down > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/up_threshold_at_fast_down;
-	echo $freq_step > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_step;
-	echo $up_threshold_diff > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/up_threshold_diff;
-	echo $freq_step_dec > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_step_dec;
-	echo $cpu_up_rate > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_up_rate;
-	echo $cpu_down_rate > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_down_rate;
-	echo $up_nr_cpus > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/up_nr_cpus;
-	echo $hotplug_freq_1_1 > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_freq_1_1;
-	echo $hotplug_freq_2_0 > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_freq_2_0;
-	echo $hotplug_freq_2_1 > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_freq_2_1;
-	echo $hotplug_freq_3_0 > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_freq_3_0;
-	echo $hotplug_freq_3_1 > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_freq_3_1;
-	echo $hotplug_freq_4_0 > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_freq_4_0;
-	echo $hotplug_rq_1_1 > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_rq_1_1;
-	echo $hotplug_rq_2_0 > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_rq_2_0;
-	echo $hotplug_rq_2_1 > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_rq_2_1;
-	echo $hotplug_rq_3_0 > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_rq_3_0;
-	echo $hotplug_rq_3_1 > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_rq_3_1;
-	echo $hotplug_rq_4_0 > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_rq_4_0;
-	echo $flexrate_max_freq > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/flexrate_max_freq;
-	echo $flexrate_forcerate > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/flexrate_forcerate;
-	echo $cpu_online_bias_count > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_count;
-	echo $cpu_online_bias_up_threshold > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_up_threshold;
-	echo $cpu_online_bias_down_threshold > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_down_threshold;
+	echo "$freq_for_responsiveness" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_for_responsiveness;
+    echo "$freq_for_fast_down" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_for_fast_down;
+    echo "$sampling_rate" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/sampling_rate;
+	echo "$sampling_down_factor" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/sampling_down_factor;
+	echo "$up_threshold" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/up_threshold;
+	echo "$down_differential" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/down_differential;
+	echo "$up_threshold_at_min_freq" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/up_threshold_at_min_freq;
+	echo "$up_threshold_at_fast_down" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/up_threshold_at_fast_down;
+	echo "$freq_step" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_step;
+	echo "$up_threshold_diff" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/up_threshold_diff;
+	echo "$freq_step_dec" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_step_dec;
+	echo "$cpu_up_rate" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_up_rate;
+	echo "$cpu_down_rate" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_down_rate;
+	echo "$up_nr_cpus" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/up_nr_cpus;
+	echo "$hotplug_freq_1_1" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_freq_1_1;
+	echo "$hotplug_freq_2_0" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_freq_2_0;
+	echo "$hotplug_freq_2_1" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_freq_2_1;
+	echo "$hotplug_freq_3_0" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_freq_3_0;
+	echo "$hotplug_freq_3_1" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_freq_3_1;
+	echo "$hotplug_freq_4_0" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_freq_4_0;
+	echo "$hotplug_rq_1_1" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_rq_1_1;
+	echo "$hotplug_rq_2_0" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_rq_2_0;
+	echo "$hotplug_rq_2_1" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_rq_2_1;
+	echo "$hotplug_rq_3_0" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_rq_3_0;
+	echo "$hotplug_rq_3_1" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_rq_3_1;
+	echo "$hotplug_rq_4_0" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_rq_4_0;
+	echo "$flexrate_max_freq" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/flexrate_max_freq;
+	echo "$flexrate_forcerate" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/flexrate_forcerate;
+	echo "$cpu_online_bias_count" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_count;
+	echo "$cpu_online_bias_up_threshold" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_up_threshold;
+	echo "$cpu_online_bias_down_threshold" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_down_threshold;
+
+	log -p i -t $FILE_NAME "*** CPU_GOV_AWAKE_TWEAKS ***: apply";
 	
 	fi;
 
@@ -465,7 +468,7 @@ TCP_TWEAKS()
 	setprop ro.ril.def.agps.mode 2;
 	setprop ro.ril.enable.managed.roaming 1;
 	setprop ro.ril.enable.enhance.search 0;
-	setprop ro.ril.fast.dormancy.rule 1;
+#	setprop ro.ril.fast.dormancy.rule 1;
 	setprop ro.ril.fd.scron.timeout 30;
 	setprop ro.ril.fd.scroff.timeout 10;
 	setprop ro.ril.emc.mode 2;
@@ -814,7 +817,7 @@ AWAKE_MODE()
 	
 	WAKEUP_BOOST_DELAY;
 	
-	echo $AWAKE_LAPTOP_MODE > /proc/sys/vm/laptop_mode;
+	echo "$AWAKE_LAPTOP_MODE" > /proc/sys/vm/laptop_mode;
 	$IWCONFIG wlan0 txpower 12dBm;
 	
 	# set default values
@@ -893,7 +896,7 @@ SLEEP_MODE()
 	echo "500" > /sys/module/mali/parameters/mali_gpu_utilization_timeout;
 
 	$IWCONFIG wlan0 txpower 12dBm;
-	echo $SLEEP_LAPTOP_MODE > /proc/sys/vm/laptop_mode;
+	echo "$SLEEP_LAPTOP_MODE" > /proc/sys/vm/laptop_mode;
 
 	KERNEL_SCHED_SLEEP;
 

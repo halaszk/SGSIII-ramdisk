@@ -887,10 +887,11 @@ SLEEP_MODE()
 	echo "$scaling_min_suspend_freq" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq;
 	echo "$scaling_max_suspend_freq" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq;
 
-		# set CPU-Tweak
-		sleep_power_save=1;
-		CPU_GOV_TWEAKS;
 	fi;
+
+	# set CPU-Tweak
+        sleep_power_save=1;
+        CPU_GOV_TWEAKS;
 	# bus freq to min 133Mhz
 	echo "80" > /sys/devices/system/cpu/cpufreq/up_threshold;
 	echo "500" > /sys/module/mali/parameters/mali_gpu_utilization_timeout;

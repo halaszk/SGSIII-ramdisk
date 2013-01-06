@@ -52,7 +52,6 @@ fi
 
     ;;
   100)
-        echo "900 850 850 800 800 800" > /sys/devices/system/cpu/busfreq/mif_volt_table
         echo "100100 800000" > /sys/devices/system/cpu/busfreq/mif_volt_table
         echo "133133 800000" > /sys/devices/system/cpu/busfreq/mif_volt_table
         echo "160160 800000" > /sys/devices/system/cpu/busfreq/mif_volt_table

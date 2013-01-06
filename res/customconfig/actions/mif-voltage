@@ -1,0 +1,66 @@
+#!/sbin/busybox sh
+
+if [ "a$2" != "a" ];then
+
+filename=$(basename $2)
+
+if [ "a$3" == "a" ];then
+  evalcmd='eval "echo \$$filename"'
+  eval $evalcmd
+  exit
+else
+  evalcmd='eval "$filename=$3"'
+  eval $evalcmd
+  evalcmd='eval "echo \$$filename"'
+  eval $evalcmd
+fi
+
+  if [ -f /sys/devices/system/cpu/busfreq/mif_volt_table ];then
+ case "$mif_undervolting" in
+  0)
+	echo "100100 900000" > /sys/devices/system/cpu/busfreq/mif_volt_table
+        echo "133133 900000" > /sys/devices/system/cpu/busfreq/mif_volt_table
+        echo "160160 900000" > /sys/devices/system/cpu/busfreq/mif_volt_table
+        echo "267160 950000" > /sys/devices/system/cpu/busfreq/mif_volt_table
+        echo "267200 950000" > /sys/devices/system/cpu/busfreq/mif_volt_table
+        echo "400200 1000000" > /sys/devices/system/cpu/busfreq/mif_volt_table
+    ;;
+  25)
+        echo "100100 875000" > /sys/devices/system/cpu/busfreq/mif_volt_table
+        echo "133133 875000" > /sys/devices/system/cpu/busfreq/mif_volt_table
+        echo "160160 875000" > /sys/devices/system/cpu/busfreq/mif_volt_table
+        echo "267160 925000" > /sys/devices/system/cpu/busfreq/mif_volt_table
+        echo "267200 925000" > /sys/devices/system/cpu/busfreq/mif_volt_table
+        echo "400200 975000" > /sys/devices/system/cpu/busfreq/mif_volt_table
+    ;;
+  50)
+        echo "100100 850000" > /sys/devices/system/cpu/busfreq/mif_volt_table
+        echo "133133 850000" > /sys/devices/system/cpu/busfreq/mif_volt_table
+        echo "160160 850000" > /sys/devices/system/cpu/busfreq/mif_volt_table
+        echo "267160 900000" > /sys/devices/system/cpu/busfreq/mif_volt_table
+        echo "267200 900000" > /sys/devices/system/cpu/busfreq/mif_volt_table
+        echo "400200 950000" > /sys/devices/system/cpu/busfreq/mif_volt_table
+
+    ;;
+  75)
+        echo "100100 825000" > /sys/devices/system/cpu/busfreq/mif_volt_table
+        echo "133133 825000" > /sys/devices/system/cpu/busfreq/mif_volt_table
+        echo "160160 825000" > /sys/devices/system/cpu/busfreq/mif_volt_table
+        echo "267160 875000" > /sys/devices/system/cpu/busfreq/mif_volt_table
+        echo "267200 875000" > /sys/devices/system/cpu/busfreq/mif_volt_table
+        echo "400200 925000" > /sys/devices/system/cpu/busfreq/mif_volt_table
+
+    ;;
+  100)
+        echo "900 850 850 800 800 800" > /sys/devices/system/cpu/busfreq/mif_volt_table
+        echo "100100 800000" > /sys/devices/system/cpu/busfreq/mif_volt_table
+        echo "133133 800000" > /sys/devices/system/cpu/busfreq/mif_volt_table
+        echo "160160 800000" > /sys/devices/system/cpu/busfreq/mif_volt_table
+        echo "267160 850000" > /sys/devices/system/cpu/busfreq/mif_volt_table
+        echo "267200 850000" > /sys/devices/system/cpu/busfreq/mif_volt_table
+        echo "400200 900000" > /sys/devices/system/cpu/busfreq/mif_volt_table
+
+    ;;
+esac;
+fi
+fi

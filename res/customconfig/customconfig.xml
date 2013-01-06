@@ -24,7 +24,6 @@
              <spinnerItem name="Single core mode" value="1"/> 
       </spinner>
       <seekBar description="Sets the sched_mc value which changes the cpu scheduler behaviour for multi-cpu systems. 0 is Samsung kernel's default value which turns sched_mc off. Setting it to 1 means that the first core will be tried to be loaded more and setting it to 2 will bias task wake-ups to semi-idle cpu package for power savings. (default: 0)" name="sched_mc" action="generic /sys/devices/system/cpu/sched_mc_power_savings" unit="" min="0" reversed="false" step="1" max="2"/>
-      	<seekBar description="This is for CPU BUS-FREQ UP-FREQ-Scaling, based on CPU load. It sets the the load threshold on which BUS frequency will rise. Default: 80%" name="busfreq_up_threshold" action="generic /sys/devices/system/cpu/busfreq/up_threshold" unit="%" min="23" reversed="false" step="1" max="90"/>
     </settingsPane>
 	<settingsPane description=""
 	name="CPU Undervolting">
@@ -37,18 +36,6 @@
              <spinnerItem name="-100 mV" value="100"/>
       </spinner>
 	  <button description="Use this button to see CPU Voltage that used right now!" name="Check Active CPU Voltage" action="push-actions/check_cpu_voltage" label="Check CPU Voltage"/>
-    </settingsPane>
-	<settingsPane description=""
-	name="CPU BUS Undervolting">
-      <spinner description="Sets the CPU undervolting value which will be applied during boot time only. It will not have any effect until you restart your device. Remember: if you change this value and your device doesn't boot you will have to reset extweaks settings using CWM recovery. This value will be applied to all CPU steps before any script or app execution. If you use any script or voltage control app this setting may be overriden by those." 
-	  name="CPU BUS Undervolting" action="cpu_bus-voltage cpu_bus_undervolting">
-             <spinnerItem name="No Undervolting" value="0"/>
-             <spinnerItem name=" -25 mV" value="25"/>
-             <spinnerItem name=" -50 mV" value="50"/>
-             <spinnerItem name=" -75 mV" value="75"/>
-             <spinnerItem name="-100 mV" value="100"/>
-      </spinner>
-	  <button description="Use this button to see CPU BusFreq-Voltage that used right now!" name="Check Active CPU BusFreq-Voltage" action="push-actions/check_cpu_bus_voltage" label="Check CPU BusFreq-Voltage"/>
     </settingsPane>
     <settingsPane description=""
 		name="CPU Scaling Settings">
@@ -483,6 +470,63 @@
                unit="%" min="1" reversed="false" step="1" max="100"/>
     </settingsPane>
   </settingsTab>
+<settingsTab name="Memory/Internal">
+ <settingsPane description="MIF/INT represent the SoCs memory interface and internal components. The DVFS logic controls both frequencies in pairwise steps, although they frequencies are independant, they are defined together. MIF or Memory Interface is the direct voltage and frequency used on the C2C bus to the memory chip. INT or internal voltage and frequency are the internal bus and all components connected to it other than the CPU and GPU cores. This encompasses blocks like the camera interfaces, the ISP, the I/O controllers and the MFC (Hardware decoder). The configurables below control the scaling parameters of the DVFS logic of this block. The next target frequency is decided by the maximum of (Target DMC frequency ; Target CPU frequency ; Busfreq lock frequency)."
+                  name="Mif/Int control">
+      <seekBar description="The sampling rate period on which the DVFS monitor makes decision. Default: µS."
+               name="sampling_rate" 
+               action="generic /sys/devices/system/cpu/busfreq/sampling_rate"
+               unit="µS" min="10000" reversed="false" step="5000" max="200000"/>
+      <seekBar description="The Platform Performance Monitoring Unit (PPMU) collects usage information on the bus on a hardware level from the CPU and the two memory controllers (DMCs). This dictates the size of the historic the kernel keeps in store. Default: ."
+               name="Load history size" 
+               action="generic /sys/devices/system/cpu/busfreq/load_history_size"
+               unit="samples" min="1" reversed="false" step="1" max="20"/>
+      <seekBar description="The DMC maximum threshold above which the average load of the memory controllers over the last sample is exceeded, the maximum OPP step is set. Default: ."
+               name="DMC maximum threshold" 
+               action="generic /sys/devices/system/cpu/busfreq/dmc_max_threshold"
+               unit="%" min="1" reversed="false" step="1" max="99"/>
+      <seekBar description="The idle threshold, which, if the memory controller load falls below it, reduces the OPP step by one step. If the live load falls between the idle threshold and DMC max threshold, the average DMC load over the load history size is taken and normalized towards the maximum OPP frequency, and this ondemand-like target frequency dictates the next DMC frequency. Default: ."
+               name="Idle threshold" 
+               action="generic /sys/devices/system/cpu/busfreq/idle_threshold"
+               unit="%" min="1" reversed="false" step="1" max="50"/>
+      <seekBar description="The CPU maximum bus threshold above which the load of the CPU bus over the last sample is exceeded, the maximum OPP step is set. Default: ."
+               name="Maximum CPU bus threshold" 
+               action="generic /sys/devices/system/cpu/busfreq/max_cpu_threshold"
+               unit="%" min="1" reversed="false" step="1" max="99"/>
+      <seekBar description="The CPU bus up threshold, actually acting as a delimiter threshold of sorts, if the load exceeds up_threshold but doesn't exceed max CPU threshold, it takes into account the CPU load slope size to step down one step, if the slope conditional isn't met, the CPU target bus frequency stays the same. Default: ."
+               name="Up CPU threshold" 
+               action="generic /sys/devices/system/cpu/busfreq/up_cpu_threshold"
+               unit="%" min="1" reversed="false" step="1" max="99"/>
+      <seekBar description="CPU slope size is defined by the load difference from the current sample to the previous sample. If the slope exceeds the set value, the CPU target bus frequency steps down one step. Default: ."
+               name="CPU slope size" 
+               action="generic /sys/devices/system/cpu/busfreq/cpu_slope_size"
+               unit="%" min="1" reversed="false" step="1" max="50"/>
+    </settingsPane>
+        <settingsPane description=""
+        name="CPU BUS Undervolting">
+      <spinner description="Sets the CPU BUS INTERNAL undervolting value which will be applied during boot time only. It will not have any effect until you restart your $
+          name="CPU BUS Undervolting" action="cpu_bus-voltage cpu_bus_undervolting">
+             <spinnerItem name="No Undervolting" value="0"/>
+             <spinnerItem name=" -25 mV" value="25"/>
+             <spinnerItem name=" -50 mV" value="50"/>
+             <spinnerItem name=" -75 mV" value="75"/>
+             <spinnerItem name="-100 mV" value="100"/>
+      </spinner>
+          <button description="Use this button to see CPU BusFreq-Voltage that used right now!" name="Check Active CPU BusFreq-Voltage" action="push-actions/check_cpu_bus_voltage" label="Check CPU BusFreq-Voltage"/>
+    </settingsPane>
+        <settingsPane description=""
+        name="MEMORY Interface Undervolting">
+      <spinner description="Sets the MEMORY Interface undervolting value which will be applied during boot time only. It will not have any effect until you restart your $
+          name="MEMORY Interface Undervolting" action="mif-voltage mif_undervolting">
+             <spinnerItem name="No Undervolting" value="0"/>
+             <spinnerItem name=" -25 mV" value="25"/>
+             <spinnerItem name=" -50 mV" value="50"/>
+             <spinnerItem name=" -75 mV" value="75"/>
+             <spinnerItem name="-100 mV" value="100"/>
+      </spinner>
+          <button description="Use this button to see MEMORY Interface-Voltage that used right now!" name="Check Active MEMORY Interface-Voltage" action="push-actions/check_mif_voltage" label="Check MEMORY Interface-Voltage"/>
+    </settingsPane>
+</settingsTab>
   <settingsTab name="GPU">
     <settingsPane description="GPU Frequency Settings. Default frequencies are: 160, 266, 350, 440MHz and 533MHz. Warning: Changing GPU frequency or voltages may cause lockups or damage on your device." name="GPUFreq">
 

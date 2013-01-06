@@ -180,4 +180,11 @@ fbearlysuspend_delay0=0
 tsp_slide2wake=off
 power_reduce=on
 disable_yournal=off
-
+load_history_size=5
+dmc_max_threshold=30
+idle_threshold=4
+max_cpu_threshold=20
+up_cpu_threshold=11
+cpu_slope_size=7
+int_volt_table=0
+mif_volt_table=0

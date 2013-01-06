@@ -504,7 +504,7 @@
     </settingsPane>
         <settingsPane description=""
         name="CPU BUS Undervolting">
-      <spinner description="Sets the CPU BUS INTERNAL undervolting value which will be applied during boot time only. It will not have any effect until you restart your $
+      <spinner description="Sets the CPU BUS INTERNAL undervolting value which will be applied during boot time only. It will not have any effect until you restart your device. Remember: if you change this value and your device doesn't boot you will have to reset extweaks settings using CWM recovery. This value will be applied to all CPU steps before any script or app execution. If you use any script or voltage control app this setting may be overriden by those."
           name="CPU BUS Undervolting" action="cpu_bus-voltage cpu_bus_undervolting">
              <spinnerItem name="No Undervolting" value="0"/>
              <spinnerItem name=" -25 mV" value="25"/>
@@ -516,7 +516,7 @@
     </settingsPane>
         <settingsPane description=""
         name="MEMORY Interface Undervolting">
-      <spinner description="Sets the MEMORY Interface undervolting value which will be applied during boot time only. It will not have any effect until you restart your $
+      <spinner description="Sets the MEMORY Interface undervolting value which will be applied during boot time only. It will not have any effect until you restart your device. Remember: if you change this value and your device doesn't boot you will have to reset extweaks settings using CWM recovery. This value will be applied to all CPU steps before any script or app execution. If you use any script or voltage control app this setting may be overriden by those."
           name="MEMORY Interface Undervolting" action="mif-voltage mif_undervolting">
              <spinnerItem name="No Undervolting" value="0"/>
              <spinnerItem name=" -25 mV" value="25"/>

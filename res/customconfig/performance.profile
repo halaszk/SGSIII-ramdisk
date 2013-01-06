@@ -188,5 +188,4 @@ idle_threshold=4
 max_cpu_threshold=20
 up_cpu_threshold=11
 cpu_slope_size=7
-int_volt_table=0
-mif_volt_table=0
+mif_undervolting=0

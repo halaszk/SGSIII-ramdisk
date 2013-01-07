@@ -124,6 +124,7 @@ echo 3 > /proc/sys/kernel/rom_feature_set;
   else
 echo 2 > /proc/sys/kernel/rom_feature_set;
     $BB mv -f /res/misc/init.41/* /
+    $BB rm -f /lib/modules/dhd_cm.ko
   fi
 fi
 
@@ -155,8 +156,8 @@ insmod /lib/modules/mali_control.ko;
 #insmod /lib/modules/cpufreq_hotplug.ko;
 #insmod /lib/modules/cpufreq_lulzactiveq.ko;
 # additional I/O schedulers
-insmod /lib/modules/sio-iosched.ko;
-insmod /lib/modules/vr-iosched.ko;
+#insmod /lib/modules/sio-iosched.ko;
+#insmod /lib/modules/vr-iosched.ko;
 # audio enhancements
 insmod /lib/modules/kscoobydoo.ko devicename=scoobydoo_sound;
 

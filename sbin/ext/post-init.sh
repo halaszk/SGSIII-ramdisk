@@ -78,6 +78,15 @@ if [ "$exfat" == on ]; then
 insmod /lib/modules/exfat_core.ko;
 insmod /lib/modules/exfat_fs.ko;
 fi;
+######################################
+# Loading Modules
+######################################
+$BB chmod -R 755 /lib;
+
+for module in $(ls in /lib/modules/*.ko); do
+$BB insmod "${module}";
+done;
+
 # for ntfs automounting
 insmod /lib/modules/fuse.ko;
 mount -o remount,rw /

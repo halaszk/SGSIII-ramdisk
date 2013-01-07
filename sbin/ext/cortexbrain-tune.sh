@@ -699,22 +699,36 @@ fi;
 }
 
 
-# set less brightnes is battery is low
-AUTO_BRIGHTNESS()
+# set less brightnes if battery is low
+# (works only without "auto_brightness" for now?!)
+SYNC_BRIGHTNESS()
 {
-	if [ "$cortexbrain_auto_tweak_brightness" == on ]; then
-		LEVEL=`cat /sys/class/power_supply/battery/capacity`;
-		MAX_BRIGHTNESS=`cat /sys/class/backlight/panel/max_brightness`;
-		OLD_BRIGHTNESS=`cat /sys/class/backlight/panel/brightness`;
-		NEW_BRIGHTNESS=`$(( MAX_BRIGHTNESS*LEVEL/100 ))`;
-		if [ "$NEW_BRIGHTNESS" -le "$OLD_BRIGHTNESS" ]; then
-			echo "$NEW_BRIGHTNESS" > /sys/class/backlight/panel/brightness;
-		fi;
-		log -p i -t $FILE_NAME "*** AUTO_BRIGHTNESS ***";
-	fi;
+if [ "$cortexbrain_auto_sync_brightness" == on ]; then
+LEVEL=`cat /sys/class/power_supply/battery/capacity`;
+MAX_BRIGHTNESS=`cat /sys/class/backlight/panel/max_brightness`;
+OLD_BRIGHTNESS=`cat /sys/class/backlight/panel/brightness`;
+NEW_BRIGHTNESS=`$(( MAX_BRIGHTNESS*LEVEL/100 ))`;
+if [ "$NEW_BRIGHTNESS" -le "$OLD_BRIGHTNESS" ]; then
+echo "$NEW_BRIGHTNESS" > /sys/class/backlight/panel/brightness;
+fi;
+log -p i -t $FILE_NAME "*** SYNC_BRIGHTNESS ***";
+fi;
 }
 
-
+# set less brightnes
+# (works only without "auto_brightness" for now?!)
+LESS_BRIGHTNESS()
+{
+if [ "$cortexbrain_auto_less_brightness" == on ]; then
+MAX_BRIGHTNESS=`cat /sys/class/backlight/panel/max_brightness`;
+OLD_BRIGHTNESS=`cat /sys/class/backlight/panel/brightness`;
+NEW_BRIGHTNESS=`$(( MAX_BRIGHTNESS-cortexbrain_less_brightness ))`;
+if [ "$NEW_BRIGHTNESS" -ge "0" ]; then
+echo "$NEW_BRIGHTNESS" > /sys/class/backlight/panel/brightness;
+fi;
+log -p i -t $FILE_NAME "*** LESS_BRIGHTNESS ***";
+fi;
+}
 # set swappiness in case that no root installed, and zram used or disk swap used
 SWAPPINESS()
 {
@@ -859,7 +873,8 @@ fi;
 
 	ENABLE_NMI;
 
-	AUTO_BRIGHTNESS;
+	SYNC_BRIGHTNESS;
+	LESS_BRIGHTNESS;
 
 	DONT_KILL_CORTEX;
 	

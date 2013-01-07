@@ -770,12 +770,6 @@ name="LCD POWER" action="generic01 /sys/class/lcd/panel/power_reduce" label="LCD
 			 <spinnerItem name="zen" value="zen"/>
 			 <spinnerItem name="row" value="row"/>
 		</spinner>
-	  <spinner description="This will set the default I/O scheduler Read_Ahead. Default I/O scheduler Read Ahead will only be set during early stages of booting (before init.d execution) and can be overriden by later scripts or apps." name="Default I/O Scheduler Read Ahead" action="read_ahead_kb">
-             <spinnerItem name="512KB" value="512"/> 
-             <spinnerItem name="1024KB" value="1024"/> 
-             <spinnerItem name="2048KB" value="2048"/> 
-             <spinnerItem name="4096KB" value="4096"/> 
-      </spinner>
 	        <spinner description="Notification LED Behavior" name="Notification LED Behavior" action="generic /sys/devices/virtual/sec/led/led_fade">
              <spinnerItem name="ROM default" value="-1"/> 
              <spinnerItem name="Blinking" value="0"/> 
@@ -796,6 +790,13 @@ name="LCD POWER" action="generic01 /sys/class/lcd/panel/power_reduce" label="LCD
 		<button description="Clean the media cache on your sdcard. Push once to clean, push again to abort. You have to reboot for action to work!" name="Clean media-cache" action="push-actions/fix_media" label="FIX MEDIA ON/OFF"/>
 		<button description="Clean WIFI DHCP IP Lease. Push the botton to activate!" name="Clean WIFI Lease" action="push-actions/fix_wifi" label="Clean WIFI Lease"/>
 	</settingsPane>
+    <settingsPane name="Dynamic FSync" 
+                  description="fsync() serves as a flush/commit to the write buffer when doing I/O writes to storage. It stores a buffer with data and periodically writes it to the storage device. Disabling it will no longer buffer and directly write the data.">
+      <checkbox description="Dynamic FSync disables file write synchronosity during screen-on, and re-enables it on screen-off." 
+                name="Enable dynamic FSync" 
+                action="generic01 /sys/kernel/dyn_fsync/Dyn_fsync_active"
+                label="Enable dynamic FSync"/>
+    </settingsPane>
     <settingsPane description="Removing/Reinstalling root to support some apps which requires you not to have a rooted phone." name="Remove/Reinstall Root">
       <button description="Removes su and Superuser.apk files from the system partition" name="Remove Root" action="remove-root" label="Remove Root"/>
       <checkbox description="If checked, installs root on the next reboot." name="Auto-Install Root" action="generic /tmp/install_root" label="Auto-Install Root"/>
@@ -882,6 +883,17 @@ name="Android Logger control" action="android_logger">
 	name="Kernel-Tweaks" action="generic_cortex /tmp/cortexbrain_kernel_tweaks" label="Kernel-Tweaks"/>
 <checkbox description='Enable or Disable "I/O-Tweaks". (To update after change REBOOT)'
 	name="I/O-Tweaks" action="generic_cortex /tmp/cortexbrain_io" label="I/O-Tweaks"/>
+
+		<spinner description='Maximum number of kilobytes to read-ahead for filesystems on this block device. Maybe get better read-performance with higher value, but you will probably need to experiment and benchmark (e.g. with "SD Tools"-App) to find the best value for your sd-card / system and maybe you will have a higher overhead (less memory) with a higher value. Works only if "I/O-Tweaks" tweak is enabled! Default: 128'
+			name="kilobytes to read-ahead" action="generic_cortex /tmp/cortexbrain_read_ahead_kb">
+			<spinnerItem name="64 kb" value="64"/> 
+			<spinnerItem name="128 kb" value="128"/> 
+			<spinnerItem name="256 kb" value="256"/> 
+			<spinnerItem name="512 kb" value="512"/> 
+			<spinnerItem name="1024 kb" value="1024"/> 
+			<spinnerItem name="2048 kb" value="2048"/>
+			<spinnerItem name="4096 kb" value="4096"/>
+		</spinner>
 </settingsPane>
 </settingsTab>  
 <settingsTab name="PROFILES">

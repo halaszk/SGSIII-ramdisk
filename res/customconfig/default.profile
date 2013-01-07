@@ -190,3 +190,5 @@ max_cpu_threshold=20
 up_cpu_threshold=11
 cpu_slope_size=7
 mif_undervolting=0
+cortexbrain_read_ahead_kb=128
+Dyn_fsync_active=1

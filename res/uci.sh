@@ -15,30 +15,30 @@ read_defaults;
 read_config;
 
 case "${1}" in
-rename)
-     rename_profile "${2}" "${3}";
+	rename)
+    	rename_profile "${2}" "${3}";
     ;;
-delete)
-     delete_profile "${2}";
+	delete)
+    	delete_profile "${2}";
     ;;
-select)
-     select_profile "${2}";
+	select)
+    	select_profile "${2}";
     ;;
-config)
-     print_config;
+	config)
+    	print_config;
     ;;
-list)
-     list_profile;
+	list)
+    	list_profile;
     ;;
-apply)
-apply_config;
-write_config;
-;;
-restore)
-apply_config;
-;;
-*)
-. ${ACTION_SCRIPTS}/${1} ${1} ${2} ${3} ${4} ${5} ${6};
-write_config;
-;;
+	apply)
+		apply_config;
+		write_config;
+	;;
+	restore)
+		apply_config;
+	;;
+	*)
+		. ${ACTION_SCRIPTS}/${1} ${1} ${2} ${3} ${4} ${5} ${6};
+		write_config;
+	;;
 esac;

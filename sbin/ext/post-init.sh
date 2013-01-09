@@ -35,11 +35,6 @@ $BB chmod 0777 /data/.siyah/ -R;
 read_defaults;
 read_config;
 
-# CM 10.1 tweaks.
-#/sbin/setprop dalvik.vm.heaptargetutilization 0.75
-#/sbin/setprop dalvik.vm.heapminfree 512k
-#/sbin/setprop dalvik.vm.heapmaxfree 2m
-
 #mdnie sharpness tweak
 if [ "$mdniemod" == "on" ];then
 . /sbin/ext/mdnie-sharpness-tweak.sh;
@@ -68,25 +63,32 @@ if [ "$logger" == "off" ];then
   echo 0 > /sys/module/xt_qtaguid/parameters/debug_mask;
 fi
 
-	if [ "$gesture_tweak" == on ]; then
+if [ "$gesture_tweak" == "on" ]; then
 echo "1" > /sys/devices/virtual/misc/touch_gestures/gestures_enabled;
 pkill -f "/data/gesture_set.sh";
 pkill -f "/sys/devices/virtual/misc/touch_gestures/wait_for_gesture";
 nohup $BB sh /data/gesture_set.sh;
 fi;
-if [ "$exfat" == on ]; then
+if [ "$exfat" == "on" ]; then
 insmod /lib/modules/exfat_core.ko;
 insmod /lib/modules/exfat_fs.ko;
 fi;
 ######################################
 # Loading Modules
 ######################################
-$BB chmod -R 755 /lib;
+#$BB chmod -R 755 /lib;
 
-for module in $(ls in /lib/modules/*.ko); do
-$BB insmod "${module}";
-done;
+#for module in $(ls in /lib/modules/*.ko); do
+#$BB insmod "${module}";
+#done;
 
+if [ "$logger" == "off" ];then
+rmmod /lib/modules/logger.ko
+fi
+if [ "$exfat" == "off" ]; then
+rmmod /lib/modules/exfat_core.ko;
+rmmod /lib/modules/exfat_fs.ko;
+fi;
 # for ntfs automounting
 insmod /lib/modules/fuse.ko;
 mount -o remount,rw /

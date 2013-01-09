@@ -73,14 +73,27 @@ if [ "$exfat" == "on" ]; then
 insmod /lib/modules/exfat_core.ko;
 insmod /lib/modules/exfat_fs.ko;
 fi;
+
 ######################################
 # Loading Modules
 ######################################
-#$BB chmod -R 755 /lib;
+$BB chmod -R 755 /lib;
 
-#for module in $(ls in /lib/modules/*.ko); do
-#$BB insmod "${module}";
-#done;
+(
+	sleep 40;
+	# order of modules load is important.
+	$BB insmod /lib/modules/scsi_wait_scan.ko;
+	$BB insmod /lib/modules/j4fs.ko;
+
+	sleep 10;
+	$BB insmod /lib/modules/auth_rpcgss.ko;
+	$BB insmod /lib/modules/nfs.ko;
+	$BB insmod /lib/modules/cifs.ko;
+	$BB insmod /lib/modules/sunrpc.ko;
+	$BB insmod /lib/modules/mvpkm.ko;
+	$BB insmod /lib/modules/lockd.ko;
+	$BB insmod /lib/modules/pvtcpkm.ko;
+)&
 
 if [ "$logger" == "off" ];then
 rmmod /lib/modules/logger.ko

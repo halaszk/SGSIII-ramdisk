@@ -71,34 +71,6 @@ then
   fi
 fi;
 
-GMTWEAKS()
-{
-  if [ "$payload_extracted" == "0" ];then
-    extract_payload
-  fi
-if [ -f /system/app/STweaks.apk ]; then
-stmd5sum=`/sbin/busybox md5sum /system/app/STweaks.apk | /sbin/busybox awk '{print $1}'`
-stmd5sum_kernel=`cat /res/stweaks_md5`;
-if [ "$stmd5sum" != "$stmd5sum_kernel" ]; then
-rm -f /system/app/STweaks.apk > /dev/null 2>&1;
-rm -f /data/app/com.gokhanmoral.*weaks*.apk > /dev/null 2>&1;
-rm -f /data/dalvik-cache/*gokhanmoral.*weak*.apk* > /dev/null 2>&1;
-rm -f /cache/dalvik-cache/*gokhanmoral.*weak*.apk* > /dev/null 2>&1;
-fi;
-fi;
-
-if [ ! -f /system/app/STweaks.apk ]; then
-rm -f /data/app/com.gokhanmoral.*weak*.apk > /dev/null 2>&1;
-rm -rf /data/data/com.gokhanmoral.*weak* > /dev/null 2>&1;
-rm -f /data/dalvik-cache/*gokhanmoral.*weak*.apk* > /dev/null 2>&1;
-rm -f /cache/dalvik-cache/*gokhanmoral.*weak*.apk* > /dev/null 2>&1;
-xzcat /res/misc/payload/STweaks.apk.xz > /system/app/STweaks.apk;
-chown 0.0 /system/app/STweaks.apk;
-chmod 644 /system/app/STweaks.apk;
-fi;
-}
-#GMTWEAKS;
-
 EXTWEAKS_CLEAN()
 {
 if [ -f /system/app/Extweaks.apk ] || [ -f /data/app/com.darekxan.extweaks.ap*.apk ]; then

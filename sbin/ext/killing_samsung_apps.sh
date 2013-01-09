@@ -8,7 +8,6 @@ echo "............Closing APPS before init";
 sleep 71
 busybox renice -1 `pidof scaling`
 /sbin/busybox killall -q com.android.MtpApplication
-/sbin/busybox killall -q com.sec.android.inputmethod
 /sbin/busybox killall -q com.sec.android.provider.logsprovider
 /sbin/busybox killall -q com.android.nfc
 /sbin/busybox killall -q com.samsung.android.providers.context

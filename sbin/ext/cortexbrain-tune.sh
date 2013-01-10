@@ -672,6 +672,7 @@ power_performance=1;
 
 echo "performance" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor;
 CPU_GOV_TWEAKS;
+
 # GPU utilization to min delay
 echo "100" > /sys/module/mali/parameters/mali_gpu_utilization_timeout;
 
@@ -825,7 +826,7 @@ AWAKE_MODE()
 	WAKEUP_BOOST_DELAY;
 	
 	echo "$AWAKE_LAPTOP_MODE" > /proc/sys/vm/laptop_mode;
-#	$IWCONFIG wlan0 txpower 12dBm;
+	$IWCONFIG wlan0 txpower 2;
 	
 	# set default values
 	echo "$dirty_expire_centisecs_default" > /proc/sys/vm/dirty_expire_centisecs;
@@ -855,13 +856,14 @@ fi;
 
 	# set wifi.supplicant_scan_interval
 	setprop wifi.supplicant_scan_interval $supplicant_scan_interval;
-	
+	if [ "$cortexbrain_cpu_boost" == on ]; then
 	# bus freq back to normal
 	echo "$dmc_max_threshold" > /sys/devices/system/cpu/busfreq/dmc_max_threshold;
 	echo "$max_cpu_threshold" > /sys/devices/system/cpu/busfreq/max_cpu_threshold;
 	echo "$up_cpu_threshold" > /sys/devices/system/cpu/busfreq/up_cpu_threshold;
 	
 	echo "$mali_gpu_utilization_timeout" > /sys/module/mali/parameters/mali_gpu_utilization_timeout;
+	fi;
 	# set the vibrator - force in case it's has been reseted
 	echo "$pwm_val" > /sys/vibrator/pwm_val;
 
@@ -894,21 +896,23 @@ SLEEP_MODE()
 		# set CPU-Governor
 	echo "$deep_sleep" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor;
 	echo "$standby_freq" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq;
-	fi;
-	# reduce deepsleep CPU speed, SUSPEND mode
+		# reduce deepsleep CPU speed, SUSPEND mode
 	echo "$scaling_min_suspend_freq" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq;
 	echo "$scaling_max_suspend_freq" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq;
+	fi;
+
 
 	# set CPU-Tweak
         sleep_power_save=1;
         CPU_GOV_TWEAKS;
+	if [ "$cortexbrain_cpu_boost" == on ]; then
 	# bus freq to min 100Mhz
 	echo "80" > /sys/devices/system/cpu/busfreq/dmc_max_threshold;
 	echo "80" > /sys/devices/system/cpu/busfreq/max_cpu_threshold;
 	echo "80" > /sys/devices/system/cpu/busfreq/up_cpu_threshold;
 	echo "500" > /sys/module/mali/parameters/mali_gpu_utilization_timeout;
-
-	#$IWCONFIG wlan0 txpower 8;
+	fi;
+	$IWCONFIG wlan0 txpower 2;
 	echo "$SLEEP_LAPTOP_MODE" > /proc/sys/vm/laptop_mode;
 
 	KERNEL_SCHED_SLEEP;

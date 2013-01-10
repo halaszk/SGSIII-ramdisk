@@ -314,12 +314,14 @@ CPU_GOV_TWEAKS()
 	echo "$hotplug_rq_3_0_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_rq_3_0;
 	echo "$hotplug_rq_3_1_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_rq_3_1;
 	echo "$hotplug_rq_4_0_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_rq_4_0;
+	echo "$flexrate_enable_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/flexrate_enable;
 	echo "$flexrate_max_freq_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/flexrate_max_freq;
 	echo "$flexrate_forcerate_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/flexrate_forcerate;
 	echo "$cpu_online_bias_count_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_count;
 	echo "$cpu_online_bias_up_threshold_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_up_threshold;
 	echo "$cpu_online_bias_down_threshold_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_down_threshold;
-	echo "$max_cpu_lock" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/max_cpu_lock;
+	echo "1" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/max_cpu_lock; # force cpu to single core mode when screen is off!
+	echo "$lcdfreq_enable_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/lcdfreq_enable;
 	
 	log -p i -t $FILE_NAME "*** CPU_GOV_SLEEP_TWEAKS ***: apply";
 		# awake-settings
@@ -357,6 +359,7 @@ CPU_GOV_TWEAKS()
 	echo "$cpu_online_bias_up_threshold" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_up_threshold;
 	echo "$cpu_online_bias_down_threshold" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_down_threshold;
 	echo "$max_cpu_lock" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/max_cpu_lock;
+	echo "$lcdfreq_enable" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/lcdfreq_enable;
 
 	log -p i -t $FILE_NAME "*** CPU_GOV_AWAKE_TWEAKS ***: apply";
 	
@@ -671,7 +674,9 @@ CPU_GOV_TWEAKS;
 echo "100" > /sys/module/mali/parameters/mali_gpu_utilization_timeout;
 
 	# bus freq to 400MHZ in low load
-echo "30" > /sys/devices/system/cpu/busfreq/up_threshold;
+echo "30" > /sys/devices/system/cpu/busfreq/dmc_max_threshold;
+echo "30" > /sys/devices/system/cpu/busfreq/max_cpu_threshold;
+echo "30" > /sys/devices/system/cpu/busfreq/up_cpu_threshold;
 
 echo "1400000" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq;
 echo "1400000" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq;
@@ -818,7 +823,7 @@ AWAKE_MODE()
 	WAKEUP_BOOST_DELAY;
 	
 	echo "$AWAKE_LAPTOP_MODE" > /proc/sys/vm/laptop_mode;
-	$IWCONFIG wlan0 txpower 12dBm;
+#	$IWCONFIG wlan0 txpower 12dBm;
 	
 	# set default values
 	echo "$dirty_expire_centisecs_default" > /proc/sys/vm/dirty_expire_centisecs;
@@ -850,7 +855,10 @@ fi;
 	setprop wifi.supplicant_scan_interval $supplicant_scan_interval;
 	
 	# bus freq back to normal
-	echo "$up_threshold" > /sys/devices/system/cpu/busfreq/up_threshold;
+	echo "$dmc_max_threshold" > /sys/devices/system/cpu/busfreq/dmc_max_threshold;
+	echo "$max_cpu_threshold" > /sys/devices/system/cpu/busfreq/max_cpu_threshold;
+	echo "$up_cpu_threshold" > /sys/devices/system/cpu/busfreq/up_cpu_threshold;
+	
 	echo "$mali_gpu_utilization_timeout" > /sys/module/mali/parameters/mali_gpu_utilization_timeout;
 	# set the vibrator - force in case it's has been reseted
 	echo "$pwm_val" > /sys/vibrator/pwm_val;
@@ -884,20 +892,21 @@ SLEEP_MODE()
 		# set CPU-Governor
 	echo "$deep_sleep" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor;
 	echo "$standby_freq" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq;
+	fi;
 	# reduce deepsleep CPU speed, SUSPEND mode
 	echo "$scaling_min_suspend_freq" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq;
 	echo "$scaling_max_suspend_freq" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq;
 
-	fi;
-
 	# set CPU-Tweak
         sleep_power_save=1;
         CPU_GOV_TWEAKS;
-	# bus freq to min 133Mhz
-	echo "80" > /sys/devices/system/cpu/cpufreq/up_threshold;
+	# bus freq to min 100Mhz
+	echo "80" > /sys/devices/system/cpu/busfreq/dmc_max_threshold;
+	echo "80" > /sys/devices/system/cpu/busfreq/max_cpu_threshold;
+	echo "80" > /sys/devices/system/cpu/busfreq/up_cpu_threshold;
 	echo "500" > /sys/module/mali/parameters/mali_gpu_utilization_timeout;
 
-	$IWCONFIG wlan0 txpower 12dBm;
+	#$IWCONFIG wlan0 txpower 8;
 	echo "$SLEEP_LAPTOP_MODE" > /proc/sys/vm/laptop_mode;
 
 	KERNEL_SCHED_SLEEP;
@@ -975,20 +984,6 @@ fi;
 #
 # When User select battery/default profile all tuning will be toward battery save.
 # But user loose performance -20% and get more stable system and more battery left.
-#
-# When user select performance profile, tuning will be to max performance on screen ON.
-# When screen OFF all tuning switched to max power saving. as with battery profile,
-# So user gets max performance and max battery save but only on screen OFF.
-#
-# This script change governors and tuning for them on the fly.
-# Also switch on/off hotplug CPU core based on screen on/off.
-# This script reset battery stats when battery is 100% charged.
-# This script tune Network and System VM settings and ROM settings tuning.
-# This script changing default MOUNT options and I/O tweaks for all flash disks and ZRAM.
-#
-# TODO: add more description, explanations & default vaules ...
-#
-But user loose performance -20% and get more stable system and more battery left.
 #
 # When user select performance profile, tuning will be to max performance on screen ON.
 # When screen OFF all tuning switched to max power saving. as with battery profile,

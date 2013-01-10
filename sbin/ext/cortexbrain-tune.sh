@@ -322,6 +322,7 @@ CPU_GOV_TWEAKS()
 	echo "$cpu_online_bias_down_threshold_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_down_threshold;
 	echo "1" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/max_cpu_lock; # force cpu to single core mode when screen is off!
 	echo "$lcdfreq_enable_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/lcdfreq_enable;
+	echo "$hotplug_compare_level_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_compare_level;
 	
 	log -p i -t $FILE_NAME "*** CPU_GOV_SLEEP_TWEAKS ***: apply";
 		# awake-settings
@@ -360,6 +361,7 @@ CPU_GOV_TWEAKS()
 	echo "$cpu_online_bias_down_threshold" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_down_threshold;
 	echo "$max_cpu_lock" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/max_cpu_lock;
 	echo "$lcdfreq_enable" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/lcdfreq_enable;
+	echo "$hotplug_compare_level" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_compare_level;
 
 	log -p i -t $FILE_NAME "*** CPU_GOV_AWAKE_TWEAKS ***: apply";
 	

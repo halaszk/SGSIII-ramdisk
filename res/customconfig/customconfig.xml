@@ -43,7 +43,7 @@
 	     <spinnerItem name="ondemandq" value="ondemandq"/>
 	     <spinnerItem name="pegasusq" value="pegasusq"/>
 		 <spinnerItem name="hydrxq" value="hydrxq"/>
-		 <spinnerItem name="zzmoove" value="zzmoove"/>
+		 <spinnerItem name="nightmare" value="nightmare"/>
          <spinnerItem name="performance" value="performance"/>
        </spinner>
     <seekBar description="Scaling maximum frequency (Samsung default: 1400000)"
@@ -67,7 +67,7 @@
 		unit="Sec" min="0" reversed="false" step="1" max="15"/>
 	<spinner description="This will set the DEEP SLEEP (screen off) CPU governor. Depends on cortex background process to be enabled."
 		name="Deep-Sleep! CPU Governor" action="generic /tmp/deep_sleep">
-	<spinnerItem name="zzmoove" value="zzmoove"/>
+	<spinnerItem name="nightmare" value="nightmare"/>
     <spinnerItem name="pegasusq" value="pegasusq"/>
     <spinnerItem name="hydrxq" value="hydrxq"/>
 	<spinnerItem name="ondemandq" value="ondemandq"/>
@@ -233,6 +233,11 @@
                name="Runqueue depth from 4 core to offline" 
                action="cpu-governor hotplug_rq_4_0"
                unit="thread depth" min="100" reversed="false" step="5" max="600"/>
+				<spinner description="Set the HOTPLUG Compare Level to turn on the CPU Cores/Frequency scale. 0 = History Load Based (Default), 1 = Current Load Based. (Only for Nightmare)"
+						name="hotplug_compare_level" action="cpu-governor hotplug_compare_level">
+						<spinnerItem name="History Load Based" value="0"/>
+						<spinnerItem name="Current Load Based" value="1"/>
+				</spinner>
     </settingsPane>
 		<settingsPane description="Tuneables for flexrate requests; accelerated sampling speed when the screen is touched." 
                   name="Flexrate settings">
@@ -446,6 +451,11 @@
                name="CPU online bias down threshold" 
                action="generic /tmp/cpu_online_bias_down_threshold_sleep"
                unit="%" min="1" reversed="false" step="1" max="100"/>
+				<spinner description="Set the HOTPLUG Compare Level to turn on the CPU Cores/Frequency scale. 0 = History Load Based (Default), 1 = Current Load Based. (Only for Nightmare)"
+						name="hotplug_compare_level" action="generic /tmp/hotplug_compare_level_sleep">
+						<spinnerItem name="History Load Based" value="0"/>
+						<spinnerItem name="Current Load Based" value="1"/>
+				</spinner>
     </settingsPane>
 	</settingsTab>
 	<settingsTab name="Memory/Internal">

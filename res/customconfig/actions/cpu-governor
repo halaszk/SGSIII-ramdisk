@@ -19,6 +19,7 @@ SYSTEM_GOVERNOR=`cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor`;
 		echo $max_cpu_lock > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/max_cpu_lock
 		echo $flexrate_enable > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/flexrate_enable
 		echo $lcdfreq_enable > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/lcdfreq_enable
+		echo $hotplug_compare_level > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_compare_level
         echo $freq_for_responsiveness > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_for_responsiveness
         echo $freq_for_fast_down > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_for_fast_down
         echo $sampling_rate > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/sampling_rate

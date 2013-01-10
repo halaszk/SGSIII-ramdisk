@@ -191,3 +191,5 @@ cpu_slope_size=7
 mif_undervolting=0
 cortexbrain_read_ahead_kb=128
 Dyn_fsync_active=1
+hotplug_compare_level=1
+hotplug_compare_level_sleep=1

@@ -988,3 +988,17 @@ fi;
 #
 # TODO: add more description, explanations & default vaules ...
 #
+But user loose performance -20% and get more stable system and more battery left.
+#
+# When user select performance profile, tuning will be to max performance on screen ON.
+# When screen OFF all tuning switched to max power saving. as with battery profile,
+# So user gets max performance and max battery save but only on screen OFF.
+#
+# This script change governors and tuning for them on the fly.
+# Also switch on/off hotplug CPU core based on screen on/off.
+# This script reset battery stats when battery is 100% charged.
+# This script tune Network and System VM settings and ROM settings tuning.
+# This script changing default MOUNT options and I/O tweaks for all flash disks and ZRAM.
+#
+# TODO: add more description, explanations & default vaules ...
+#

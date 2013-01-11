@@ -179,5 +179,5 @@ if [ $init_d == on ]; then
 $BB sh /sbin/ext/run-init-scripts.sh;
 fi;
 # run partitions tune after full boot
-$BB sh /sbin/ext/partitions-tune.sh
+#$BB sh /sbin/ext/partitions-tune.sh
 

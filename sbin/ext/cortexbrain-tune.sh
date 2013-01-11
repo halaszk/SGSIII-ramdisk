@@ -320,8 +320,8 @@ CPU_GOV_TWEAKS()
 	echo "$cpu_online_bias_count_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_count;
 	echo "$cpu_online_bias_up_threshold_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_up_threshold;
 	echo "$cpu_online_bias_down_threshold_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_down_threshold;
-	echo "1" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/max_cpu_lock; # force cpu to single core mode when screen is off!
-	echo "0" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/lcdfreq_enable;
+	#echo "1" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/max_cpu_lock; # force cpu to single core mode when screen is off!
+	#echo "0" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/lcdfreq_enable;
 	echo "$hotplug_compare_level_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_compare_level;
 	
 	log -p i -t $FILE_NAME "*** CPU_GOV_SLEEP_TWEAKS ***: apply";
@@ -805,6 +805,12 @@ ENABLE_NMI()
 	fi;
 }
 
+GAMMA_FIX()
+{
+	echo "$min_gamma" > /sys/class/misc/brightness_curve/min_gamma;
+	echo "$max_gamma" > /sys/class/misc/brightness_curve/max_gamma;
+	log -p i -t $FILE_NAME "*** GAMMA_FIX ***: done";
+}
 
 # ==============================================================
 # TWEAKS: if Screen-ON
@@ -812,6 +818,8 @@ ENABLE_NMI()
 AWAKE_MODE()
 {
 	ENABLE_LOGGER;
+
+	GAMMA_FIX;
 
 	KERNEL_SCHED_AWAKE;
 	

@@ -321,7 +321,7 @@ CPU_GOV_TWEAKS()
 	echo "$cpu_online_bias_up_threshold_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_up_threshold;
 	echo "$cpu_online_bias_down_threshold_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_down_threshold;
 	echo "1" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/max_cpu_lock; # force cpu to single core mode when screen is off!
-	echo "$lcdfreq_enable_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/lcdfreq_enable;
+	echo "0" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/lcdfreq_enable;
 	echo "$hotplug_compare_level_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_compare_level;
 	
 	log -p i -t $FILE_NAME "*** CPU_GOV_SLEEP_TWEAKS ***: apply";
@@ -360,7 +360,7 @@ CPU_GOV_TWEAKS()
 	echo "$cpu_online_bias_up_threshold" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_up_threshold;
 	echo "$cpu_online_bias_down_threshold" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_down_threshold;
 	echo "$max_cpu_lock" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/max_cpu_lock;
-	echo "$lcdfreq_enable" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/lcdfreq_enable;
+	echo "$lcdfreq" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/lcdfreq_enable;
 	echo "$hotplug_compare_level" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_compare_level;
 
 	log -p i -t $FILE_NAME "*** CPU_GOV_AWAKE_TWEAKS ***: apply";
@@ -826,8 +826,10 @@ AWAKE_MODE()
 	WAKEUP_BOOST_DELAY;
 	
 	echo "$AWAKE_LAPTOP_MODE" > /proc/sys/vm/laptop_mode;
-	$IWCONFIG wlan0 txpower 2;
 	
+	if [ "$cortexbrain_wifi" == on ]; then
+	$IWCONFIG wlan0 txpower 2;
+	fi;
 	# set default values
 	echo "$dirty_expire_centisecs_default" > /proc/sys/vm/dirty_expire_centisecs;
 	echo "$dirty_writeback_centisecs_default" > /proc/sys/vm/dirty_writeback_centisecs;
@@ -912,7 +914,10 @@ SLEEP_MODE()
 	echo "80" > /sys/devices/system/cpu/busfreq/up_cpu_threshold;
 	echo "500" > /sys/module/mali/parameters/mali_gpu_utilization_timeout;
 	fi;
+	if [ "$cortexbrain_wifi" == on ]; then
 	$IWCONFIG wlan0 txpower 2;
+	fi;
+	
 	echo "$SLEEP_LAPTOP_MODE" > /proc/sys/vm/laptop_mode;
 
 	KERNEL_SCHED_SLEEP;

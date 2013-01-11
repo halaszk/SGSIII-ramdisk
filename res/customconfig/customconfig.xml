@@ -666,7 +666,10 @@
     <settingsPane description="Other screen related settings" name="Other Settings">
         <checkbox description="mDNIe sharpness tweaks from hardcore. Requires reboot to be effective." name="mDNIe Sharpness Tweaks" action="generic /tmp/mdniemod" label="mDNIe Sharpness Tweaks"/>
 	    <checkbox description="Enable inverting the screen colors by quickly pressing Home button 4 times" name="mDNIe Negative Toggle" action="generic01 /sys/module/gpio_keys/parameters/mdnie_shortcut_enabled" label="mDNIe Negative Toggle"/>
-		<checkbox description="Enables or disables the mechanic, disabled by default" name="LCDfreq_enable" action="cpu-governor lcdfreq_enable" label="Dynamic Screen Frequency Scaling for CPU Governors"/>
+		<spinner description="Enables or disables the mechanic, disabled by default" name="LCDfreq_enable" action="cpu-governor lcdfreq" label="Dynamic Screen Frequency Scaling for CPU Governors">
+				<spinnerItem name="On" value="1"/>
+				<spinnerItem name="Off" value="0"/>
+		</spinner>
 		<checkbox description="LCD Power Reduce for backlight. If you like brighter screen in cost of battery drain, then turn it off. Default: On."
 			  name="LCD POWER" action="generic01 /sys/class/lcd/panel/power_reduce" label="LCD POWER REDUCE"/>
 		<seekBar description="Setting min_bl higher will result in staying lowest brightness level for brighter conditions (default 30)"
@@ -866,6 +869,8 @@
 			name="Kernel-Tweaks" action="generic_cortex /tmp/cortexbrain_kernel_tweaks" label="Kernel-Tweaks"/>
 		<checkbox description='Enable or Disable "I/O-Tweaks". (To update after change REBOOT)'
 			name="I/O-Tweaks" action="generic_cortex /tmp/cortexbrain_io" label="I/O-Tweaks"/>
+		<checkbox description='Enable or Disable "WIFI-Tweaks". (To update after change REBOOT)'
+			name="WIFI-Tweaks" action="generic_cortex /tmp/cortexbrain_wifi" label="WIFI-Tweaks"/>
 		<spinner description='Maximum number of kilobytes to read-ahead for filesystems on this block device. Maybe get better read-performance with higher value, but you will probably need to experiment and benchmark (e.g. with "SD Tools"-App) to find the best value for your sd-card / system and maybe you will have a higher overhead (less memory) with a higher value. Works only if "I/O-Tweaks" tweak is enabled! Default: 128'
 			name="kilobytes to read-ahead" action="generic_cortex /tmp/cortexbrain_read_ahead_kb">
 			<spinnerItem name="64 kb" value="64"/> 

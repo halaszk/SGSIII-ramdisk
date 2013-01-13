@@ -1,37 +1,18 @@
 #!/sbin/busybox sh
 
-if [ "a$2" != "a" ];then
+PROFILE=`cat /data/.siyah/.active.profile`;
+. /data/.siyah/$PROFILE.profile;
 
-filename=$(basename $2)
-
-if [ "a$3" == "a" ];then
-  evalcmd='eval "echo \$$filename"'
-  eval $evalcmd
-  exit
+if [ "a$3" == "a" ]; then
+	evalcmd='eval "echo \$CPUVOLT$2"';
+	eval $evalcmd;
 else
-  evalcmd='eval "$filename=$3"'
-  eval $evalcmd
-  evalcmd='eval "echo \$$filename"'
-  eval $evalcmd
-fi
+	evalcmd='eval "CPUVOLT$2=$3"';
+	eval $evalcmd;
+	evalcmd='eval "echo \$CPUVOLT$2"';
+	eval $evalcmd;
 
-  if [ -f /sys/devices/system/cpu/cpu0/cpufreq/UV_mV_table ];then
- case "$cpu_undervolting" in
-  0)
-        echo "1400 1400 1375 1313 1275 1238 1175 1125 1075 1025 975 963 950 938 925 900 900 900" > /sys/devices/system/cpu/cpu0/cpufreq/UV_mV_table
-    ;;
-  25)
-        echo "1400 1400 1375 1313 1250 1213 1150 1100 1050 1000 950 938 925 913 900 875 875 875" > /sys/devices/system/cpu/cpu0/cpufreq/UV_mV_table
-    ;;
-  50)
-        echo "1400 1400 1375 1313 1225 1188 1125 1075 1025 975 925 913 900 888 875 850 850 850" > /sys/devices/system/cpu/cpu0/cpufreq/UV_mV_table
-    ;;
-  75)
-        echo "1400 1400 1375 1313 1200 1163 1100 1050 1000 950 900 888 875 863 850 825 825 825" > /sys/devices/system/cpu/cpu0/cpufreq/UV_mV_table
-    ;;
-  100)
-        echo "1400 1400 1375 1313 1175 1138 1075 1025 975 925 875 863 850 838 825 800 800 800" > /sys/devices/system/cpu/cpu0/cpufreq/UV_mV_table
-    ;;
-esac;
-fi
-fi
+	if [ "$cpu_voltage_switch" == on ]; then
+		echo "1400 1400 1375 1313 $CPUVOLT1 $CPUVOLT2 $CPUVOLT3 $CPUVOLT4 $CPUVOLT5 $CPUVOLT6 $CPUVOLT7 $CPUVOLT8 $CPUVOLT9 $CPUVOLT10 $CPUVOLT11 $CPUVOLT12 $CPUVOLT13 $CPUVOLT14" > /sys/devices/system/cpu/cpu0/cpufreq/UV_mV_table;
+	fi;
+fi;

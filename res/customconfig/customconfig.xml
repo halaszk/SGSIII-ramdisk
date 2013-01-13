@@ -26,18 +26,6 @@
       </spinner>
       <seekBar description="Sets the sched_mc value which changes the cpu scheduler behaviour for multi-cpu systems. 0 is Samsung kernel's default value which turns sched_mc off. Setting it to 1 means that the first core will be tried to be loaded more and setting it to 2 will bias task wake-ups to semi-idle cpu package for power savings. (default: 0)" name="sched_mc" action="generic /sys/devices/system/cpu/sched_mc_power_savings" unit="" min="0" reversed="false" step="1" max="2"/>
     </settingsPane>
-	<settingsPane description=""
-	name="CPU Undervolting">
-      <spinner description="Sets the CPU undervolting value which will be applied during boot time only. It will not have any effect until you restart your device. Remember: if you change this value and your device doesn't boot you will have to reset extweaks settings using CWM recovery. This value will be applied to all CPU steps before any script or app execution. If you use any script or voltage control app this setting may be overriden by those." 
-	  name="CPU Undervolting" action="cpu-voltage cpu_undervolting">
-             <spinnerItem name="No Undervolting" value="0"/>
-             <spinnerItem name=" -25 mV" value="25"/>
-             <spinnerItem name=" -50 mV" value="50"/>
-             <spinnerItem name=" -75 mV" value="75"/>
-             <spinnerItem name="-100 mV" value="100"/>
-      </spinner>
-	  <button description="Use this button to see CPU Voltage that used right now!" name="Check Active CPU Voltage" action="push-actions/check_cpu_voltage" label="Check CPU Voltage"/>
-    </settingsPane>
     <settingsPane description=""
 		name="CPU Scaling Settings">
        <spinner description="This will set the default CPU governor. Default CPU governor will only be set during early stages of booting (before init.d execution) and can be overriden by later scripts or apps." name="Default CPU Governor" action="generic /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor">
@@ -75,6 +63,41 @@
 	</spinner>
     </settingsPane>
   </settingsTab>
+ <settingsTab name="CPU VOLTAGE">
+	<settingsPane description="CPU Voltage Controls. Frequencies above 1400Mhz are not allowed to be modified via STweaks. Voltage Range is 650~1400mV. Lower/higher is NOT SUPPORTED. All is done to prevent BUGS and SODS. USE this interface AT YOUR OWN RISK! If you get SOD before you can load this interface and can't fix your error, reset profiles from recovery. And think harder before you SOD your CPU with too much UV!" name="CPU Voltage Controls">
+		<checkbox description="Main switch for Voltage Control! If disabled, all below settings have no effect! If you are using an external application or script to configure CPU voltage, don't tick this checkbox. Don't start to mod voltage before you enable this switch! It will not make any effect and you will have to set all to default, and tune again!" 
+			name="CPU Voltage Main Switch" action="generic_cortex /tmp/cpu_voltage_switch" label="CPU Voltage Main Switch"/>
+		<button description="Use this button to see what CPU Voltage is used right now!" name="Check Active CPU Voltage" action="push-actions/check_cpu_voltage" label="Check CPU Voltage"/>
+		<seekBar description="CPU Voltage for 1400Mhz. Default: 1275mV"
+			name="CPU Voltage 1400Mhz" action="cpu-voltage 1" unit="mV" min="650" reversed="false" step="25" max="1350"/>
+		<seekBar description="CPU Voltage for 1300Mhz. Default: 1238mV"
+			name="CPU Voltage 1300Mhz" action="cpu-voltage 2" unit="mV" min="650" reversed="false" step="25" max="1350"/>
+		<seekBar description="CPU Voltage for 1200Mhz. Default: 1175mV"
+			name="CPU Voltage 1200Mhz" action="cpu-voltage 3" unit="mV" min="650" reversed="false" step="25" max="1350"/>
+		<seekBar description="CPU Voltage for 1100Mhz. Default: 1125mV"
+			name="CPU Voltage 1100Mhz" action="cpu-voltage 4" unit="mV" min="650" reversed="false" step="25" max="1300"/>
+		<seekBar description="CPU Voltage for 1000Mhz. Default: 1075mV"
+			name="CPU Voltage 1000Mhz" action="cpu-voltage 5" unit="mV" min="650" reversed="false" step="25" max="1250"/>
+		<seekBar description="CPU Voltage for 900Mhz. Default: 1025mV"
+			name="CPU Voltage 900Mhz" action="cpu-voltage 6" unit="mV" min="650" reversed="false" step="25" max="1175"/>
+		<seekBar description="CPU Voltage for 800Mhz. Default: 975mV"
+			name="CPU Voltage 800Mhz" action="cpu-voltage 7" unit="mV" min="650" reversed="false" step="25" max="1125"/>
+		<seekBar description="CPU Voltage for 700Mhz. Default: 963mV"
+			name="CPU Voltage 700Mhz" action="cpu-voltage 8" unit="mV" min="650" reversed="false" step="25" max="1075"/>
+		<seekBar description="CPU Voltage for 600Mhz. Default: 950mV"
+			name="CPU Voltage 600Mhz" action="cpu-voltage 9" unit="mV" min="650" reversed="false" step="25" max="1050"/>
+		<seekBar description="CPU Voltage for 500Mhz. Default: 938mV"
+			name="CPU Voltage 500Mhz" action="cpu-voltage 10" unit="mV" min="650" reversed="false" step="25" max="1025"/>
+		<seekBar description="CPU Voltage for 400Mhz. Default: 925mV"
+			name="CPU Voltage 400Mhz" action="cpu-voltage 11" unit="mV" min="650" reversed="false" step="25" max="1025"/>
+		<seekBar description="CPU Voltage for 300Mhz. Default: 900mV"
+			name="CPU Voltage 300Mhz" action="cpu-voltage 12" unit="mV" min="650" reversed="false" step="25" max="1025"/>
+		<seekBar description="CPU Voltage for 200Mhz. Default: 900mV"
+			name="CPU Voltage 200Mhz" action="cpu-voltage 13" unit="mV" min="650" reversed="false" step="25" max="1000"/>
+		<seekBar description="CPU Voltage for 100Mhz. Default: 900mV"
+			name="CPU Voltage 100Mhz" action="cpu-voltage 14" unit="mV" min="650" reversed="false" step="25" max="975"/>
+		</settingsPane>
+	</settingsTab>
 	<settingsTab name="GOVERNOR TUN./(AWAKE)">
 		<settingsPane description="Tuneables for CPU hotplug, online-ing and offline-ing of cores on light use when not being used." 
                   name="Scaling speed">
@@ -872,7 +895,7 @@
 		<checkbox description='Enable or Disable "WIFI-Tweaks". (To update after change REBOOT)'
 			name="WIFI-Tweaks" action="generic_cortex /tmp/cortexbrain_wifi" label="WIFI-Tweaks"/>
 		 <seekBar description=""
-                name="wifi power limit" action="generic_cortex /tmp/cortexbrain_wifi_tx" unit=" dBm" min="1" reversed="false" step="1" max="20"/>
+	                name="wifi power limit" action="generic_cortex /tmp/cortexbrain_wifi_tx" unit=" dBm" min="1" reversed="false" step="2" max="100"/>
 		<spinner description='Maximum number of kilobytes to read-ahead for filesystems on this block device. Maybe get better read-performance with higher value, but you will probably need to experiment and benchmark (e.g. with "SD Tools"-App) to find the best value for your sd-card / system and maybe you will have a higher overhead (less memory) with a higher value. Works only if "I/O-Tweaks" tweak is enabled! Default: 128'
 			name="kilobytes to read-ahead" action="generic_cortex /tmp/cortexbrain_read_ahead_kb">
 			<spinnerItem name="64 kb" value="64"/> 

@@ -9,7 +9,7 @@ else
   evalcmd='eval "echo \$zram_size"'
   eval $evalcmd
 
-  echo 100 > /proc/sys/vm/swappiness
+  echo 60 > /proc/sys/vm/swappiness
   swapoff /dev/block/zram0 > /dev/null 2>&1
   echo 1 > /sys/devices/virtual/block/zram0/reset
   echo `expr $zram_size \* 1024 \* 1024` > /sys/devices/virtual/block/zram0/disksize

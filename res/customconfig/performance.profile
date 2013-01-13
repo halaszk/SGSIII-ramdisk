@@ -110,6 +110,7 @@ cortexbrain_kernel_tweaks=on
 cortexbrain_io=on
 cortexbrain_multitaskingfix=on
 cortexbrain_wifi=off
+cortexbrain_wifi_tx=8
 sleep_scheduler=deadline
 init_d=off
 exfat=off

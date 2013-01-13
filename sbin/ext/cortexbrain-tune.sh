@@ -836,7 +836,7 @@ AWAKE_MODE()
 	echo "$AWAKE_LAPTOP_MODE" > /proc/sys/vm/laptop_mode;
 	
 	if [ "$cortexbrain_wifi" == on ]; then
-	$IWCONFIG wlan0 txpower 2;
+	$IWCONFIG wlan0 txpower $cortexbrain_wifi_tx;
 	fi;
 	# set default values
 	echo "$dirty_expire_centisecs_default" > /proc/sys/vm/dirty_expire_centisecs;
@@ -923,7 +923,7 @@ SLEEP_MODE()
 	echo "500" > /sys/module/mali/parameters/mali_gpu_utilization_timeout;
 	fi;
 	if [ "$cortexbrain_wifi" == on ]; then
-	$IWCONFIG wlan0 txpower 2;
+	$IWCONFIG wlan0 txpower $cortexbrain_wifi_tx;
 	fi;
 	
 	echo "$SLEEP_LAPTOP_MODE" > /proc/sys/vm/laptop_mode;

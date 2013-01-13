@@ -817,6 +817,8 @@ GAMMA_FIX()
 # ==============================================================
 AWAKE_MODE()
 {
+	IO_TWEAKS;
+
 	ENABLE_LOGGER;
 
 	GAMMA_FIX;

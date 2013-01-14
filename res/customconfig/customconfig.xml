@@ -763,25 +763,6 @@
 	<button description="ZRAM check for active state" name="ZRAM STATS" action="push-actions/zramstats" label="ZRAM STATS"/>
 		<button description="Update time via ntp-server" name="UPDATE TIME" action="push-actions/time_update" label="UPDATE TIME"/>
       <checkbox description="Enable or Disable Android Logger (needs reboot)" name="Android Logger" action="generic /tmp/logger" label="Android Logger"/>
-      <spinner description="This will set the default I/O scheduler. Default I/O scheduler will only be set during early stages of booting (before init.d execution) and can be overriden by later scripts or apps." name="Default I/O Scheduler" action="generic /sys/block/mmcblk0/queue/scheduler">
-             <spinnerItem name="sio" value="sio"/> 
-             <spinnerItem name="noop" value="noop"/> 
-             <spinnerItem name="deadline" value="deadline"/> 
-             <spinnerItem name="vr" value="vr"/> 
-             <spinnerItem name="cfq" value="cfq"/> 
-			 <spinnerItem name="zen" value="zen"/>
-			 <spinnerItem name="row" value="row"/>
-       </spinner>
-	  	<spinner description="This will set the STANDBY/DEEPSLEEP I/O scheduler for internal, system, data and external sdcard. Default is NOOP"
-						  name="STANDBY/DEEPSLEEP I/O Scheduler" action="generic_sleep_scheduler /tmp/sleep_scheduler">
-             <spinnerItem name="sio" value="sio"/> 
-             <spinnerItem name="noop" value="noop"/> 
-             <spinnerItem name="deadline" value="deadline"/> 
-             <spinnerItem name="vr" value="vr"/> 
-             <spinnerItem name="cfq" value="cfq"/> 
-			 <spinnerItem name="zen" value="zen"/>
-			 <spinnerItem name="row" value="row"/>
-		</spinner>
 	        <spinner description="Notification LED Behavior" name="Notification LED Behavior" action="generic /sys/devices/virtual/sec/led/led_fade">
              <spinnerItem name="ROM default" value="-1"/> 
              <spinnerItem name="Blinking" value="0"/> 
@@ -830,6 +811,39 @@
 		<button description="Use this button to check if Cron Task Jobs are done as requested. This will show the log for all finished jobs." name="Test Cron Task Jobs" action="push-actions/crontab_log" label="Test Cron Task Jobs"/>
 	</settingsPane>
 	</settingsTab>
+	<settingsTab name="I/O">
+		<settingsPane description="Here you can tune I/O settings managed by Kernel" name="I/O Tuning">		
+			<spinner description='Maximum number of kilobytes to read-ahead for filesystems on this block device. Maybe get better read-performance with higher value, but you will probably need to experiment and benchmark (e.g. with "SD Tools"-App) to find the best value for your sd-card / system and maybe you will have a higher overhead (less memory) with a higher value. Works only if "I/O-Tweaks" tweak is enabled! Default: 128'
+				     name="kilobytes to read-ahead" action="generic_cortex /tmp/cortexbrain_read_ahead_kb">
+			<spinnerItem name="64 kb" value="64"/> 
+			<spinnerItem name="128 kb" value="128"/> 
+			<spinnerItem name="256 kb" value="256"/> 
+			<spinnerItem name="512 kb" value="512"/> 
+			<spinnerItem name="1024 kb" value="1024"/> 
+			<spinnerItem name="2048 kb" value="2048"/>
+			<spinnerItem name="4096 kb" value="4096"/>
+			</spinner>
+	      <spinner description="This will set the default I/O scheduler. Default I/O scheduler will only be set during early stages of booting (before init.d execution) and can be overriden by later scripts or apps." name="Default I/O Scheduler" action="generic /sys/block/mmcblk0/queue/scheduler">
+             <spinnerItem name="sio" value="sio"/> 
+             <spinnerItem name="noop" value="noop"/> 
+             <spinnerItem name="deadline" value="deadline"/> 
+             <spinnerItem name="vr" value="vr"/> 
+             <spinnerItem name="cfq" value="cfq"/> 
+	     <spinnerItem name="zen" value="zen"/>
+	     <spinnerItem name="row" value="row"/>
+	       </spinner>
+	  	<spinner description="This will set the STANDBY/DEEPSLEEP I/O scheduler for internal, system, data and external sdcard. Default is NOOP"
+			  name="STANDBY/DEEPSLEEP I/O Scheduler" action="generic_sleep_scheduler /tmp/sleep_scheduler">
+             <spinnerItem name="sio" value="sio"/> 
+             <spinnerItem name="noop" value="noop"/> 
+             <spinnerItem name="deadline" value="deadline"/> 
+             <spinnerItem name="vr" value="vr"/> 
+             <spinnerItem name="cfq" value="cfq"/> 
+			 <spinnerItem name="zen" value="zen"/>
+			 <spinnerItem name="row" value="row"/>
+		</spinner>
+	</settingsPane>
+</settingsTab>
   <settingsTab name="Dualboot">
     <settingsPane description="Dual-Boot Settings. Warning: No confirmation will be asked for reboot buttons." name="Dual-Boot Settings">
       <button description="Reboot into 2ndROM Utils which let you configure, clone or backup the 2ndROM" name="Reboot into 2ndROM Utils" action="reboot-into 0" label="Reboot into 2ndROM Utils"/>

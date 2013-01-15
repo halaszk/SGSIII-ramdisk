@@ -125,6 +125,7 @@ cortexbrain_multitaskingfix=on
 cortexbrain_wifi=off
 cortexbrain_wifi_tx=8
 sleep_scheduler=deadline
+oom_config=medium
 init_d=off
 exfat=off
 freq_for_responsiveness=400000

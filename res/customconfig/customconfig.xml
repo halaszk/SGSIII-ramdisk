@@ -32,7 +32,6 @@
 	     <spinnerItem name="ondemandq" value="ondemandq"/>
 	     <spinnerItem name="pegasusq" value="pegasusq"/>
 		 <spinnerItem name="hydrxq" value="hydrxq"/>
-		 <spinnerItem name="nightmare" value="nightmare"/>
          <spinnerItem name="performance" value="performance"/>
        </spinner>
     <seekBar description="Scaling maximum frequency (Samsung default: 1400000)"
@@ -56,7 +55,6 @@
 		unit="Sec" min="0" reversed="false" step="1" max="15"/>
 	<spinner description="This will set the DEEP SLEEP (screen off) CPU governor. Depends on cortex background process to be enabled."
 		name="Deep-Sleep! CPU Governor" action="generic /tmp/deep_sleep">
-	<spinnerItem name="nightmare" value="nightmare"/>
     <spinnerItem name="pegasusq" value="pegasusq"/>
     <spinnerItem name="hydrxq" value="hydrxq"/>
 	<spinnerItem name="ondemandq" value="ondemandq"/>
@@ -811,8 +809,8 @@
 		<button description="Use this button to check if Cron Task Jobs are done as requested. This will show the log for all finished jobs." name="Test Cron Task Jobs" action="push-actions/crontab_log" label="Test Cron Task Jobs"/>
 	</settingsPane>
 	</settingsTab>
-	<settingsTab name="I/O">
-		<settingsPane description="Here you can tune I/O settings managed by Kernel" name="I/O Tuning">		
+	<settingsTab name="I/O and OOM">
+		<settingsPane description="Here you can tune I/O and OOM(low mem management) settings managed by Kernel" name="I/O and OOM Tuning">	
 			<spinner description='Maximum number of kilobytes to read-ahead for filesystems on this block device. Maybe get better read-performance with higher value, but you will probably need to experiment and benchmark (e.g. with "SD Tools"-App) to find the best value for your sd-card / system and maybe you will have a higher overhead (less memory) with a higher value. Works only if "I/O-Tweaks" tweak is enabled! Default: 128'
 				     name="kilobytes to read-ahead" action="generic_cortex /tmp/cortexbrain_read_ahead_kb">
 			<spinnerItem name="64 kb" value="64"/> 
@@ -841,6 +839,14 @@
              <spinnerItem name="cfq" value="cfq"/> 
 			 <spinnerItem name="zen" value="zen"/>
 			 <spinnerItem name="row" value="row"/>
+		</spinner>
+		<spinner description="Here you can set the level of low mem managemet by kernel lowmemkiller function, more aggressive, then more free RAM but more killed apps"
+						 name="OOM Level Tuning" action="oom_config">
+			<spinnerItem name="very_light" value="very_light"/> 
+			<spinnerItem name="light" value="light"/> 
+			<spinnerItem name="medium" value="medium"/> 
+			<spinnerItem name="aggressive" value="aggressive"/> 
+			<spinnerItem name="exterminate" value="exterminate"/> 
 		</spinner>
 	</settingsPane>
 </settingsTab>

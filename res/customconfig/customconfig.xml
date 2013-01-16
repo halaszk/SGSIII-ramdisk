@@ -99,6 +99,7 @@
 	<settingsTab name="GOVERNOR TUN./(AWAKE)">
 		<settingsPane description="Tuneables for CPU hotplug, online-ing and offline-ing of cores on light use when not being used." 
                   name="Scaling speed">
+	<button description="Use this button to push all new changes to GOV core in real time! the sleep tuning will be auto added on screen off, to screen off gov." name="GOV Policy Install" action="push-actions/cpu_tuning_update" label="Push CPU Tuning To GOV Core"/>
 			 <spinner description="Set the freqency threshold below which we use aggressive up-scaling. Default: 400MHz." 
                name="Frequency for responsiveness" 
                action="cpu-governor freq_for_responsiveness">

@@ -128,6 +128,11 @@ case "${debug_to_sd}" in
 			cat /proc/partitions >> $DEBUG_FILE;
 			SEPARATOR;
 
+			# Emmc firmware date
+                        echo "EMMC firmware version:" >> $DEBUG_FILE;
+                        cat /sys/class/misc/emmc_fw_date/emmc_fw_date >> $DEBUG_FILE;
+                        SEPARATOR;
+
 			# System
 			echo "System-Info:" >> $DEBUG_FILE;
 			echo "sysctl:" >> $DEBUG_FILE;

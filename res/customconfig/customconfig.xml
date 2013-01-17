@@ -613,6 +613,18 @@
       <seekBar description="GPU threshold to jump down from fifth to fourth step" 
 		name="GPU Threshold 5-DOWN" action="gpu-thresh 5DOWN" unit="%" min="0" reversed="false" step="5" max="100"/>
     </settingsPane>
+    <settingsPane description="The number of cycles that the GPU stays at the specific level. The defaults are all 0." name="GPU StayCount">
+      <seekBar description="GPU first step (for the lowest freq) StayCount" 
+		name="GPU StayCount1" action="gpu-staycount 1" unit=" sec" min="0" reversed="false" step="1" max="5"/>
+      <seekBar description="GPU second step StayCount" 
+		name="GPU StayCount2" action="gpu-staycount 2" unit=" sec" min="0" reversed="false" step="1" max="5"/>
+      <seekBar description="GPU third step StayCount" 
+		name="GPU StayCount3" action="gpu-staycount 3" unit=" sec" min="0" reversed="false" step="1" max="5"/>
+      <seekBar description="GPU fourth step StayCount" 
+		name="GPU StayCount4" action="gpu-staycount 4" unit=" sec" min="0" reversed="false" step="1" max="5"/>
+      <seekBar description="GPU fifth step (for the highest freq) StayCount"
+                name="GPU StayCount4" action="gpu-staycount 5" unit=" sec" min="0" reversed="false" step="1" max="5"/>
+    </settingsPane>
   </settingsTab>
   <settingsTab name="Audio">
     <settingsPane description="Speaker Tuning Settings" name="Speaker Tuning">

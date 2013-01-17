@@ -1,4 +1,4 @@
-#!$BB sh
+#!/sbin/busybox sh
 
 #Credits:
 # Zacharias.maladroit

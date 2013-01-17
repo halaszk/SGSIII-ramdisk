@@ -77,6 +77,10 @@ if [ "$SECONDROM" == "0" ];then
     /sbin/choose_rom $SECONDROM
   fi
 else
+  if [ ! -f /.secondrom/media/.secondrom/data/.layout_version ];then
+    echo 2 > /.secondrom/media/.secondrom/data/.layout_version
+    mkdir /.secondrom/media/0
+  fi
   if [ "$NEXTBOOT" == "1" ];then
     SECONDROM=0;
   elif [ "$NEXTBOOT" == "2" ];then

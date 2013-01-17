@@ -1,4 +1,4 @@
-#!/sbin/busybox sh
+#!$BB sh
 
 #Credits:
 # Zacharias.maladroit
@@ -23,6 +23,7 @@ PIDOFCORTEX=$$;
 IWCONFIG=/sbin/iwconfig;
 AWAKE_LAPTOP_MODE="0";
 SLEEP_LAPTOP_MODE="5";
+BB=/sbin/busybox;
 
 # set not yet known values for functions
 power_performance=0;
@@ -146,7 +147,7 @@ KERNEL_TWEAKS()
 		echo "2097152" > /proc/sys/kernel/shmall;
 		echo "268435456" > /proc/sys/kernel/shmmax;
 		echo "524288" > /proc/sys/kernel/threads-max;
-  		/sbin/busybox sysctl -w kernel.panic=10;
+  		$BB sysctl -w kernel.panic=10;
 	
 		log -p i -t $FILE_NAME "*** KERNEL_TWEAKS ***: enabled";
 	fi;
@@ -220,9 +221,9 @@ BATTERY_TWEAKS()
 {
 	if [ "$cortexbrain_battery" == on ]; then
 	  # vm tweaks
-	  /sbin/busybox sysctl -w vm.dirty_background_ratio=70;
-	  /sbin/busybox sysctl -w vm.dirty_ratio=90;
-	  /sbin/busybox sysctl -w vm.vfs_cache_pressure=10;
+	  $BB sysctl -w vm.dirty_background_ratio=70;
+	  $BB sysctl -w vm.dirty_ratio=90;
+	  $BB sysctl -w vm.vfs_cache_pressure=10;
 
 	# System tweaks: Hardcore speedmod
 	  # vm tweaks
@@ -409,14 +410,14 @@ MEMORY_TWEAKS()
 # =========
 mem=`free|grep Mem | awk '{print $2}'`;
 if [ "$mem" -lt 524288 ];then
-	sysctl -w vm.dirty_background_ratio=20;
-	sysctl -w vm.dirty_ratio=40;
+	$BB sysctl -w vm.dirty_background_ratio=20;
+	$BB sysctl -w vm.dirty_ratio=40;
 elif [ "$mem" -lt 1049776 ];then
-	sysctl -w vm.dirty_background_ratio=10;
-	sysctl -w vm.dirty_ratio=20;
+	$BB sysctl -w vm.dirty_background_ratio=10;
+	$BB sysctl -w vm.dirty_ratio=20;
 else 
-	sysctl -w vm.dirty_background_ratio=5;
-	sysctl -w vm.dirty_ratio=10;
+	$BB sysctl -w vm.dirty_background_ratio=5;
+	$BB sysctl -w vm.dirty_ratio=10;
 fi;
 
 		log -p i -t $FILE_NAME "*** MEMORY_TWEAKS ***: enabled";
@@ -500,11 +501,11 @@ TCP_TWEAKS()
 		echo "6144 87380 524288" > /proc/sys/net/ipv4/tcp_rmem;
 		echo "4096" > /proc/sys/net/ipv4/udp_rmem_min;
 		echo "4096" > /proc/sys/net/ipv4/udp_wmem_min;
-	  /sbin/busybox sysctl -w net.core.rmem_max=524288;
-	  /sbin/busybox sysctl -w net.core.wmem_max=524288;
-	  /sbin/busybox sysctl -w net.ipv4.tcp_rmem='6144 87380 524288';
-	  /sbin/busybox sysctl -w net.ipv4.tcp_tw_recycle=1;
-	  /sbin/busybox sysctl -w net.ipv4.tcp_wmem='6144 87380 524288';
+	  $BB sysctl -w net.core.rmem_max=524288;
+	  $BB sysctl -w net.core.wmem_max=524288;
+	  $BB sysctl -w net.ipv4.tcp_rmem='6144 87380 524288';
+	  $BB sysctl -w net.ipv4.tcp_tw_recycle=1;
+	  $BB sysctl -w net.ipv4.tcp_wmem='6144 87380 524288';
 
 		log -p i -t $FILE_NAME "*** TCP_TWEAKS ***: enabled";
 	fi;
@@ -584,7 +585,7 @@ ENABLE_GESTURES()
 		echo "1" > /sys/devices/virtual/misc/touch_gestures/gestures_enabled;
 		pkill -f "/data/gesture_set.sh";
 		pkill -f "/sys/devices/virtual/misc/touch_gestures/wait_for_gesture";
-		nohup /sbin/busybox sh /data/gesture_set.sh;
+		nohup $BB sh /data/gesture_set.sh;
 		log -p i -t $FILE_NAME "*** GESTURE ***: enabled";
 	fi;
 }
@@ -754,11 +755,11 @@ TUNE_IPV6()
 	CISCO_VPN=`find /data/data/com.cisco.anyconnec* | wc -l`;
 	if [ "$cortexbrain_ipv6" == on ] || [ "$CISCO_VPN" != 0 ]; then
 		echo "0" > /proc/sys/net/ipv6/conf/wlan0/disable_ipv6;
-		sysctl -w net.ipv6.conf.all.disable_ipv6=0;
+		$BB sysctl -w net.ipv6.conf.all.disable_ipv6=0;
 		log -p i -t $FILE_NAME "*** TUNE_IPV6 ***: enabled";
 	else
 		echo "1" > /proc/sys/net/ipv6/conf/wlan0/disable_ipv6;
-		sysctl -w net.ipv6.conf.all.disable_ipv6=1;
+		$BB sysctl -w net.ipv6.conf.all.disable_ipv6=1;
 		log -p i -t $FILE_NAME "*** TUNE_IPV6 ***: disabled";
 	fi;
 }
@@ -767,19 +768,19 @@ KERNEL_SCHED_AWAKE()
 {
 	case "${cfs_tweaks}" in
   0)
-    sysctl -w kernel.sched_min_granularity_ns=750000 > /dev/null;
-    sysctl -w kernel.sched_latency_ns=10000000 > /dev/null;
-    sysctl -w kernel.sched_wakeup_granularity_ns=2000000 > /dev/null;
+    $BB sysctl -w kernel.sched_min_granularity_ns=750000 > /dev/null;
+    $BB sysctl -w kernel.sched_latency_ns=10000000 > /dev/null;
+    $BB sysctl -w kernel.sched_wakeup_granularity_ns=2000000 > /dev/null;
     ;;
   1)
-    sysctl -w kernel.sched_min_granularity_ns=750000 > /dev/null;
-    sysctl -w kernel.sched_latency_ns=6000000 > /dev/null;
-    sysctl -w kernel.sched_wakeup_granularity_ns=1000000 > /dev/null;
+    $BB sysctl -w kernel.sched_min_granularity_ns=750000 > /dev/null;
+    $BB sysctl -w kernel.sched_latency_ns=6000000 > /dev/null;
+    $BB sysctl -w kernel.sched_wakeup_granularity_ns=1000000 > /dev/null;
     ;;
   2)
-    sysctl -w kernel.sched_min_granularity_ns=200000 > /dev/null;
-    sysctl -w kernel.sched_latency_ns=400000 > /dev/null;
-    sysctl -w kernel.sched_wakeup_granularity_ns=100000 > /dev/null;
+    $BB sysctl -w kernel.sched_min_granularity_ns=200000 > /dev/null;
+    $BB sysctl -w kernel.sched_latency_ns=400000 > /dev/null;
+    $BB sysctl -w kernel.sched_wakeup_granularity_ns=100000 > /dev/null;
     ;;
 esac;
 
@@ -859,8 +860,10 @@ AWAKE_MODE()
 	echo "$dirty_expire_centisecs_default" > /proc/sys/vm/dirty_expire_centisecs;
 	echo "$dirty_writeback_centisecs_default" > /proc/sys/vm/dirty_writeback_centisecs;
 	
+	if [ "$cortexbrain_cpu_boost" == on ]; then
 	echo "$scaling_governor" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor;
-	
+	fi;
+
 	DISABLE_WIFI_PM;
 	
 	TUNE_IPV6;
@@ -870,9 +873,9 @@ AWAKE_MODE()
 	# set I/O-Scheduler
 	echo "$scheduler" > /sys/block/mmcblk0/queue/scheduler;
 	echo "$scheduler" > /sys/block/mmcblk1/queue/scheduler;
-if [ "$mali_resume_enable" == on ]; then
+	if [ "$mali_resume_enable" == on ]; then
 	echo "$GPUFREQ1" > /sys/module/mali/parameters/step0_clk;
-fi;
+	fi;
 	echo "20" > /proc/sys/vm/vfs_cache_pressure;
 
 	if [ "$cortexbrain_cpu_boost" == on ]; then
@@ -1004,7 +1007,7 @@ if [ "$cortexbrain_background_process" == 1 ] && [ `pgrep -f "cat /sys/power/wai
 		cat /sys/power/wait_for_fb_sleep > /dev/null 2>&1;
 		SLEEP_MODE;
 	done &);
-else
+	else
 	if [ "$cortexbrain_background_process" == 0 ]; then
 		echo "Cortex background disabled!"
 	else

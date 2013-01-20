@@ -734,11 +734,10 @@ SWAPPINESS()
 	SWAP_CHECK=`free | grep Swap | awk '{ print $2 }'`;
 	if [ "$zram" == 0 ] || [ "$SWAP_CHECK" == 0 ]; then
 		echo "0" > /proc/sys/vm/swappiness;
-		log -p i -t $FILE_NAME "*** SWAPPINESS ***: disabled";
 	else
-		echo "60" > /proc/sys/vm/swappiness;
-		log -p i -t $FILE_NAME "*** SWAPPINESS ***: enabled";
+		echo "$swappiness" > /proc/sys/vm/swappiness;
 	fi;
+log -p i -t $FILE_NAME "*** SWAPPINESS: $swappiness ***";
 }
 
 TUNE_IPV6()

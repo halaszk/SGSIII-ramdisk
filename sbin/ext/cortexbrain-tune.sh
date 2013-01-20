@@ -34,8 +34,8 @@ dirty_expire_centisecs_default=1000;
 dirty_writeback_centisecs_default=1000;
 
 # battery settings
-dirty_expire_centisecs_battery=0;
-dirty_writeback_centisecs_battery=0;
+dirty_expire_centisecs_battery=500;
+dirty_writeback_centisecs_battery=1000;
 
 # =========
 # Renice - kernel thread responsible for managing the swap memory and logs
@@ -120,10 +120,20 @@ IO_TWEAKS()
 
 		echo NO_NORMALIZED_SLEEPER > /sys/kernel/debug/sched_features;
 		echo NO_NEW_FAIR_SLEEPERS > /sys/kernel/debug/sched_features;
-		echo NO_START_DEBIT > /sys/kernel/debug/sched_features
-		echo NO_WAKEUP_PREEMPT > /sys/kernel/debug/sched_features
-		echo NEXT_BUDDY > /sys/kernel/debug/sched_features
-		echo SYNC_WAKEUPS > /sys/kernel/debug/sched_features
+		echo NO_START_DEBIT > /sys/kernel/debug/sched_features;
+		echo NO_WAKEUP_PREEMPT > /sys/kernel/debug/sched_features;
+		echo NEXT_BUDDY > /sys/kernel/debug/sched_features;
+		echo SYNC_WAKEUPS > /sys/kernel/debug/sched_features;
+
+	if ( mount | grep -w ext4 ) then
+	echo "EXT4 Partition Found!";
+	echo "Remounting...";
+	$BB mount -o noatime,remount,rw,discard,barrier=0,commit=60,noauto_da_alloc,delalloc /cache /cache;
+	$BB mount -o noatime,remount,rw,discard,barrier=0,commit=60,noauto_da_alloc,delalloc /data /data;
+	$BB mount >> /sdcard/fsck.log;
+	else
+	echo "EXT4 Partition Not Found!";
+	fi;
 
 
 		log -p i -t $FILE_NAME "*** IO_TWEAKS ***: enabled";
@@ -160,10 +170,10 @@ KERNEL_TWEAKS;
 SYSTEM_TWEAKS()
 {
 	if [ "$cortexbrain_system" == on ]; then
-		# render UI with GPU
-		setprop hwui.render_dirty_regions false;
-		setprop windowsmgr.max_events_per_sec 100;
-		# enable Hardware Rendering
+	# render UI with GPU
+	setprop hwui.render_dirty_regions false;
+	setprop windowsmgr.max_events_per_sec 100;
+	# enable Hardware Rendering
 	setprop video.accelerate.hw 1;
 	setprop debug.performance.tuning 1;
 	setprop debug.sf.hw 1;
@@ -176,8 +186,10 @@ SYSTEM_TWEAKS()
 	setprop profiler.force_disable_err_rpt 1;
 	setprop profiler.force_disable_ulog 1;
 
-	# Proximity tweak
-	setprop mot.proximity.delay 15;
+	# Dialing Tweaks
+	setprop ro.telephony.call_ring.delay=0;
+	setprop ro.lge.proximity.delay=25;
+	setprop mot.proximity.delay=25;
 
 	# more Tweaks
 	setprop dalvik.vm.execution-mode int:jit;
@@ -209,6 +221,8 @@ SYSTEM_TWEAKS()
 	setprop media.stagefright.enable-rtsp=true;
 	setprop media.stagefright.enable-record false;
 
+
+
 		log -p i -t $FILE_NAME "*** SYSTEM_TWEAKS ***: enabled";
 	fi;
 }
@@ -220,6 +234,8 @@ SYSTEM_TWEAKS;
 BATTERY_TWEAKS()
 {
 	if [ "$cortexbrain_battery" == on ]; then
+	  $BB mount -t debugfs none /sys/kernel/debug;
+	  $BB umount /sys/kernel/debug;
 	  # vm tweaks
 	  $BB sysctl -w vm.dirty_background_ratio=70;
 	  $BB sysctl -w vm.dirty_ratio=90;
@@ -395,7 +411,7 @@ MEMORY_TWEAKS()
 	#	echo "50" > /proc/sys/vm/overcommit_ratio; # default: 50
 	#	echo "128 128" > /proc/sys/vm/lowmem_reserve_ratio;
 	#	echo "3" > /proc/sys/vm/page-cluster; # default: 3
-		echo "8192" > /proc/sys/vm/min_free_kbytes;
+		echo "2896" > /proc/sys/vm/min_free_kbytes;
 		# =========
 # VM Settings
 # =========
@@ -446,6 +462,12 @@ TCP_TWEAKS()
 {
 	if [ "$cortexbrain_tcp" == on ]; then
 
+	# Website Bypass
+	setprop net.rmnet0.dns1=8.8.8.8;
+	setprop net.rmnet0.dns2=8.8.4.4;
+	setprop net.dns1=8.8.8.8;
+	setprop net.dns2=8.8.4.4;
+
 		# =========
 	# 3G-2G and wifi network battery tweaks
 	setprop ro.ril.enable.a52 0;
@@ -471,32 +493,68 @@ TCP_TWEAKS()
 	setprop ro.ril.fd.scroff.timeout 10;
 	setprop ro.ril.emc.mode 2;
 	setprop ro.ril.att.feature 0;
+	
+	# Wireless Speed Tweaks
+	setprop net.tcp.buffersize.default=4096,87380,256960,4096,16384,256960;
+	setprop net.tcp.buffersize.wifi=4096,87380,256960,4096,16384,256960;
+	setprop net.tcp.buffersize.umts=4096,87380,256960,4096,16384,256960;
+	setprop net.tcp.buffersize.gprs=4096,87380,256960,4096,16384,256960;
+	setprop net.tcp.buffersize.edge=4096,87380,256960,4096,16384,256960;
+	setprop net.ipv4.tcp_ecn=0;
+	setprop net.ipv4.route.flush=1;
+	setprop net.ipv4.tcp_rfc1337=1;
+	setprop net.ipv4.ip_no_pmtu_disc=0;
+	setprop net.ipv4.tcp_sack=1;
+	setprop net.ipv4.tcp_fack=1;
+	setprop net.ipv4.tcp_window_scaling=1;
+	setprop net.ipv4.tcp_timestamps=1;
+	setprop net.ipv4.tcp_rmem=4096 39000 187000;
+	setprop net.ipv4.tcp_wmem=4096 39000 187000;
+	setprop net.ipv4.tcp_mem=187000 187000 187000;
+	setprop net.ipv4.tcp_no_metrics_save=1;
+	setprop net.ipv4.tcp_moderate_rcvbuf=1;
 
-		echo "0" > /proc/sys/net/ipv4/tcp_timestamps;
-		echo "1" > /proc/sys/net/ipv4/tcp_tw_reuse;
-		echo "1" > /proc/sys/net/ipv4/tcp_sack;
-		echo "1" > /proc/sys/net/ipv4/tcp_tw_recycle;
-		echo "1" > /proc/sys/net/ipv4/tcp_window_scaling;
-		echo "1" > /proc/sys/net/ipv4/tcp_moderate_rcvbuf;
-		echo "1" > /proc/sys/net/ipv4/route/flush;
-		echo "2" > /proc/sys/net/ipv4/tcp_syn_retries;
-		echo "2" > /proc/sys/net/ipv4/tcp_synack_retries;
-		echo "10" > /proc/sys/net/ipv4/tcp_fin_timeout;
-		echo "0" > /proc/sys/net/ipv4/tcp_ecn;
-		echo "524288" > /proc/sys/net/core/wmem_max;
-		echo "524288" > /proc/sys/net/core/rmem_max;
-		echo "262144" > /proc/sys/net/core/rmem_default;
-		echo "262144" > /proc/sys/net/core/wmem_default;
-		echo "20480" > /proc/sys/net/core/optmem_max;
-		echo "6144 87380 524288" > /proc/sys/net/ipv4/tcp_wmem;
-		echo "6144 87380 524288" > /proc/sys/net/ipv4/tcp_rmem;
-		echo "4096" > /proc/sys/net/ipv4/udp_rmem_min;
-		echo "4096" > /proc/sys/net/ipv4/udp_wmem_min;
-	  $BB sysctl -w net.core.rmem_max=524288;
-	  $BB sysctl -w net.core.wmem_max=524288;
-	  $BB sysctl -w net.ipv4.tcp_rmem='6144 87380 524288';
-	  $BB sysctl -w net.ipv4.tcp_tw_recycle=1;
-	  $BB sysctl -w net.ipv4.tcp_wmem='6144 87380 524288';
+	echo "0" > /proc/sys/net/ipv4/tcp_timestamps;
+	echo "1" > /proc/sys/net/ipv4/tcp_tw_reuse;
+	echo "1" > /proc/sys/net/ipv4/tcp_sack;
+	echo "1" > /proc/sys/net/ipv4/tcp_dsack;
+	echo "1" > /proc/sys/net/ipv4/tcp_tw_recycle;
+	echo "1" > /proc/sys/net/ipv4/tcp_window_scaling;
+	echo "5" > /proc/sys/net/ipv4/tcp_keepalive_probes;
+	echo "30" > /proc/sys/net/ipv4/tcp_keepalive_intvl;
+	echo "30" > /proc/sys/net/ipv4/tcp_fin_timeout;
+	echo "1" > /proc/sys/net/ipv4/tcp_moderate_rcvbuf;
+	echo "1" > /proc/sys/net/ipv4/route/flush;
+	echo "6144" > /proc/sys/net/ipv4/udp_rmem_min;
+	echo "6144" > /proc/sys/net/ipv4/udp_wmem_min;
+	echo "1" > /proc/sys/net/ipv4/tcp_rfc1337;
+	echo "0" > /proc/sys/net/ipv4/ip_no_pmtu_disc;
+	echo "0" > /proc/sys/net/ipv4/tcp_ecn;
+	echo "6144 87380 2097152" > /proc/sys/net/ipv4/tcp_wmem;
+	echo "6144 87380 2097152" > /proc/sys/net/ipv4/tcp_rmem;
+	echo "1" > /proc/sys/net/ipv4/tcp_fack;
+	echo "2" > /proc/sys/net/ipv4/tcp_synack_retries;
+	echo "2" > /proc/sys/net/ipv4/tcp_syn_retries;
+	echo "1" > /proc/sys/net/ipv4/tcp_no_metrics_save;
+	echo "1800" > /proc/sys/net/ipv4/tcp_keepalive_time;
+	echo "0" > /proc/sys/net/ipv4/ip_forward;
+	echo "0" > /proc/sys/net/ipv4/conf/default/accept_source_route;
+	echo "0" > /proc/sys/net/ipv4/conf/all/accept_source_route;
+	echo "0" > /proc/sys/net/ipv4/conf/all/accept_redirects;
+	echo "0" > /proc/sys/net/ipv4/conf/default/accept_redirects;
+	echo "0" > /proc/sys/net/ipv4/conf/all/secure_redirects;
+	echo "0" > /proc/sys/net/ipv4/conf/default/secure_redirects;
+	echo "0" > /proc/sys/net/ipv4/ip_dynaddr;
+	echo "1440000" > /proc/sys/net/ipv4/tcp_max_tw_buckets;
+	echo "57344 57344 524288" > /proc/sys/net/ipv4/tcp_mem;
+	echo "1440000" > /proc/sys/net/ipv4/tcp_max_tw_buckets;
+	echo "2097152" > /proc/sys/net/core/rmem_max;
+	echo "2097152" > /proc/sys/net/core/wmem_max;
+	echo "262144" > /proc/sys/net/core/rmem_default;
+	echo "262144" > /proc/sys/net/core/wmem_default;
+	echo "20480" > /proc/sys/net/core/optmem_max;
+	echo "2500" > /proc/sys/net/core/netdev_max_backlog;
+	echo "50" > /proc/sys/net/unix/max_dgram_qlen;
 
 		log -p i -t $FILE_NAME "*** TCP_TWEAKS ***: enabled";
 	fi;
@@ -815,9 +873,9 @@ GAMMA_FIX()
 {
 	echo "$min_gamma" > /sys/class/misc/brightness_curve/min_gamma;
 	echo "$max_gamma" > /sys/class/misc/brightness_curve/max_gamma;
-	log -p i -t $FILE_NAME "*** GAMMA_FIX ***: done";
-}
 
+	log -p i -t $FILE_NAME "*** GAMMA_FIX: min: $min_gamma max: $max_gamma ***: done";
+}
 # ==============================================================
 # TWEAKS: if Screen-ON
 # ==============================================================
@@ -866,7 +924,7 @@ AWAKE_MODE()
 	if [ "$mali_resume_enable" == on ]; then
 	echo "$GPUFREQ1" > /sys/module/mali/parameters/step0_clk;
 	fi;
-	echo "20" > /proc/sys/vm/vfs_cache_pressure;
+	echo "50" > /proc/sys/vm/vfs_cache_pressure;
 
 	if [ "$cortexbrain_cpu_boost" == on ]; then
 	# set CPU speed
@@ -970,7 +1028,7 @@ SLEEP_MODE()
 		echo "$sleep_scheduler" > /sys/block/mmcblk1/queue/scheduler;
 
 		# set battery value
-		echo "10" > /proc/sys/vm/vfs_cache_pressure; # default: 100
+		echo "50" > /proc/sys/vm/vfs_cache_pressure; # default: 100
 
 		DISABLE_NMI;
 

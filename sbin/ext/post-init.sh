@@ -155,7 +155,7 @@ $BB rm -f /data/.siyah/booting;
 # STWEAKS FIXING
 # ==============================================================
 # change USB mode MTP or Mass Storage
-/res/customconfig/actions/usb-mode ${usb_mode};
+$BB sh /res/uci.sh usb-mode ${usb_mode};
 )&
 
 	$BB mount -t rootfs -o remount,rw rootfs;

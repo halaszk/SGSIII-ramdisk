@@ -30,8 +30,9 @@ if [ "$WGET_CHECK1" == 1 ] || [ "$WGET_CHECK2" == 1 ]; then
 			# debug
 			#echo $version " - " $OLD_VERSION;
 
-			expr $version \> $OLD_VERSION >/dev/null && echo "There is a new version of this kernel available!!!";
-			expr "1.3.5" \= $version >/dev/null && echo "You already using the most advanced kernel in the world!" && break;
+
+		expr $version \> $OLD_VERSION >/dev/null && echo "There is a new version of this kernel available!!!" && break;			
+		expr "1.3.5" \= $version >/dev/null && echo "You already using the most advanced kernel in the world!" && break;
 		done;
 	fi;
 

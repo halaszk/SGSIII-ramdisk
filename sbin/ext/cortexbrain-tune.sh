@@ -24,6 +24,7 @@ IWCONFIG=/sbin/iwconfig;
 AWAKE_LAPTOP_MODE="0";
 SLEEP_LAPTOP_MODE="5";
 BB=/sbin/busybox;
+PROP=/system/bin/$PROP;
 
 # default settings (1000 = 10 seconds)
 dirty_expire_centisecs_default=1000;
@@ -167,55 +168,55 @@ SYSTEM_TWEAKS()
 {
 	if [ "$cortexbrain_system" == on ]; then
 	# render UI with GPU
-	setprop hwui.render_dirty_regions false;
-	setprop windowsmgr.max_events_per_sec 100;
+	$PROP hwui.render_dirty_regions false;
+	$PROP windowsmgr.max_events_per_sec 100;
 	# enable Hardware Rendering
-	setprop video.accelerate.hw 1;
-	setprop debug.performance.tuning 1;
-	setprop debug.sf.hw 1;
-	setprop persist.sys.use_dithering 1;
-#	setprop persist.sys.ui.hw true; # ->reported as problem maker in some roms.
+	$PROP video.accelerate.hw 1;
+	$PROP debug.performance.tuning 1;
+	$PROP debug.sf.hw 1;
+	$PROP persist.sys.use_dithering 1;
+#	$PROP persist.sys.ui.hw true; # ->reported as problem maker in some roms.
 
 	# render UI with GPU
-	setprop hwui.render_dirty_regions false;
-	setprop windowsmgr.max_events_per_sec 120;
-	setprop profiler.force_disable_err_rpt 1;
-	setprop profiler.force_disable_ulog 1;
+	$PROP hwui.render_dirty_regions false;
+	$PROP windowsmgr.max_events_per_sec 120;
+	$PROP profiler.force_disable_err_rpt 1;
+	$PROP profiler.force_disable_ulog 1;
 
 	# Dialing Tweaks
-	setprop ro.telephony.call_ring.delay=0;
-	setprop ro.lge.proximity.delay=25;
-	setprop mot.proximity.delay=25;
+	$PROP ro.telephony.call_ring.delay=0;
+	$PROP ro.lge.proximity.delay=25;
+	$PROP mot.proximity.delay=25;
 
 	# more Tweaks
-	setprop dalvik.vm.execution-mode int:jit;
-	setprop persist.adb.notify 0;
-	setprop pm.sleep_mode 1;
+	$PROP dalvik.vm.execution-mode int:jit;
+	$PROP persist.adb.notify 0;
+	$PROP pm.sleep_mode 1;
 
 	# =========
 	# Optimized Audio and Video Settings
 	# =========
-	setprop ro.media.enc.jpeg.quality 100;
-	setprop ro.media.dec.jpeg.memcap 8000000;
-	setprop ro.media.enc.hprof.vid.bps 8000000;
-	setprop ro.media.capture.maxres 8m;
-	#setprop ro.media.capture.fast.fps 4
-	#setprop ro.media.capture.slow.fps 120
-	#setprop ro.media.capture.flashMinV 3300000
-	#setprop ro.media.capture.torchIntensity 40
-	#setprop ro.media.capture.flashIntensity 70
-	setprop ro.media.panorama.defres 3264x1840;
-	setprop ro.media.panorama.frameres 1280x720;
-	setprop ro.camcorder.videoModes true;
-	setprop ro.media.enc.hprof.vid.fps 65;
-	#setprop ro.service.swiqi.supported true
-	#setprop persist.service.swiqi.enable 1
-	setprop media.stagefright.enable-player true;
-	setprop media.stagefright.enable-meta true;
-	setprop media.stagefright.enable-scan true;
-	setprop media.stagefright.enable-http true;
-	setprop media.stagefright.enable-rtsp=true;
-	setprop media.stagefright.enable-record false;
+	$PROP ro.media.enc.jpeg.quality 100;
+	$PROP ro.media.dec.jpeg.memcap 8000000;
+	$PROP ro.media.enc.hprof.vid.bps 8000000;
+	$PROP ro.media.capture.maxres 8m;
+	#$PROP ro.media.capture.fast.fps 4
+	#$PROP ro.media.capture.slow.fps 120
+	#$PROP ro.media.capture.flashMinV 3300000
+	#$PROP ro.media.capture.torchIntensity 40
+	#$PROP ro.media.capture.flashIntensity 70
+	$PROP ro.media.panorama.defres 3264x1840;
+	$PROP ro.media.panorama.frameres 1280x720;
+	$PROP ro.camcorder.videoModes true;
+	$PROP ro.media.enc.hprof.vid.fps 65;
+	#$PROP ro.service.swiqi.supported true
+	#$PROP persist.service.swiqi.enable 1
+	$PROP media.stagefright.enable-player true;
+	$PROP media.stagefright.enable-meta true;
+	$PROP media.stagefright.enable-scan true;
+	$PROP media.stagefright.enable-http true;
+	$PROP media.stagefright.enable-rtsp=true;
+	$PROP media.stagefright.enable-record false;
 
 
 
@@ -453,56 +454,56 @@ TCP_TWEAKS()
 	if [ "$cortexbrain_tcp" == on ]; then
 
 	# Website Bypass
-	setprop net.rmnet0.dns1=8.8.8.8;
-	setprop net.rmnet0.dns2=8.8.4.4;
-	setprop net.dns1=8.8.8.8;
-	setprop net.dns2=8.8.4.4;
+	$PROP net.rmnet0.dns1=8.8.8.8;
+	$PROP net.rmnet0.dns2=8.8.4.4;
+	$PROP net.dns1=8.8.8.8;
+	$PROP net.dns2=8.8.4.4;
 
 		# =========
 	# 3G-2G and wifi network battery tweaks
-	setprop ro.ril.enable.a52 0;
-	setprop ro.ril.enable.a53 1;
-	setprop ro.ril.fast.dormancy.timeout 3;
-	setprop ro.ril.enable.sbm.feature 1;
-	setprop ro.ril.enable.sdr 0;
-	setprop ro.ril.qos.maxpdps 2;
-	setprop ro.ril.hsxpa 2;
-	setprop ro.ril.hsdpa.category 14;
-	setprop ro.ril.hsupa.category 7;
-	setprop ro.ril.hep 1;
-	setprop ro.ril.enable.dtm 0;
-	setprop ro.ril.enable.amr.wideband 1;
-	setprop ro.ril.gprsclass 12;
-	setprop ro.ril.avoid.pdp.overlap 1;
-	setprop ro.ril.enable.prl.recognition 0;
-	setprop ro.ril.def.agps.mode 2;
-	setprop ro.ril.enable.managed.roaming 1;
-	setprop ro.ril.enable.enhance.search 0;
-#	setprop ro.ril.fast.dormancy.rule 1;
-	setprop ro.ril.fd.scron.timeout 30;
-	setprop ro.ril.fd.scroff.timeout 10;
-	setprop ro.ril.emc.mode 2;
-	setprop ro.ril.att.feature 0;
+	$PROP ro.ril.enable.a52 0;
+	$PROP ro.ril.enable.a53 1;
+	$PROP ro.ril.fast.dormancy.timeout 3;
+	$PROP ro.ril.enable.sbm.feature 1;
+	$PROP ro.ril.enable.sdr 0;
+	$PROP ro.ril.qos.maxpdps 2;
+	$PROP ro.ril.hsxpa 2;
+	$PROP ro.ril.hsdpa.category 14;
+	$PROP ro.ril.hsupa.category 7;
+	$PROP ro.ril.hep 1;
+	$PROP ro.ril.enable.dtm 0;
+	$PROP ro.ril.enable.amr.wideband 1;
+	$PROP ro.ril.gprsclass 12;
+	$PROP ro.ril.avoid.pdp.overlap 1;
+	$PROP ro.ril.enable.prl.recognition 0;
+	$PROP ro.ril.def.agps.mode 2;
+	$PROP ro.ril.enable.managed.roaming 1;
+	$PROP ro.ril.enable.enhance.search 0;
+#	$PROP ro.ril.fast.dormancy.rule 1;
+	$PROP ro.ril.fd.scron.timeout 30;
+	$PROP ro.ril.fd.scroff.timeout 10;
+	$PROP ro.ril.emc.mode 2;
+	$PROP ro.ril.att.feature 0;
 	
 	# Wireless Speed Tweaks
-	setprop net.tcp.buffersize.default=4096,87380,256960,4096,16384,256960;
-	setprop net.tcp.buffersize.wifi=4096,87380,256960,4096,16384,256960;
-	setprop net.tcp.buffersize.umts=4096,87380,256960,4096,16384,256960;
-	setprop net.tcp.buffersize.gprs=4096,87380,256960,4096,16384,256960;
-	setprop net.tcp.buffersize.edge=4096,87380,256960,4096,16384,256960;
-	setprop net.ipv4.tcp_ecn=0;
-	setprop net.ipv4.route.flush=1;
-	setprop net.ipv4.tcp_rfc1337=1;
-	setprop net.ipv4.ip_no_pmtu_disc=0;
-	setprop net.ipv4.tcp_sack=1;
-	setprop net.ipv4.tcp_fack=1;
-	setprop net.ipv4.tcp_window_scaling=1;
-	setprop net.ipv4.tcp_timestamps=1;
-	setprop net.ipv4.tcp_rmem=4096 39000 187000;
-	setprop net.ipv4.tcp_wmem=4096 39000 187000;
-	setprop net.ipv4.tcp_mem=187000 187000 187000;
-	setprop net.ipv4.tcp_no_metrics_save=1;
-	setprop net.ipv4.tcp_moderate_rcvbuf=1;
+	$PROP net.tcp.buffersize.default=4096,87380,256960,4096,16384,256960;
+	$PROP net.tcp.buffersize.wifi=4096,87380,256960,4096,16384,256960;
+	$PROP net.tcp.buffersize.umts=4096,87380,256960,4096,16384,256960;
+	$PROP net.tcp.buffersize.gprs=4096,87380,256960,4096,16384,256960;
+	$PROP net.tcp.buffersize.edge=4096,87380,256960,4096,16384,256960;
+	$PROP net.ipv4.tcp_ecn=0;
+	$PROP net.ipv4.route.flush=1;
+	$PROP net.ipv4.tcp_rfc1337=1;
+	$PROP net.ipv4.ip_no_pmtu_disc=0;
+	$PROP net.ipv4.tcp_sack=1;
+	$PROP net.ipv4.tcp_fack=1;
+	$PROP net.ipv4.tcp_window_scaling=1;
+	$PROP net.ipv4.tcp_timestamps=1;
+	$PROP net.ipv4.tcp_rmem=4096 39000 187000;
+	$PROP net.ipv4.tcp_wmem=4096 39000 187000;
+	$PROP net.ipv4.tcp_mem=187000 187000 187000;
+	$PROP net.ipv4.tcp_no_metrics_save=1;
+	$PROP net.ipv4.tcp_moderate_rcvbuf=1;
 
 	echo "0" > /proc/sys/net/ipv4/tcp_timestamps;
 	echo "1" > /proc/sys/net/ipv4/tcp_tw_reuse;
@@ -591,14 +592,14 @@ WIFI_PM()
 		fi;
 
 		if [ "$supplicant_scan_interval" -le 180 ]; then
-			setprop wifi.supplicant_scan_interval 360;
+			$PROP wifi.supplicant_scan_interval 360;
 		fi;
 	elif [ "${state}" == "awake" ]; then
 		if [ -e /sys/module/dhd/parameters/wifi_pm ]; then
 			echo "0" > /sys/module/dhd/parameters/wifi_pm;
 		fi;
 
-		setprop wifi.supplicant_scan_interval $supplicant_scan_interval;
+		$PROP wifi.supplicant_scan_interval $supplicant_scan_interval;
 	fi;
 
 	log -p i -t $FILE_NAME "*** WIFI_PM ***: ${state}";
@@ -746,7 +747,7 @@ DONT_KILL_CORTEX()
 MOUNT_SD_CARD()
 {
         if [ "$auto_mount_sd" == on ]; then
-		/system/bin/setprop persist.sys.usb.config mass_storage,adb;
+		$PROP persist.sys.usb.config mass_storage,adb;
 		$BB umount -l /mnt/extSdCard/;
 echo "/dev/block/vold/179:48" > /sys/devices/virtual/android_usb/android0/f_mass_storage/lun0/file;
 if [ -e /dev/block/vold/179:49 ]; then
@@ -1005,7 +1006,7 @@ AWAKE_MODE()
 	fi;
 
 	# set wifi.supplicant_scan_interval
-	setprop wifi.supplicant_scan_interval $supplicant_scan_interval;
+	$PROP wifi.supplicant_scan_interval $supplicant_scan_interval;
 	if [ "$cortexbrain_cpu_boost" == on ]; then
 	# bus freq back to normal
 	echo "$dmc_max_threshold" > /sys/devices/system/cpu/busfreq/dmc_max_threshold;
@@ -1096,7 +1097,7 @@ SLEEP_MODE()
 
 		# set wifi.supplicant_scan_interval
 		if [ "$supplicant_scan_interval" -le 180 ]; then
-			setprop wifi.supplicant_scan_interval 360;
+			$PROP wifi.supplicant_scan_interval 360;
 		fi;
 
 		# set settings for battery -> don't wake up "pdflush daemon"

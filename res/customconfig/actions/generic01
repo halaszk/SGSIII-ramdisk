@@ -4,22 +4,22 @@ if [ "a$2" != "a" ];then
 filename=$(basename $2)
 
 if [ "a$3" == "a" ];then
-  evalcmd='eval "echo \$$filename"'
-  if [ "a`eval $evalcmd`" == "a" ];then
-    if [ "`cat $2`" == "0" ];then
-      eval $filename=off
+evalcmd='eval "echo \$$filename"'
+if [ "a`eval $evalcmd`" == "a" ];then
+if [ "`cat $2`" == "0" ];then
+eval $filename=off
     else
-      eval $filename=on
+eval $filename=on
     fi
-  fi
+fi
   eval $evalcmd
 else
-  evalcmd='eval "$filename=$3"'
+evalcmd='eval "$filename=$3"'
   eval $evalcmd
   evalcmd='eval "echo \$$filename"'
   eval $evalcmd
   if [ -f $2 ];then
-    case "$3" in
+case "$3" in
       off)
         echo 0 > $2
         ;;
@@ -30,5 +30,3 @@ else
   fi
 fi
 fi
-
-

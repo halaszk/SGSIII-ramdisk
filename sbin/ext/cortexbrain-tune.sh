@@ -1151,3 +1151,13 @@ fi;
 #
 # TODO: add more description, explanations & default vaules ...
 #
+n screen OFF.
+#
+# This script change governors and tuning for them on the fly.
+# Also switch on/off hotplug CPU core based on screen on/off.
+# This script reset battery stats when battery is 100% charged.
+# This script tune Network and System VM settings and ROM settings tuning.
+# This script changing default MOUNT options and I/O tweaks for all flash disks and ZRAM.
+#
+# TODO: add more description, explanations & default vaules ...
+#

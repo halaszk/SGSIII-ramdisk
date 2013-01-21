@@ -216,3 +216,4 @@ Dyn_fsync_active=1
 hotplug_compare_level=1
 hotplug_compare_level_sleep=1
 swappiness=0
+cortexbrain_ksm_control=off

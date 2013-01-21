@@ -649,29 +649,87 @@ DISABLE_GESTURES()
 	log -p i -t $FILE_NAME "*** GESTURE ***: disabled";
 }
 
-ENABLE_KSM()
-{
-if [ "$run" == "1" ]; then
-	# enable KSM on screen ON.
-	KSM="/sys/kernel/mm/ksm/run";
-	if [ -e "$KSM" ]; then
-	echo "1" > $KSM;
-	fi;
-	log -p i -t $FILE_NAME "*** KSM ***: enabled";
-fi;
-}
+# ==============================================================
+# KSM-TWEAKS
+# ==============================================================
+if [ "$cortexbrain_ksm_control" == on ]; then
+	KSM_MONITOR_INTERVAL=60;
+	KSM_NPAGES_BOOST=300;
+	KSM_NPAGES_DECAY=50;
 
-DISABLE_KSM()
-{
-if [ "$run" == "0" ]; then
-	# disable KSM on screen OFF
-	KSM="/sys/kernel/mm/ksm/run";
-	if [ -e "$KSM" ]; then
-	echo "0" > $KSM;
+	KSM_NPAGES_MIN=32;
+	KSM_NPAGES_MAX=1000;
+	KSM_SLEEP_MSEC=200;
+	KSM_SLEEP_MIN=2000;
+
+	KSM_THRES_COEF=30;
+	KSM_THRES_CONST=2048;
+
+	npages=0;
+	total=`awk '/^MemTotal:/ {print $2}' /proc/meminfo`;
+	thres=$(( $total * $KSM_THRES_COEF / 100 ));
+	if [ $KSM_THRES_CONST -gt $thres ]; then
+		thres=$KSM_THRES_CONST;
 	fi;
-	log -p i -t $FILE_NAME "*** KSM ***: disabled";
+	total=$(( $total / 1024 ));
+	sleep=$(( $KSM_SLEEP_MSEC * 16 * 1024 / $total ));
+	if [ $sleep -le $KSM_SLEEP_MIN ]; then
+		sleep=$KSM_SLEEP_MIN;
+	fi;
+
+	KSMCTL() {
+		case x${1} in
+			xstop)
+				log -p i -t $FILE_NAME "*** ksm: stop ***";
+				echo 0 > /sys/kernel/mm/ksm/run;
+			;;
+			xstart)
+				log -p i -t $FILE_NAME "*** ksm: start ${2} ${3} ***";
+				echo ${2} > /sys/kernel/mm/ksm/pages_to_scan;
+				echo ${3} > /sys/kernel/mm/ksm/sleep_millisecs;
+				echo 1 > /sys/kernel/mm/ksm/run;
+				renice 10 -p "`pidof ksmd`";
+			;;
+		esac
+	}
+
+	FREE_MEM() {
+		awk '/^(MemFree|Buffers|Cached):/ {free += $2}; END {print free}' /proc/meminfo;
+	}
+
+	INCREASE_NPAGES() {
+		local delta=${1:-0};
+		npages=$(( $npages + $delta ));
+		if [ $npages -lt $KSM_NPAGES_MIN ]; then
+			npages=$KSM_NPAGES_MIN;
+		elif [ $npages -gt $KSM_NPAGES_MAX ]; then
+			npages=$KSM_NPAGES_MAX;
+		fi;
+		echo $npages;
+	}
+
+	ADJUST_KSM() {
+		local free=`FREE_MEM`;
+		if [ $free -gt $thres ]; then
+			log -p i -t $FILE_NAME "*** ksm: $free > $thres ***";
+			npages=`INCREASE_NPAGES ${KSM_NPAGES_BOOST}`;
+			KSMCTL "stop";
+			return 1;
+		else
+			npages=`INCREASE_NPAGES $KSM_NPAGES_DECAY`;
+			log -p i -t $FILE_NAME "*** ksm: $free < $thres ***"
+			KSMCTL "start" $npages $sleep;
+			return 0;
+		fi;
+	}
+
+	(while [ 1 ]; do
+		cat /sys/power/wait_for_fb_wake;
+		sleep $KSM_MONITOR_INTERVAL &
+		wait $!;
+		ADJUST_KSM;
+	done &);
 fi;
-}
 
 # please don't kill "cortexbrain"
 DONT_KILL_CORTEX()
@@ -895,6 +953,11 @@ AWAKE_MODE()
 	
 	MOUNT_SD_CARD;
 	
+	if [ "$cortexbrain_ksm_control" == on ]; then
+		ADJUST_KSM;
+	fi;
+
+	
 	ENABLE_GESTURES;
 	
 	WAKEUP_BOOST_DELAY;
@@ -1005,6 +1068,10 @@ SLEEP_MODE()
 	BATTERY_TWEAKS;
 
 	CROND_SAFETY;
+	
+	if [ "$cortexbrain_ksm_control" == on ]; then
+			KSMCTL "stop";
+	fi;
 
 	SWAPPINESS;
 	

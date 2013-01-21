@@ -946,6 +946,7 @@
 			name="WIFI-Tweaks" action="generic_cortex /tmp/cortexbrain_wifi" label="WIFI-Tweaks"/>
 		 <seekBar description=""
 	                name="wifi power limit" action="generic_cortex /tmp/cortexbrain_wifi_tx" unit=" dBm" min="1" reversed="false" step="2" max="100"/>
+		<button description="KSM check for active state" name="KSM STATS" action="push-actions/ksmstats" label="KSM STATS"/>
 		</settingsPane>
 	</settingsTab>  
 	<settingsTab name="BACKUP/RESTORE">

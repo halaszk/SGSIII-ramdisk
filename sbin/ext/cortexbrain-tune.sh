@@ -736,10 +736,6 @@ DONT_KILL_CORTEX()
 	for i in $PIDOFCORTEX; do
 		echo "-950" > /proc/${i}/oom_score_adj;
 	done;
-	PIDOFMALI=`pgrep -f "ru.services.malistatus"`;
-        for i in $PIDOFMALI; do
-                echo "-950" > /proc/${i}/oom_score_adj;
-        done;
 
 	log -p i -t $FILE_NAME "*** DONT_KILL_CORTEX ***";
 }
@@ -757,32 +753,33 @@ log -p i -t $FILE_NAME "*** MOUNT_SD_CARD ***";
 fi;
 }
 
-# set delay to prevent mp3-music shattering when screen turned ON
-DELAY()
+# set wakeup booster delay to prevent mp3 music shattering when screen turned ON
+WAKEUP_DELAY()
 {
-	local state="$1";
-	local delay="$wakeup_delay";
-	if [ ! -e /data/.siyah/booting ]; then
-		if [ "${state}" == "sleep" ]; then
-			if [ "$wakeup_delay" -le 5 ]; then
-				delay=5;
-			fi;
-		fi;
-
-		if [ "$delay" != 0 ]; then
-			log -p i -t $FILE_NAME "*** DELAY ${delay}sec ***";
-			sleep $delay;
-		fi;
-	fi;
+if [ "$wakeup_delay" != 0 ] && [ ! -e /data/.siyah/booting ]; then
+log -p i -t $FILE_NAME "*** WAKEUP_DELAY ${wakeup_delay}sec ***";
+sleep $wakeup_delay
+fi;
 }
 
-BOOST_DELAY()
+WAKEUP_DELAY_SLEEP()
 {
-	# check if ROM booting now, then don't wait - creation and deletion of /data/.siyah/booting @> /sbin/ext/post-init.sh
-	if [ "$wakeup_boost" != 0 ] && [ ! -e /data/.siyah/booting ]; then
-		log -p i -t $FILE_NAME "*** MEGA_BOOST_DELAY ${wakeup_boost}sec ***";
-		sleep $wakeup_boost;
-	fi;
+if [ "$wakeup_delay" != 0 ] && [ ! -e /data/.siyah/booting ]; then
+log -p i -t $FILE_NAME "*** WAKEUP_DELAY_SLEEP ${wakeup_delay}sec ***";
+sleep $wakeup_delay;
+else
+log -p i -t $FILE_NAME "*** WAKEUP_DELAY_SLEEP 3sec ***";
+sleep 3;
+fi;
+}
+
+# check if ROM booting now, then don't wait - creation and deletion of /data/.siyah/booting @> /sbin/ext/post-init.sh
+WAKEUP_BOOST_DELAY()
+{
+if [ ! -e /data/.siyah/booting ] && [ "$wakeup_boost" != 0 ]; then
+log -p i -t $FILE_NAME "*** WAKEUP_BOOST_DELAY ${wakeup_boost}sec ***";
+sleep $wakeup_boost;
+fi;
 }
 
 MALI_TIMEOUT()
@@ -791,7 +788,7 @@ MALI_TIMEOUT()
 	if [ "${state}" == "awake" ]; then
 		echo "$mali_gpu_utilization_timeout" > /sys/module/mali/parameters/mali_gpu_utilization_timeout;
 	elif [ "${state}" == "sleep" ]; then
-		echo "500" > /sys/module/mali/parameters/mali_gpu_utilization_timeout;
+		echo "300" > /sys/module/mali/parameters/mali_gpu_utilization_timeout;
 	elif [ "${state}" == "performance" ]; then
 		echo "100" > /sys/module/mali/parameters/mali_gpu_utilization_timeout;
 	fi;
@@ -957,7 +954,7 @@ AWAKE_MODE()
 
 	KERNEL_SCHED_AWAKE;
 	
-	DELAY "awake";
+	WAKEUP_DELAY;
 	
 	MEGA_BOOST_CPU_TWEAKS;
 	
@@ -970,7 +967,7 @@ AWAKE_MODE()
 	
 	GESTURES "awake";
 	
-	BOOST_DELAY;
+	WAKEUP_BOOST_DELAY;
 	
 	echo "$AWAKE_LAPTOP_MODE" > /proc/sys/vm/laptop_mode;
 	
@@ -1037,17 +1034,8 @@ AWAKE_MODE()
 # ==============================================================
 SLEEP_MODE()
 {
-	# !!! do not delete this !!!
-	echo "0" > /tmp/early_wakeup;
-	(while [ 1 ]; do
-		cat /sys/power/wait_for_fb_wake;
-		echo "1" > /tmp/early_wakeup;
-		exit;
-	done &);
+	WAKEUP_DELAY_SLEEP;
 
-	DELAY "sleep";
-
-	if [ `cat /tmp/early_wakeup` == 0 ]; then
 	# we only read the config when screen goes off ...
 	PROFILE=`cat /data/.siyah/.active.profile`;
 	. /data/.siyah/$PROFILE.profile;
@@ -1116,7 +1104,6 @@ SLEEP_MODE()
 		log -p i -t $FILE_NAME "*** SLEEP mode ***";
 
 		LOGGER "sleep";
-	fi;
 }
 
 # ==============================================================

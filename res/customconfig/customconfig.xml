@@ -773,20 +773,6 @@
              <spinnerItem name="300MB" value="300"/>
 			 <spinnerItem name="600MB" value="600"/>
       </spinner>
-		<spinner description="If you have enabled swap, then the higher a number set here, the more the system will swap. (Default: 0)"
-			name="swappiness" action="generic /proc/sys/vm/swappiness">
-			<spinnerItem name="0" value="0"/>
-			<spinnerItem name="10" value="10"/>                                                                                               		
-			<spinnerItem name="20" value="20"/>
-			<spinnerItem name="30" value="30"/>
-			<spinnerItem name="40" value="40"/>
-			<spinnerItem name="50" value="50"/>
-			<spinnerItem name="60" value="60"/>
-			<spinnerItem name="70" value="70"/>
-			<spinnerItem name="80" value="80"/>
-			<spinnerItem name="90" value="90"/>
-			<spinnerItem name="100" value="100"/>
-		</spinner>
 	<button description="ZRAM check for active state" name="ZRAM STATS" action="push-actions/zramstats" label="ZRAM STATS"/>
 		<button description="Update time via ntp-server" name="UPDATE TIME" action="push-actions/time_update" label="UPDATE TIME"/>
       <checkbox description="Enable or Disable Android Logger (needs reboot)" name="Android Logger" action="generic /tmp/logger" label="Android Logger"/>
@@ -850,6 +836,20 @@
 			<spinnerItem name="2048 kb" value="2048"/>
 			<spinnerItem name="4096 kb" value="4096"/>
 			</spinner>
+	                      <spinner description="If you have enabled swap, then the higher a number set here, the more the system will swap. (Default: 0)"
+                        name="swappiness" action="generic /proc/sys/vm/swappiness">
+                        <spinnerItem name="0" value="0"/>
+                        <spinnerItem name="10" value="10"/>                                                                                                 $
+                        <spinnerItem name="20" value="20"/>
+                        <spinnerItem name="30" value="30"/>
+                        <spinnerItem name="40" value="40"/>
+                        <spinnerItem name="50" value="50"/>
+                        <spinnerItem name="60" value="60"/>
+                        <spinnerItem name="70" value="70"/>
+                        <spinnerItem name="80" value="80"/>
+                        <spinnerItem name="90" value="90"/>
+                        <spinnerItem name="100" value="100"/>
+                </spinner>
 	      <spinner description="This will set the default I/O scheduler. Default I/O scheduler will only be set during early stages of booting (before init.d execution) and can be overriden by later scripts or apps." name="Default I/O Scheduler" action="generic /sys/block/mmcblk0/queue/scheduler">
              <spinnerItem name="sio" value="sio"/> 
              <spinnerItem name="noop" value="noop"/> 

@@ -24,7 +24,7 @@ IWCONFIG=/sbin/iwconfig;
 AWAKE_LAPTOP_MODE="0";
 SLEEP_LAPTOP_MODE="5";
 BB=/sbin/busybox;
-PROP=/system/bin/$PROP;
+PROP=/system/bin/setprop;
 
 # default settings (1000 = 10 seconds)
 dirty_expire_centisecs_default=1000;

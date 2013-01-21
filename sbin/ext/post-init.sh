@@ -18,7 +18,6 @@ done;
 if [ ! -d /data/.siyah ]; then
 $BB mkdir -p /data/.siyah;
 fi;
-. /res/customconfig/customconfig-helper
 
 ccxmlsum=`md5sum /res/customconfig/customconfig.xml | awk '{print $1}'`
 if [ "a${ccxmlsum}" != "a`cat /data/.siyah/.ccxmlsum`" ];
@@ -27,9 +26,12 @@ then
   echo ${ccxmlsum} > /data/.siyah/.ccxmlsum;
 fi
 [ ! -f /data/.siyah/default.profile ] && cp /res/customconfig/default.profile /data/.siyah;
+[ ! -f /data/.siyah/battery.profile ] && cp /res/customconfig/battery.profile /data/.siyah/battery.profile;
+[ ! -f /data/.siyah/performance.profile ] && cp /res/customconfig/performance.profile /data/.siyah/performance.profile;
 
 $BB chmod 0777 /data/.siyah/ -R;
 
+. /res/customconfig/customconfig-helper;
 read_defaults;
 read_config;
 
@@ -142,10 +144,8 @@ $BB chmod 6755 /sbin/ext/cortexbrain-tune.sh;
 # apply STweaks settings
 echo "booting" > /data/.siyah/booting;
 pkill -f "com.gokhanmoral.stweaks.app";
-sleep 13
-export CONFIG_BOOTING=1
-$BB sh /res/uci.sh apply;
-export CONFIG_BOOTING=
+$BB sh /res/uci.sh restore;
+
 # restore all the PUSH Button Actions back to there location
 $BB mount -o remount,rw rootfs;
 $BB mv /res/no-push-on-boot/* /res/customconfig/actions/push-actions/;

@@ -26,4 +26,3 @@ else
   echo $VOLTAGES > /sys/class/misc/mali_control/voltage_control
 fi
 
-

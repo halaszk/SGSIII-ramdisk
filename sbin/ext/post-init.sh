@@ -18,7 +18,8 @@ done;
 if [ ! -d /data/.siyah ]; then
 $BB mkdir -p /data/.siyah;
 fi;
-. /res/customconfig/customconfig-helper
+
+. /res/customconfig/customconfig-helper;
 
 ccxmlsum=`md5sum /res/customconfig/customconfig.xml | awk '{print $1}'`
 if [ "a${ccxmlsum}" != "a`cat /data/.siyah/.ccxmlsum`" ];

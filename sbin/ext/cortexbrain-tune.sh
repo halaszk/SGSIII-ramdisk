@@ -25,10 +25,6 @@ AWAKE_LAPTOP_MODE="0";
 SLEEP_LAPTOP_MODE="5";
 BB=/sbin/busybox;
 
-# set not yet known values for functions
-power_performance=0;
-sleep_power_save=0;
-
 # default settings (1000 = 10 seconds)
 dirty_expire_centisecs_default=1000;
 dirty_writeback_centisecs_default=1000;
@@ -287,12 +283,12 @@ BATTERY_TWEAKS()
 
 CPU_GOV_TWEAKS()
 {
+	local state="$1";
 	if [ "$cortexbrain_cpu" == on ]; then
-
 	SYSTEM_GOVERNOR=`cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor`;
         
 		# power_performance
-	if [ "$power_performance" == 1 ]; then
+	if [ "${state}" == "performance" ]; then
 
 	echo "20000" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/sampling_rate;
 	echo "10" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_up_rate;
@@ -303,7 +299,7 @@ CPU_GOV_TWEAKS()
 	echo "800000" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_for_responsiveness;
 
 		# sleep-settings
-	elif [ "$sleep_power_save" == 1 ]; then
+	elif [ "${state}" == "sleep" ]; then
 
 	echo "$freq_for_responsiveness_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_for_responsiveness;
     echo "$freq_for_fast_down_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_for_fast_down;
@@ -341,10 +337,8 @@ CPU_GOV_TWEAKS()
 	#echo "0" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/lcdfreq_enable;
 	echo "$hotplug_compare_level_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_compare_level;
 	
-	log -p i -t $FILE_NAME "*** CPU_GOV_SLEEP_TWEAKS ***: apply";
 		# awake-settings
-	else
-	
+	elif [ "${state}" == "awake" ]; then
 	echo "$freq_for_responsiveness" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_for_responsiveness;
     echo "$freq_for_fast_down" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_for_fast_down;
     echo "$sampling_rate" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/sampling_rate;
@@ -379,23 +373,19 @@ CPU_GOV_TWEAKS()
 	echo "$max_cpu_lock" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/max_cpu_lock;
 	echo "$lcdfreq" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/lcdfreq_enable;
 	echo "$hotplug_compare_level" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_compare_level;
-
-	log -p i -t $FILE_NAME "*** CPU_GOV_AWAKE_TWEAKS ***: apply";
 	
 	fi;
 
-	# reset
-	power_performance=0;
-	sleep_power_save=0;
-
-		log -p i -t $FILE_NAME "*** CPU_GOV_TWEAKS ***: enabled";
+		log -p i -t $FILE_NAME "*** CPU_GOV_TWEAKS: ${state} ***: enabled";
 	fi;
 }
-
+if [ "$cortexbrain_background_process" == 0 ]; then
+	CPU_GOV_TWEAKS "awake";
+fi;
 # this needed for cpu tweaks apply from STweaks in real time.
 apply_cpu=$2;
 if [ "${apply_cpu}" == "update" ]; then
-CPU_GOV_TWEAKS;
+CPU_GOV_TWEAKS "awake";
 fi;
 
 # ==============================================================
@@ -590,64 +580,71 @@ FIREWALL_TWEAKS;
 # SCREEN-FUNCTIONS
 # ==============================================================
 
-ENABLE_WIFI_PM()
+WIFI_PM()
 {
-if [ "$wifi_pwr" == on ]; then
-if [ -e /sys/module/dhd/parameters/wifi_pm ]; then
-echo "1" > /sys/module/dhd/parameters/wifi_pm;
-fi;
-log -p i -t $FILE_NAME "*** WIFI_PM ***: enabled";
-fi;
+	local state="$1";
+	if [ "${state}" == "sleep" ]; then
+		if [ "$wifi_pwr" == on ]; then
+			if [ -e /sys/module/dhd/parameters/wifi_pm ]; then
+				echo "1" > /sys/module/dhd/parameters/wifi_pm;
+			fi;
+		fi;
+
+		if [ "$supplicant_scan_interval" -le 180 ]; then
+			setprop wifi.supplicant_scan_interval 360;
+		fi;
+	elif [ "${state}" == "awake" ]; then
+		if [ -e /sys/module/dhd/parameters/wifi_pm ]; then
+			echo "0" > /sys/module/dhd/parameters/wifi_pm;
+		fi;
+
+		setprop wifi.supplicant_scan_interval $supplicant_scan_interval;
+	fi;
+
+	log -p i -t $FILE_NAME "*** WIFI_PM ***: ${state}";
 }
 
-DISABLE_WIFI_PM()
+LOGGER()
 {
-if [ -e /sys/module/dhd/parameters/wifi_pm ]; then
-echo "0" > /sys/module/dhd/parameters/wifi_pm;
-log -p i -t $FILE_NAME "*** WIFI_PM ***: disabled";
-fi;
-}
-
-ENABLE_LOGGER()
-{
-	if [ "$android_logger" == auto ] || [ "$android_logger" == debug ]; then
-		if [ -e /dev/log-sleep ] && [ ! -e /dev/log ]; then
-			mv /dev/log-sleep/ /dev/log/;
-			log -p i -t $FILE_NAME "*** LOGGER ***: enabled";
+	local state="$1";
+	if [ "${state}" == "awake" ]; then
+		if [ "$android_logger" == auto ] || [ "$android_logger" == debug ]; then
+			if [ -e /dev/log-sleep ] && [ ! -e /dev/log ]; then
+				mv /dev/log-sleep/ /dev/log/
+			fi;
+		fi;
+	elif [ "${state}" == "sleep" ]; then
+		if [ "$android_logger" == auto ] || [ "$android_logger" == disabled ]; then
+			if [ -e /dev/log ]; then
+				mv /dev/log/ /dev/log-sleep/;
+			fi;
 		fi;
 	fi;
+
+	log -p i -t $FILE_NAME "*** LOGGER ***: ${state}";
 }
 
-DISABLE_LOGGER()
+GESTURES()
 {
-	if [ "$android_logger" == auto ] || [ "$android_logger" == disabled ]; then
-		if [ -e /dev/log ]; then
-			mv /dev/log/ /dev/log-sleep/;
-			log -p i -t $FILE_NAME "*** LOGGER ***: disabled";
+	local state="$1";
+	if [ "${state}" == "awake" ]; then
+		if [ "$gesture_tweak" == on ]; then
+			echo "1" > /sys/devices/virtual/misc/touch_gestures/gestures_enabled;
+			pkill -f "/data/gesture_set.sh";
+			pkill -f "/sys/devices/virtual/misc/touch_gestures/wait_for_gesture";
+			nohup /sbin/busybox sh /data/gesture_set.sh;
 		fi;
+	elif [ "${state}" == "sleep" ]; then
+		if [ `pgrep -f "/data/gesture_set.sh" | wc -l` != 0 ] || [ `pgrep -f "/sys/devices/virtual/misc/touch_gestures/wait_for_gesture" | wc -l` != 0 ] || [ "$gesture_tweak" == off ]; then
+			pkill -f "/data/gesture_set.sh";
+			pkill -f "/sys/devices/virtual/misc/touch_gestures/wait_for_gesture";
+		fi;
+		echo "0" > /sys/devices/virtual/misc/touch_gestures/gestures_enabled;
 	fi;
+
+	log -p i -t $FILE_NAME "*** GESTURE ***: ${state}";
 }
 
-ENABLE_GESTURES()
-{
-	if [ "$gesture_tweak" == on ]; then
-		echo "1" > /sys/devices/virtual/misc/touch_gestures/gestures_enabled;
-		pkill -f "/data/gesture_set.sh";
-		pkill -f "/sys/devices/virtual/misc/touch_gestures/wait_for_gesture";
-		nohup $BB sh /data/gesture_set.sh;
-		log -p i -t $FILE_NAME "*** GESTURE ***: enabled";
-	fi;
-}
-
-DISABLE_GESTURES()
-{
-	if [ `pgrep -f "/data/gesture_set.sh" | wc -l` != "0" ] || [ `pgrep -f "/sys/devices/virtual/misc/touch_gestures/wait_for_gesture" | wc -l` != "0" ] || [ "$gesture_tweak" == off ]; then
-		pkill -f "/data/gesture_set.sh";
-		pkill -f "/sys/devices/virtual/misc/touch_gestures/wait_for_gesture";
-	fi;
-	echo "0" > /sys/devices/virtual/misc/touch_gestures/gestures_enabled;
-	log -p i -t $FILE_NAME "*** GESTURE ***: disabled";
-}
 
 # ==============================================================
 # KSM-TWEAKS
@@ -757,33 +754,46 @@ log -p i -t $FILE_NAME "*** MOUNT_SD_CARD ***";
 fi;
 }
 
-# set wakeup booster delay to prevent mp3 music shattering when screen turned ON
-WAKEUP_DELAY()
+# set delay to prevent mp3-music shattering when screen turned ON
+DELAY()
 {
-if [ "$wakeup_delay" != 0 ] && [ ! -e /data/.siyah/booting ]; then
-log -p i -t $FILE_NAME "*** WAKEUP_DELAY ${wakeup_delay}sec ***";
-sleep $wakeup_delay
-fi;
+	local state="$1";
+	local delay="$wakeup_delay";
+	if [ ! -e /data/.siyah/booting ]; then
+		if [ "${state}" == "sleep" ]; then
+			if [ "$wakeup_delay" -le 5 ]; then
+				delay=5;
+			fi;
+		fi;
+
+		if [ "$delay" != 0 ]; then
+			log -p i -t $FILE_NAME "*** DELAY ${delay}sec ***";
+			sleep $delay;
+		fi;
+	fi;
 }
 
-WAKEUP_DELAY_SLEEP()
+BOOST_DELAY()
 {
-if [ "$wakeup_delay" != 0 ] && [ ! -e /data/.siyah/booting ]; then
-log -p i -t $FILE_NAME "*** WAKEUP_DELAY_SLEEP ${wakeup_delay}sec ***";
-sleep $wakeup_delay;
-else
-log -p i -t $FILE_NAME "*** WAKEUP_DELAY_SLEEP 3sec ***";
-sleep 3;
-fi;
+	# check if ROM booting now, then don't wait - creation and deletion of /data/.siyah/booting @> /sbin/ext/post-init.sh
+	if [ "$wakeup_boost" != 0 ] && [ ! -e /data/.siyah/booting ]; then
+		log -p i -t $FILE_NAME "*** MEGA_BOOST_DELAY ${wakeup_boost}sec ***";
+		sleep $wakeup_boost;
+	fi;
 }
 
-# check if ROM booting now, then don't wait - creation and deletion of /data/.siyah/booting @> /sbin/ext/post-init.sh
-WAKEUP_BOOST_DELAY()
+MALI_TIMEOUT()
 {
-if [ ! -e /data/.siyah/booting ] && [ "$wakeup_boost" != 0 ]; then
-log -p i -t $FILE_NAME "*** WAKEUP_BOOST_DELAY ${wakeup_boost}sec ***";
-sleep $wakeup_boost;
-fi;
+	local state="$1";
+	if [ "${state}" == "awake" ]; then
+		echo "$mali_gpu_utilization_timeout" > /sys/module/mali/parameters/mali_gpu_utilization_timeout;
+	elif [ "${state}" == "sleep" ]; then
+		echo "500" > /sys/module/mali/parameters/mali_gpu_utilization_timeout;
+	elif [ "${state}" == "performance" ]; then
+		echo "100" > /sys/module/mali/parameters/mali_gpu_utilization_timeout;
+	fi;
+
+	log -p i -t $FILE_NAME "*** MALI_TIMEOUT: ${state} ***";
 }
 
 # boost CPU power for fast and no lag wakeup
@@ -791,13 +801,10 @@ MEGA_BOOST_CPU_TWEAKS()
 {
 if [ "$cortexbrain_cpu_boost" == on ]; then
 
-power_performance=1;
-
 echo "performance" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor;
-CPU_GOV_TWEAKS;
+CPU_GOV_TWEAKS "performance";
 
-# GPU utilization to min delay
-echo "100" > /sys/module/mali/parameters/mali_gpu_utilization_timeout;
+MALI_TIMEOUT "performance";
 
 	# bus freq to 400MHZ in low load
 echo "30" > /sys/devices/system/cpu/busfreq/dmc_max_threshold;
@@ -941,13 +948,13 @@ AWAKE_MODE()
 {
 	IO_TWEAKS;
 
-	ENABLE_LOGGER;
+	LOGGER "awake";
 
 	GAMMA_FIX;
 
 	KERNEL_SCHED_AWAKE;
 	
-	WAKEUP_DELAY;
+	DELAY "awake";
 	
 	MEGA_BOOST_CPU_TWEAKS;
 	
@@ -958,9 +965,9 @@ AWAKE_MODE()
 	fi;
 
 	
-	ENABLE_GESTURES;
+	GESTURES "awake";
 	
-	WAKEUP_BOOST_DELAY;
+	BOOST_DELAY;
 	
 	echo "$AWAKE_LAPTOP_MODE" > /proc/sys/vm/laptop_mode;
 	
@@ -975,11 +982,11 @@ AWAKE_MODE()
 	echo "$scaling_governor" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor;
 	fi;
 
-	DISABLE_WIFI_PM;
+	WIFI_PM "awake";
 	
 	TUNE_IPV6;
 
-	CPU_GOV_TWEAKS;
+	CPU_GOV_TWEAKS "awake";
 
 	# set I/O-Scheduler
 	echo "$scheduler" > /sys/block/mmcblk0/queue/scheduler;
@@ -1003,7 +1010,7 @@ AWAKE_MODE()
 	echo "$max_cpu_threshold" > /sys/devices/system/cpu/busfreq/max_cpu_threshold;
 	echo "$up_cpu_threshold" > /sys/devices/system/cpu/busfreq/up_cpu_threshold;
 	
-	echo "$mali_gpu_utilization_timeout" > /sys/module/mali/parameters/mali_gpu_utilization_timeout;
+	MALI_TIMEOUT "awake";
 	fi;
 	# set the vibrator - force in case it's has been reseted
 	echo "$pwm_val" > /sys/vibrator/pwm_val;
@@ -1027,11 +1034,20 @@ AWAKE_MODE()
 # ==============================================================
 SLEEP_MODE()
 {
+	# !!! do not delete this !!!
+	echo "0" > /tmp/early_wakeup;
+	(while [ 1 ]; do
+		cat /sys/power/wait_for_fb_wake;
+		echo "1" > /tmp/early_wakeup;
+		exit;
+	done &);
+
+	DELAY "sleep";
+
+	if [ `cat /tmp/early_wakeup` == 0 ]; then
 	# we only read the config when screen goes off ...
 	PROFILE=`cat /data/.siyah/.active.profile`;
 	. /data/.siyah/$PROFILE.profile;
-	
-	WAKEUP_DELAY_SLEEP;
 
 	if [ "$cortexbrain_cpu_boost" == on ]; then
 		# set CPU-Governor
@@ -1044,14 +1060,13 @@ SLEEP_MODE()
 
 
 	# set CPU-Tweak
-        sleep_power_save=1;
-        CPU_GOV_TWEAKS;
+	CPU_GOV_TWEAKS "sleep";
 	if [ "$cortexbrain_cpu_boost" == on ]; then
 	# bus freq to min 100Mhz
 	echo "80" > /sys/devices/system/cpu/busfreq/dmc_max_threshold;
 	echo "80" > /sys/devices/system/cpu/busfreq/max_cpu_threshold;
 	echo "80" > /sys/devices/system/cpu/busfreq/up_cpu_threshold;
-	echo "500" > /sys/module/mali/parameters/mali_gpu_utilization_timeout;
+	MALI_TIMEOUT "sleep";
 	fi;
 	if [ "$cortexbrain_wifi" == on ]; then
 	$IWCONFIG wlan0 txpower $cortexbrain_wifi_tx;
@@ -1061,7 +1076,7 @@ SLEEP_MODE()
 
 	KERNEL_SCHED_SLEEP;
 
-	DISABLE_GESTURES;
+	GESTURES "sleep";
 
 	TUNE_IPV6;
 
@@ -1075,11 +1090,7 @@ SLEEP_MODE()
 
 	SWAPPINESS;
 	
-	ENABLE_WIFI_PM;
-	
-	DISABLE_KSM;
-
-
+	WIFI_PM "sleep";
 
 		# set wifi.supplicant_scan_interval
 		if [ "$supplicant_scan_interval" -le 180 ]; then
@@ -1101,7 +1112,8 @@ SLEEP_MODE()
 
 		log -p i -t $FILE_NAME "*** SLEEP mode ***";
 
-		DISABLE_LOGGER;
+		LOGGER "sleep";
+	fi;
 }
 
 # ==============================================================
@@ -1130,34 +1142,3 @@ if [ "$cortexbrain_background_process" == 1 ] && [ `pgrep -f "cat /sys/power/wai
 	fi;
 fi;
 
-# ==============================================================
-# Logic Explanations
-#
-# This script will manipulate all the system / cpu / battery behavior
-# Based on chosen STWEAKS profile+tweaks and based on SCREEN ON/OFF state.
-#
-# When User select battery/default profile all tuning will be toward battery save.
-# But user loose performance -20% and get more stable system and more battery left.
-#
-# When user select performance profile, tuning will be to max performance on screen ON.
-# When screen OFF all tuning switched to max power saving. as with battery profile,
-# So user gets max performance and max battery save but only on screen OFF.
-#
-# This script change governors and tuning for them on the fly.
-# Also switch on/off hotplug CPU core based on screen on/off.
-# This script reset battery stats when battery is 100% charged.
-# This script tune Network and System VM settings and ROM settings tuning.
-# This script changing default MOUNT options and I/O tweaks for all flash disks and ZRAM.
-#
-# TODO: add more description, explanations & default vaules ...
-#
-n screen OFF.
-#
-# This script change governors and tuning for them on the fly.
-# Also switch on/off hotplug CPU core based on screen on/off.
-# This script reset battery stats when battery is 100% charged.
-# This script tune Network and System VM settings and ROM settings tuning.
-# This script changing default MOUNT options and I/O tweaks for all flash disks and ZRAM.
-#
-# TODO: add more description, explanations & default vaules ...
-#

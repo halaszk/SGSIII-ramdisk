@@ -132,7 +132,6 @@ IO_TWEAKS()
 	echo "EXT4 Partition Not Found!";
 	fi;
 
-
 		log -p i -t $FILE_NAME "*** IO_TWEAKS ***: enabled";
 	fi;
 }
@@ -744,7 +743,6 @@ MOUNT_SD_CARD()
 {
         if [ "$auto_mount_sd" == on ]; then
 		$PROP persist.sys.usb.config mass_storage,adb;
-		$BB umount -l /mnt/extSdCard/;
 echo "/dev/block/vold/179:48" > /sys/devices/virtual/android_usb/android0/f_mass_storage/lun0/file;
 if [ -e /dev/block/vold/179:49 ]; then
 echo "/dev/block/vold/179:49" > /sys/devices/virtual/android_usb/android0/f_mass_storage/lun1/file;

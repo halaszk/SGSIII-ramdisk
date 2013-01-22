@@ -8,8 +8,9 @@ else
 	echo "$debug_to_sd";
 fi;
 
-DEBUG_FILE="/sdcard/dorimanx_debug";
-DEBUG_FILE_LOGCAT="/sdcard/dorimanx_debug_logcat";
+DEBUG_FILE="/sdcard/halaszk_debug";
+DEBUG_FILE_LOGCAT="/sdcard/halaszk_debug_logcat";
+DEBUG_FILE_KMSG="/sdcard/halaszk_debug_kmsg";
 
 case "${debug_to_sd}" in
 	1)
@@ -136,6 +137,11 @@ case "${debug_to_sd}" in
 			mount >> $DEBUG_FILE;
 			cat /proc/partitions >> $DEBUG_FILE;
 			SEPARATOR;
+			
+			 # Emmc firmware date
+			echo "EMMC firmware version:" >> $DEBUG_FILE;
+			cat /sys/class/misc/emmc_fw_date/emmc_fw_date >> $DEBUG_FILE;
+			SEPARATOR;
 
 			# System
 			echo "System-Info:" >> $DEBUG_FILE;
@@ -171,7 +177,16 @@ case "${debug_to_sd}" in
 			#maybe we can also grep / remove personal infos here (e.g . email address)
 		)&
 		echo "Collecting logs for 60Sec please wait";
-	;;	
+	;;
+	3)
+                # last_kmsg
+                (
+                        echo "last_kmsg-Info:" >> $DEBUG_FILE_KMSG;
+                        cat /proc/last_kmsg >> $DEBUG_FILE_KMSG;
+                        SEPARATOR;
+                )&
+                echo "Collecting last kmsg done";
+        ;;
 	*)
 		echo "need input";
 	;;

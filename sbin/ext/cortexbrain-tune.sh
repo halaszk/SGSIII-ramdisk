@@ -25,6 +25,8 @@ AWAKE_LAPTOP_MODE="0";
 SLEEP_LAPTOP_MODE="5";
 BB=/sbin/busybox;
 PROP=/system/bin/setprop;
+sqlite=/sbin/sqlite3;
+wifi_idle_wait=10000;
 
 # =========
 # Renice - kernel thread responsible for managing the swap memory and logs
@@ -704,7 +706,7 @@ if [ "$cortexbrain_ksm_control" == on ]; then
 			return 1;
 		else
 			npages=`INCREASE_NPAGES $KSM_NPAGES_DECAY`;
-			log -p i -t $FILE_NAME "*** ksm: $free < $thres ***"
+			log -p i -t $FILE_NAME "*** ksm: $free < $thres ***";
 			KSMCTL "start" $npages $sleep;
 			return 0;
 		fi;
@@ -717,6 +719,22 @@ if [ "$cortexbrain_ksm_control" == on ]; then
 		ADJUST_KSM;
 	done &);
 fi;
+
+WIFI_TIMEOUT_TWEAKS()
+{
+RETURN_VALUE=$($sqlite /data/data/com.android.providers.settings/databases/settings.db "select value from secure where name='wifi_idle_ms'");
+echo "Current wifi_idle_ms value: $RETURN_VALUE";
+if [ $RETURN_VALUE='' ] 
+then
+   echo "Creating row with wifi_idle_ms value: $wifi_idle_wait";
+   $sqlite /data/data/com.android.providers.settings/databases/settings.db "insert into secure (name, value) values ('wifi_idle_ms', $wifi_idle_wait )"
+    log -p i -t $FILE_NAME "*** Creating row with wifi_idle_ms value: $wifi_idle_wait ***";
+else
+   echo "Updating wifi_idle_ms value from $RETURN_VALUE to $wifi_idle_wait";
+   $sqlite /data/data/com.android.providers.settings/databases/settings.db "update secure set value=$wifi_idle_wait where name='wifi_idle_ms'"
+   log -p i -t $FILE_NAME "*** Updating wifi_idle_ms value from $RETURN_VALUE to $wifi_idle_wait ***";
+fi;
+}
 
 # please don't kill "cortexbrain"
 DONT_KILL_CORTEX()

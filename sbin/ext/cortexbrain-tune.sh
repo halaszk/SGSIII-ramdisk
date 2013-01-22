@@ -116,16 +116,6 @@ IO_TWEAKS()
 		echo NEXT_BUDDY > /sys/kernel/debug/sched_features;
 		echo SYNC_WAKEUPS > /sys/kernel/debug/sched_features;
 
-	if ( mount | grep -w ext4 ) then
-	echo "EXT4 Partition Found!";
-	echo "Remounting...";
-	$BB mount -o noatime,remount,rw,discard,barrier=0,commit=60,noauto_da_alloc,delalloc /cache /cache;
-	$BB mount -o noatime,remount,rw,discard,barrier=0,commit=60,noauto_da_alloc,delalloc /data /data;
-	$BB mount >> /sdcard/fsck.log;
-	else
-	echo "EXT4 Partition Not Found!";
-	fi;
-
 		log -p i -t $FILE_NAME "*** IO_TWEAKS ***: enabled";
 	fi;
 }
@@ -753,7 +743,6 @@ MOUNT_SD_CARD()
 {
         if [ "$auto_mount_sd" == on ]; then
 		$PROP persist.sys.usb.config mass_storage,adb;
-echo "/dev/block/vold/179:48" > /sys/devices/virtual/android_usb/android0/f_mass_storage/lun0/file;
 if [ -e /dev/block/vold/179:49 ]; then
 echo "/dev/block/vold/179:49" > /sys/devices/virtual/android_usb/android0/f_mass_storage/lun1/file;
 fi;
@@ -885,37 +874,25 @@ TUNE_IPV6()
 	fi;
 }
 
-KERNEL_SCHED_AWAKE()
+KERNEL_SCHED()
 {
-	case "${cfs_tweaks}" in
-  0)
-    $BB sysctl -w kernel.sched_min_granularity_ns=750000 > /dev/null;
-    $BB sysctl -w kernel.sched_latency_ns=10000000 > /dev/null;
-    $BB sysctl -w kernel.sched_wakeup_granularity_ns=2000000 > /dev/null;
-    ;;
-  1)
-    $BB sysctl -w kernel.sched_min_granularity_ns=750000 > /dev/null;
-    $BB sysctl -w kernel.sched_latency_ns=6000000 > /dev/null;
-    $BB sysctl -w kernel.sched_wakeup_granularity_ns=1000000 > /dev/null;
-    ;;
-  2)
-    $BB sysctl -w kernel.sched_min_granularity_ns=200000 > /dev/null;
-    $BB sysctl -w kernel.sched_latency_ns=400000 > /dev/null;
-    $BB sysctl -w kernel.sched_wakeup_granularity_ns=100000 > /dev/null;
-    ;;
-esac;
+	local state="$1";
 
-	log -p i -t $FILE_NAME "*** KERNEL_SCHED ***: awake";
+	if [ "${state}" == "awake" ]; then
+		echo "0" > /proc/sys/kernel/sched_child_runs_first;
+		echo "1000000" > /proc/sys/kernel/sched_latency_ns;
+		echo "100000" > /proc/sys/kernel/sched_min_granularity_ns;
+		echo "2000000" > /proc/sys/kernel/sched_wakeup_granularity_ns;
+	elif [ "${state}" == "sleep" ]; then
+		echo "1" > /proc/sys/kernel/sched_child_runs_first;
+		echo "10000000" > /proc/sys/kernel/sched_latency_ns;
+		echo "1500000" > /proc/sys/kernel/sched_min_granularity_ns;
+		echo "2000000" > /proc/sys/kernel/sched_wakeup_granularity_ns;
+	fi;
+	echo "-1" > /proc/sys/kernel/sched_rt_runtime_us;
+
+	log -p i -t $FILE_NAME "*** KERNEL_SCHED ***: ${state}";
 }
-
-KERNEL_SCHED_SLEEP()
-{
-	echo "20000000" > /proc/sys/kernel/sched_latency_ns;
-	echo "4000000" > /proc/sys/kernel/sched_wakeup_granularity_ns;
-	echo "2000000" > /proc/sys/kernel/sched_min_granularity_ns;
-	log -p i -t $FILE_NAME "*** KERNEL_SCHED ***: sleep";
-}
-
 # if crond used, then give it root perent - if started by STweaks, then it will be killed in time
 CROND_SAFETY()
 {
@@ -960,8 +937,8 @@ AWAKE_MODE()
 
 	GAMMA_FIX;
 
-	KERNEL_SCHED_AWAKE;
-	
+	KERNEL_SCHED "awake";
+
 	WAKEUP_DELAY;
 	
 	MEGA_BOOST_CPU_TWEAKS;
@@ -1027,8 +1004,6 @@ AWAKE_MODE()
 
 	DONT_KILL_CORTEX;
 	
-	ENABLE_KSM;
-	
 	SWAPPINESS;
 
 	log -p i -t $FILE_NAME "*** AWAKE Normal Mode ***";
@@ -1070,7 +1045,7 @@ SLEEP_MODE()
 	
 	echo "$SLEEP_LAPTOP_MODE" > /proc/sys/vm/laptop_mode;
 
-	KERNEL_SCHED_SLEEP;
+	KERNEL_SCHED "sleep";
 
 	GESTURES "sleep";
 
@@ -1081,7 +1056,9 @@ SLEEP_MODE()
 	CROND_SAFETY;
 	
 	if [ "$cortexbrain_ksm_control" == on ]; then
-			KSMCTL "stop";
+		KSMCTL "stop";
+	else
+		echo 2 > /sys/kernel/mm/ksm/run;
 	fi;
 
 	SWAPPINESS;

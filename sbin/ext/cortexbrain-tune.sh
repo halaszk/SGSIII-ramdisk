@@ -26,14 +26,6 @@ SLEEP_LAPTOP_MODE="5";
 BB=/sbin/busybox;
 PROP=/system/bin/setprop;
 
-# default settings (1000 = 10 seconds)
-dirty_expire_centisecs_default=1000;
-dirty_writeback_centisecs_default=1000;
-
-# battery settings
-dirty_expire_centisecs_battery=500;
-dirty_writeback_centisecs_battery=1000;
-
 # =========
 # Renice - kernel thread responsible for managing the swap memory and logs
 # =========
@@ -394,8 +386,6 @@ fi;
 MEMORY_TWEAKS()
 {
 	if [ "$cortexbrain_memory" == on ]; then
-		echo "$dirty_expire_centisecs_default" > /proc/sys/vm/dirty_expire_centisecs;
-		echo "$dirty_writeback_centisecs_default" > /proc/sys/vm/dirty_writeback_centisecs;
 	#	echo "4" > /proc/sys/vm/min_free_order_shift; # default: 4
 	#	echo "0" > /proc/sys/vm/overcommit_memory; # default: 0
 	#	echo "50" > /proc/sys/vm/overcommit_ratio; # default: 50
@@ -972,9 +962,6 @@ AWAKE_MODE()
 	if [ "$cortexbrain_wifi" == on ]; then
 	$IWCONFIG wlan0 txpower $cortexbrain_wifi_tx;
 	fi;
-	# set default values
-	echo "$dirty_expire_centisecs_default" > /proc/sys/vm/dirty_expire_centisecs;
-	echo "$dirty_writeback_centisecs_default" > /proc/sys/vm/dirty_writeback_centisecs;
 	
 	if [ "$cortexbrain_cpu_boost" == on ]; then
 	echo "$scaling_governor" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor;
@@ -1085,10 +1072,6 @@ SLEEP_MODE()
 		if [ "$supplicant_scan_interval" -le 180 ]; then
 			$PROP wifi.supplicant_scan_interval 360;
 		fi;
-
-		# set settings for battery -> don't wake up "pdflush daemon"
-		echo "$dirty_expire_centisecs_battery" > /proc/sys/vm/dirty_expire_centisecs;
-		echo "$dirty_writeback_centisecs_battery" > /proc/sys/vm/dirty_writeback_centisecs;
 		
 			# set disk I/O sched to noop simple and battery saving.
 		echo "$sleep_scheduler" > /sys/block/mmcblk0/queue/scheduler;

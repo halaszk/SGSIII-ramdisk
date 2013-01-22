@@ -866,7 +866,7 @@
 			 <spinnerItem name="row" value="row"/>
 		</spinner>
 			<spinner description="Here you can set the level of 'low mem management' by kernel lowmemkiller function, more aggressive, then more free RAM but more killed apps."
-				     name="OOM Level Tuning - screen on" action="oom_config_screen_on">
+				     name="OOM Level Tuning" action="oom_config">
 			<spinnerItem name="very_light" value="very_light"/> 
 			<spinnerItem name="light" value="light"/> 
 			<spinnerItem name="medium" value="medium"/> 

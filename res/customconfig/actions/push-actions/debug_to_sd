@@ -8,9 +8,8 @@ else
 	echo "$debug_to_sd";
 fi;
 
-DEBUG_FILE="/sdcard/halaszk_debug";
-DEBUG_FILE_LOGCAT="/sdcard/halaszk_debug_logcat";
-DEBUG_FILE_KMSG="/sdcard/halaszk_debug_kmsg";
+DEBUG_FILE="/sdcard/dorimanx_debug";
+DEBUG_FILE_LOGCAT="/sdcard/dorimanx_debug_logcat";
 
 case "${debug_to_sd}" in
 	1)
@@ -20,9 +19,13 @@ case "${debug_to_sd}" in
 				echo " ---------------------------- " >> $DEBUG_FILE;
 				echo "" >> $DEBUG_FILE;
 			}
+
+			echo "" > $DEBUG_FILE;
+			echo " --- DEBUG from "`date`" --- " >> $DEBUG_FILE;
+			echo "" >> $DEBUG_FILE;
 	
 			# Kernel-Info
-			echo "Kernel-Version:" > $DEBUG_FILE;
+			echo "Kernel-Version:" >> $DEBUG_FILE;
 			cat /proc/version >> $DEBUG_FILE;
 			SEPARATOR;
 
@@ -107,10 +110,16 @@ case "${debug_to_sd}" in
 			done;
 			SEPARATOR;
 
+			# Scheduler
+			echo "Scheduler-Info:" >> $DEBUG_FILE;
+			cat /proc/sched_debug >> $DEBUG_FILE;
+			SEPARATOR;
+
 			# NET
 			echo "NET-Info:" >> $DEBUG_FILE;
 			ifconfig pdp0 >> $DEBUG_FILE;
 			ifconfig wlan0 >> $DEBUG_FILE;
+			SEPARATOR;
 
 			# USB
 			echo "USB-Info:" >> $DEBUG_FILE;
@@ -128,11 +137,6 @@ case "${debug_to_sd}" in
 			cat /proc/partitions >> $DEBUG_FILE;
 			SEPARATOR;
 
-			# Emmc firmware date
-                        echo "EMMC firmware version:" >> $DEBUG_FILE;
-                        cat /sys/class/misc/emmc_fw_date/emmc_fw_date >> $DEBUG_FILE;
-                        SEPARATOR;
-
 			# System
 			echo "System-Info:" >> $DEBUG_FILE;
 			echo "sysctl:" >> $DEBUG_FILE;
@@ -145,12 +149,15 @@ case "${debug_to_sd}" in
 			# Processes
 			echo "Process-Info:" >> $DEBUG_FILE;
 			top -b -n 1 >> $DEBUG_FILE;
-			ps -wTl >> $DEBUG_FILE;
+			ps -w >> $DEBUG_FILE;
 			SEPARATOR;
 
 			# dmesg
 			echo "dmesg-Info:" >> $DEBUG_FILE;
 			dmesg >> $DEBUG_FILE;
+			SEPARATOR;
+			echo "dmesg-Error:" >> $DEBUG_FILE;
+			dmesg | grep -i "Error" >> $DEBUG_FILE;
 			SEPARATOR;
 		)&
 		echo "All Data collected and ready at $DEBUG_FILE";
@@ -165,16 +172,6 @@ case "${debug_to_sd}" in
 		)&
 		echo "Collecting logs for 60Sec please wait";
 	;;	
-3)
-                # last_kmsg
-                (
-                        echo "last_kmsg-Info:" >> $DEBUG_FILE_KMSG;
-                        cat /proc/last_kmsg >> $DEBUG_FILE_KMSG;
-                        SEPARATOR;
-                )&
-                echo "Collecting last kmsg done";
-        ;;
-
 	*)
 		echo "need input";
 	;;

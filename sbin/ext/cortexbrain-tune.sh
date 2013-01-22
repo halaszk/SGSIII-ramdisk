@@ -735,7 +735,9 @@ else
    log -p i -t $FILE_NAME "*** Updating wifi_idle_ms value from $RETURN_VALUE to $wifi_idle_wait ***";
 fi;
 }
-
+if [ "$cortexbrain_wifi" == on ]; then
+WIFI_TIMEOUT_TWEAKS;
+fi;
 # please don't kill "cortexbrain"
 DONT_KILL_CORTEX()
 {

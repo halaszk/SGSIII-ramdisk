@@ -64,8 +64,9 @@ headphone_amplifier_level=57
 fll_tuning=1
 dac_direct=0
 dac_osr128=1
-stereo_expansion=0
-stereo_expansion_gain=16
+dac_oversampling=0
+privacy_mode=0
+mic_mode=0
 eq_selection=0
 eq_preset=0
 eq_band1=0
@@ -84,9 +85,9 @@ mdniemod=on
 mali_touch_boost_level=1
 touch_boost_level=8
 zram_size=0
-speaker_offset=0
-speaker_tuning=off
-speaker_tuning_level=44
+boeffla_sound=off
+speaker_volume
+headphone_volume
 led_fade=-1
 sched_mc_power_savings=0
 supplicant_scan_interval=360

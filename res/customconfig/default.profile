@@ -86,8 +86,8 @@ mali_touch_boost_level=1
 touch_boost_level=8
 zram_size=0
 boeffla_sound=off
-speaker_volume
-headphone_volume
+speaker_volume=57
+headphone_volume=50
 led_fade=-1
 sched_mc_power_savings=0
 supplicant_scan_interval=360

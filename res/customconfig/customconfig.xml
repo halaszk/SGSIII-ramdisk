@@ -29,6 +29,7 @@
 		 <spinnerItem name="hydrxq" value="hydrxq"/>
 		 <spinnerItem name="zzmoove" value="zzmoove"/>
 		<spinnerItem name="abyssplug" value="abyssplug"/>
+		<spinnerItem name="smartassv2" value="smartassv2"/>
          <spinnerItem name="performance" value="performance"/>
        </spinner>
     <seekBar description="Scaling maximum frequency (Samsung default: 1400000)"
@@ -56,6 +57,7 @@
     <spinnerItem name="hydrxq" value="hydrxq"/>
 	<spinnerItem name="zzmoove" value="zzmoove"/>
 	<spinnerItem name="abyssplug" value="abyssplug"/>
+	<spinnerItem name="smartassv2" value="smartassv2"/>
 	<spinnerItem name="ondemandq" value="ondemandq"/>
 	</spinner>
     </settingsPane>

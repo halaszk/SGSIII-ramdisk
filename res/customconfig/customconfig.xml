@@ -687,7 +687,7 @@
              <spinnerItem name="Disabled" value="0"/> 
              <spinnerItem name="Enabled" value="1"/> 
       </spinner>
-	   <spinner description="Microphone mode recording preset.(Default: Stock)" name="Privacy Mode" action="generic /sys/class/misc/boeffla_sound/mic_mode">
+	   <spinner description="Microphone mode recording preset.(Default: Stock)" name="Microphone Mode" action="generic /sys/class/misc/boeffla_sound/mic_mode">
              <spinnerItem name="Stock" value="0"/> 
              <spinnerItem name="Light" value="1"/> 
 			 <spinnerItem name="Concert" value="2"/>

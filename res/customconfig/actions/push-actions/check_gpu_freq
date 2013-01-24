@@ -2,5 +2,6 @@
 
 (
 GPU_FREQ=`cat /sys/class/misc/mali_control/clock_control`;
-echo "Current GPU Freqvencies: $GPU_FREQ";
+echo "Current GPU Freqvencies: ";
+echo "$GPU_FREQ";
 )&

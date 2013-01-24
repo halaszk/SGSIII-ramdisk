@@ -1,7 +1,6 @@
 #!/sbin/busybox sh
 
 (
-MIN_FREQ=`cat /sys/devices/system/gpu/min_freq`;
-MAX_FREQ=`cat /sys/devices/system/gpu/max_freq`;
-echo "Current GPU Freqvencies: MIN: $MIN_FREQ MAX: $MAX_FREQ";
+GPU_FREQ=`cat /sys/class/misc/mali_control/clock_control`;
+echo "Current GPU Freqvencies: $GPU_FREQ";
 )&

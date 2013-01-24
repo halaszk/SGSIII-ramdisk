@@ -587,6 +587,7 @@
              <spinnerItem name="266MHz" value="266"/> 
       </spinner>
 	  <button description="Use this button to see what GPU Voltage is used right now!" name="Check Active GPU Voltage" action="push-actions/check_gpu_voltage" label="Check GPU Voltage"/>
+	  <button description="Use this button to see what GPU Freq is used right now!" name="Check Active GPU Freq" action="push-actions/check_gpu_freq" label="Check GPU Voltage"/>
 	  </settingsPane>
     <settingsPane description="GPU Voltage Levels: The defaults are 875, 900, 950, 1025 and 1075." name="GPU Voltage Levels">
       <seekBar description="GPU Voltage for the first (lowest) step" 

@@ -1037,14 +1037,6 @@ AWAKE_MODE()
 
 	LOWMMKILLER "awake";
 
-	KERNEL_TWEAKS;
-
-	SYSTEM_TWEAKS;
-
-	MEMORY_TWEAKS;
-
-	TCP_TWEAKS;
-
 	log -p i -t $FILE_NAME "*** AWAKE Normal Mode ***";
 }
 

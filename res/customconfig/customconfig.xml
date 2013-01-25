@@ -880,7 +880,7 @@
 			<spinnerItem name="aggressive" value="aggressive"/> 
 			<spinnerItem name="exterminate" value="exterminate"/> 
 		</spinner>
-		<spinner description="Here you can set the level of low mem managemet by kernel lowmemkiller function for sleep mode, more aggressive, then more free RAM b$
+		<spinner description="Here you can set the level of low mem managemet by kernel lowmemkiller function for sleep mode, more aggressive, then more free RAM but more killed apps"
                                      name="OOM Level Tuning Sleep" action="generic_cortex /tmp/oom_config_sleep">
                         <spinnerItem name="very_light" value="very_light"/>
                         <spinnerItem name="light" value="light"/>

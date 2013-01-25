@@ -898,13 +898,26 @@ SEEDER()
 {
 	local state="$1";
 	if [ "${state}" == "awake" ]; then
-		(/sbin/ext/seed.sh &);
+		$BB sh /sbin/ext/seed.sh > /dev/null 2>&1;
 	elif [ "${state}" == "sleep" ]; then
-		(killall -9 rngd);
+		killall -9 rngd;
 	fi;
 
 	log -p i -t $FILE_NAME "*** SEEDER ***: ${state}";
 }
+
+LOWMMKILLER()
+{
+        local state="$1";
+        if [ "${state}" == "awake" ]; then
+                /res/uci.sh oom_config $oom_config;
+        elif [ "${state}" == "sleep" ]; then
+                /res/uci.sh oom_config_sleep $oom_config_sleep;
+        fi;
+
+        log -p i -t $FILE_NAME "*** SEEDER ***: ${state}";
+}
+
 # if crond used, then give it root perent - if started by STweaks, then it will be killed in time
 CROND_SAFETY()
 {
@@ -1022,6 +1035,16 @@ AWAKE_MODE()
 	
 	SEEDER "awake";
 
+	LOWMMKILLER "awake";
+
+	KERNEL_TWEAKS;
+
+	SYSTEM_TWEAKS;
+
+	MEMORY_TWEAKS;
+
+	TCP_TWEAKS;
+
 	log -p i -t $FILE_NAME "*** AWAKE Normal Mode ***";
 }
 
@@ -1097,11 +1120,14 @@ SLEEP_MODE()
 
 		DISABLE_NMI;
 
-		log -p i -t $FILE_NAME "*** SLEEP mode ***";
+		LOWMMKILLER "sleep";
 
 		LOGGER "sleep";
-		
-		SEEDER "sleep";
+
+                SEEDER "sleep";
+
+		log -p i -t $FILE_NAME "*** SLEEP mode ***";
+
 }
 
 # ==============================================================

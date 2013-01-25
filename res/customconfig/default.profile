@@ -137,6 +137,7 @@ cortexbrain_wifi=off
 cortexbrain_wifi_tx=8
 sleep_scheduler=noop
 oom_config=medium
+oom_config_sleep=light
 init_d=off
 exfat=off
 freq_for_responsiveness=400000

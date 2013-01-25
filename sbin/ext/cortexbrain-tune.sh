@@ -915,7 +915,7 @@ LOWMMKILLER()
                 /res/uci.sh oom_config_sleep $oom_config_sleep;
         fi;
 
-        log -p i -t $FILE_NAME "*** SEEDER ***: ${state}";
+        log -p i -t $FILE_NAME "*** LOWMMKILLER ***: ${state}";
 }
 
 # if crond used, then give it root perent - if started by STweaks, then it will be killed in time

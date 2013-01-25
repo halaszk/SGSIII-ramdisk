@@ -21,6 +21,7 @@ PROFILE=`cat /data/.siyah/.active.profile`;
 FILE_NAME=$0;
 PIDOFCORTEX=$$;
 IWCONFIG=/sbin/iwconfig;
+INTERFACE=wlan0;
 AWAKE_LAPTOP_MODE="0";
 SLEEP_LAPTOP_MODE="5";
 BB=/sbin/busybox;
@@ -893,6 +894,17 @@ KERNEL_SCHED()
 
 	log -p i -t $FILE_NAME "*** KERNEL_SCHED ***: ${state}";
 }
+SEEDER()
+{
+	local state="$1";
+	if [ "${state}" == "awake" ]; then
+		(/sbin/ext/seed.sh &);
+	elif [ "${state}" == "sleep" ]; then
+		(killall -9 rngd);
+	fi;
+
+	log -p i -t $FILE_NAME "*** SEEDER ***: ${state}";
+}
 # if crond used, then give it root perent - if started by STweaks, then it will be killed in time
 CROND_SAFETY()
 {
@@ -957,7 +969,9 @@ AWAKE_MODE()
 	echo "$AWAKE_LAPTOP_MODE" > /proc/sys/vm/laptop_mode;
 	
 	if [ "$cortexbrain_wifi" == on ]; then
-	$IWCONFIG wlan0 txpower $cortexbrain_wifi_tx;
+	$IWCONFIG $INTERFACE frag 2345;
+	$IWCONFIG $INTERFACE rts 2346;
+	$IWCONFIG $INTERFACE txpower $cortexbrain_wifi_tx;
 	fi;
 	
 	if [ "$cortexbrain_cpu_boost" == on ]; then
@@ -1005,6 +1019,8 @@ AWAKE_MODE()
 	DONT_KILL_CORTEX;
 	
 	SWAPPINESS;
+	
+	SEEDER "awake";
 
 	log -p i -t $FILE_NAME "*** AWAKE Normal Mode ***";
 }
@@ -1040,7 +1056,9 @@ SLEEP_MODE()
 	MALI_TIMEOUT "sleep";
 	fi;
 	if [ "$cortexbrain_wifi" == on ]; then
-	$IWCONFIG wlan0 txpower $cortexbrain_wifi_tx;
+	$IWCONFIG $INTERFACE frag 2345;
+	$IWCONFIG $INTERFACE rts 2346;
+	$IWCONFIG $INTERFACE txpower $cortexbrain_wifi_tx;
 	fi;
 	
 	echo "$SLEEP_LAPTOP_MODE" > /proc/sys/vm/laptop_mode;
@@ -1082,6 +1100,8 @@ SLEEP_MODE()
 		log -p i -t $FILE_NAME "*** SLEEP mode ***";
 
 		LOGGER "sleep";
+		
+		SEEDER "sleep";
 }
 
 # ==============================================================

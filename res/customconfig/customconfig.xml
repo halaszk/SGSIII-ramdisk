@@ -30,6 +30,7 @@
 		 <spinnerItem name="zzmoove" value="zzmoove"/>
 		<spinnerItem name="abyssplug" value="abyssplug"/>
 		<spinnerItem name="smartassv2" value="smartassv2"/>
+		<spinnerItem name="nightmare" value="nightmare"/>
          <spinnerItem name="performance" value="performance"/>
        </spinner>
     <seekBar description="Scaling maximum frequency (Samsung default: 1400000)"
@@ -59,6 +60,7 @@
 	<spinnerItem name="abyssplug" value="abyssplug"/>
 	<spinnerItem name="smartassv2" value="smartassv2"/>
 	<spinnerItem name="ondemandq" value="ondemandq"/>
+	<spinnerItem name="nightmare" value="nightmare"/>
 	</spinner>
     </settingsPane>
   </settingsTab>
@@ -587,7 +589,7 @@
              <spinnerItem name="266MHz" value="266"/> 
       </spinner>
 	  <button description="Use this button to see what GPU Voltage is used right now!" name="Check Active GPU Voltage" action="push-actions/check_gpu_voltage" label="Check GPU Voltage"/>
-	  <button description="Use this button to see what GPU Freq is used right now!" name="Check Active GPU Freq" action="push-actions/check_gpu_freq" label="Check GPU Voltage"/>
+	  <button description="Use this button to see what GPU Freq is used right now!" name="Check Active GPU Freq" action="push-actions/check_gpu_freq" label="Check GPU Freq"/>
 	  </settingsPane>
     <settingsPane description="GPU Voltage Levels: The defaults are 875, 900, 950, 1025 and 1075." name="GPU Voltage Levels">
       <seekBar description="GPU Voltage for the first (lowest) step" 

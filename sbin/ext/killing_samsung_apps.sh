@@ -1,12 +1,13 @@
 #!/sbin/busybox sh
 #
-# Closing APPS before init script by NeoPhyTe.x360
+##### Closing APPS before init script by NeoPhyTe.x360 #####
 
 echo "............Closing APPS before init";
 
 /sbin/busybox killall -q kswapd0
 sleep 71
-busybox renice -1 `pidof scaling`
+# busybox renice -1 `pidof scaling.sh`
+am kill-all
 /sbin/busybox killall -q com.android.MtpApplication
 /sbin/busybox killall -q com.sec.android.provider.logsprovider
 /sbin/busybox killall -q com.android.nfc

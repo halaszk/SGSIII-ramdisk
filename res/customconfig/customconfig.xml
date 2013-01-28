@@ -770,13 +770,12 @@
 			  <spinnerItem name="Restore original ROM gps.conf" value="Original_ROM_GPS_Restored"/>
 	</spinner>
 	<button description="Click to see your current GPS ZONE" name="GPS ZONE" action="push-actions/gpszonecheck" label="GPS ZONE CHECK"/>
-		<spinner description="ZRAM Module settings. Here you can shut down ZRAM or add more compressed RAM for your system." 
-			name="ZRAM Settings" action="zram">
-			<spinnerItem name="Set ZRAM to 150MB" value="1"/> 
-			<spinnerItem name="Set ZRAM to 300MB (default)" value="2"/> 
-			<spinnerItem name="Set ZRAM to 600MB" value="3"/> 
-			<spinnerItem name="Set ZRAM OFF!" value="4"/> 
-		</spinner>
+      <spinner description="ZRAM (Compressed swap space in RAM) size" name="ZRAM Size" action="zram">
+             <spinnerItem name="disabled" value="0"/>
+             <spinnerItem name="150MB" value="150"/>
+             <spinnerItem name="300MB" value="300"/>
+			 <spinnerItem name="600MB" value="600"/>
+      </spinner>
 	<button description="ZRAM check for active state" name="ZRAM STATS" action="push-actions/zramstats" label="ZRAM STATS"/>
 		<button description="Update time via ntp-server" name="UPDATE TIME" action="push-actions/time_update" label="UPDATE TIME"/>
       <checkbox description="Enable or Disable Android Logger (needs reboot)" name="Android Logger" action="generic /tmp/logger" label="Android Logger"/>

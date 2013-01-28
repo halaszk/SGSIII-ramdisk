@@ -6,17 +6,17 @@
 # ZRAM compress ratio is 50% so if set 300MB, then it will give clean 150MB More RAM,
 # This gives us 1GB RAM device or more.
 
-# $1 - "zram"
+# $1 - "zramtweaks"
 # $2 - value=
 
 if [ "a$2" == "a" ]; then
-	echo "$zram";
+	echo "$zramtweaks";
 else
-	zram=$2;
-	echo "$zram";
+	zramtweaks=$2;
+	echo "$zramtweaks";
 fi;
 
-case "${zram}" in
+case "${zramtweaks}" in
 	1)
 		if [ `cat /proc/swaps | grep 50000 |  wc -l` != "3" ]; then
 			if [ -e /dev/block/zram0 ]; then

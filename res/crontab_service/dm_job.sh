@@ -2,11 +2,19 @@
 
 # Created By Dorimanx and Dairinin
 
-if [ "a$1" != "a" ] && [ -e /system/xbin/busybox ]; then
+if [ -e /system/xbin/busybox ]; then
+	BB=/system/xbin/busybox
+elif [ -e /system/bin/busybox ]; then
+	BB=/system/bin/busybox
+else
+	BB=not_supported
+fi;
+
+if [ "a$1" != "a" ] && [ -e "$BB" ]; then
 	cron_localtime () {
 		local localtime=$1;
 		shift;
-		date -u --date=@$(date --date="$localtime" +%s) "+%-M %-H * * *    $*";
+		$BB date -u --date=@$($BB date --date="$localtime" +%s) "+%-M %-H * * *    $*";
 	}
 
 	plan_cron_job () {

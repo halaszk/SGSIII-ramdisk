@@ -19,6 +19,8 @@ if [ ! -d /data/.siyah ]; then
 $BB mkdir -p /data/.siyah;
 fi;
 
+. /res/customconfig/customconfig-helper
+
 ccxmlsum=`md5sum /res/customconfig/customconfig.xml | awk '{print $1}'`
 if [ "a${ccxmlsum}" != "a`cat /data/.siyah/.ccxmlsum`" ];
 then
@@ -26,12 +28,9 @@ then
   echo ${ccxmlsum} > /data/.siyah/.ccxmlsum;
 fi
 [ ! -f /data/.siyah/default.profile ] && cp /res/customconfig/default.profile /data/.siyah;
-[ ! -f /data/.siyah/battery.profile ] && cp /res/customconfig/battery.profile /data/.siyah/battery.profile;
-[ ! -f /data/.siyah/performance.profile ] && cp /res/customconfig/performance.profile /data/.siyah/performance.profile;
 
 $BB chmod 0777 /data/.siyah/ -R;
 
-. /res/customconfig/customconfig-helper;
 read_defaults;
 read_config;
 
@@ -123,9 +122,9 @@ mount -o remount,ro /
 	$BB sh /sbin/ext/killing_samsung_apps.sh &
 )&
 
-(
-        $BB sh /sbin/ext/smoothlauncher.sh &
-)&
+#(
+#        $BB sh /sbin/ext/smoothlauncher.sh &
+#)&
 
 
 # enable kmem interface for everyone by GM
@@ -141,6 +140,13 @@ $BB mv /res/customconfig/actions/push-actions/* /res/no-push-on-boot/;
 # set root access script.
 $BB chmod 6755 /sbin/ext/cortexbrain-tune.sh;
 
+# some initialization code
+CONFIG_XML=/res/customconfig/customconfig.xml;
+if [ ! -f $CONFIG_XML ]; then
+mount -o remount,rw /;
+  . /res/customconfig/customconfig.xml.generate > $CONFIG_XML;
+  mount -o remount,ro /;
+fi;
 # apply STweaks settings
 echo "booting" > /data/.siyah/booting;
 pkill -f "com.gokhanmoral.stweaks.app";
@@ -161,9 +167,9 @@ $BB sh /res/uci.sh usb-mode ${usb_mode};
 	$BB mount -t rootfs -o remount,rw rootfs;
 
 ##### EFS Backup #####
-(
-	$BB sh /sbin/ext/efs-backup.sh;
-) &
+#(
+#	$BB sh /sbin/ext/efs-backup.sh;
+#) &
 
 
 PIDOFACORE=`pgrep -f "android.process.acore"`;

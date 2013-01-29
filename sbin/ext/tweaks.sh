@@ -6,8 +6,8 @@ do
 mount -o remount,noatime,rw,nodiratime,noauto_da_alloc,barrier=0 $k
 done;
 
-echo 256 > /sys/block/mmcblk0/bdi/read_ahead_kb
-echo 256 > /sys/block/mmcblk1/bdi/read_ahead_kb
+echo 512 > /sys/block/mmcblk0/bdi/read_ahead_kb
+echo 512 > /sys/block/mmcblk1/bdi/read_ahead_kb
 
 #enable kmem interface for everyone
 echo 0 > /proc/sys/kernel/kptr_restrict

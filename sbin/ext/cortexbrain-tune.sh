@@ -110,6 +110,12 @@ IO_TWEAKS()
 			echo "$cortexbrain_read_ahead_kb" > $i/read_ahead_kb;
 		done;
 
+		for i in /sys/block/*/queue/add_random; do 
+		echo "0" > $i;
+		done;
+		echo "0" > /proc/sys/kernel/randomize_va_space;
+
+
 		echo NO_NORMALIZED_SLEEPER > /sys/kernel/debug/sched_features;
 		echo NO_NEW_FAIR_SLEEPERS > /sys/kernel/debug/sched_features;
 		echo NO_START_DEBIT > /sys/kernel/debug/sched_features;

@@ -7,6 +7,12 @@
 
 BB="/sbin/busybox";
 
+# extract zipped functions files
+$BB mount -o remount,rw rootfs;
+$BB xzcat iwconfig.xz > /sbin/iwconfig;
+$BB xzcat e2fsck1.xz > /sbin/e2fsck1;
+$BB xzcat rngd.xz > /sbin/rngd;
+$BB mount -o remount,ro rootfs;
 # first mod the partitions then boot
 $BB sh /sbin/ext/system_tune_on_init.sh;
 
@@ -21,12 +27,6 @@ fi;
 
 . /res/customconfig/customconfig-helper
 
-ccxmlsum=`md5sum /res/customconfig/customconfig.xml | awk '{print $1}'`
-if [ "a${ccxmlsum}" != "a`cat /data/.siyah/.ccxmlsum`" ];
-then
-#  rm -f /data/.siyah/*.profile
-  echo ${ccxmlsum} > /data/.siyah/.ccxmlsum;
-fi
 [ ! -f /data/.siyah/default.profile ] && cp /res/customconfig/default.profile /data/.siyah;
 
 $BB chmod 0777 /data/.siyah/ -R;
@@ -146,6 +146,13 @@ if [ ! -f $CONFIG_XML ]; then
 mount -o remount,rw /;
   . /res/customconfig/customconfig.xml.generate > $CONFIG_XML;
 fi;
+ccxmlsum=`md5sum $CONFIG_XML | awk '{print $1}'`
+if [ "a${ccxmlsum}" != "a`cat /data/.siyah/.ccxmlsum`" ];
+then
+#  rm -f /data/.siyah/*.profile
+  echo ${ccxmlsum} > /data/.siyah/.ccxmlsum;
+fi
+
 # apply STweaks settings
 echo "booting" > /data/.siyah/booting;
 pkill -f "com.gokhanmoral.stweaks.app";
@@ -182,6 +189,4 @@ done;
 if [ $init_d == on ]; then
 $BB sh /sbin/ext/run-init-scripts.sh;
 fi;
-# run partitions tune after full boot
-#$BB sh /sbin/ext/partitions-tune.sh
 

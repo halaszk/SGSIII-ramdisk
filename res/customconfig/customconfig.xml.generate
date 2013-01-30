@@ -1,4 +1,4 @@
-#!/sbin/busybox sh
+#!/bin/bash
 
 cat << ENDCONFIG
 <settingsRoot>
@@ -705,27 +705,27 @@ done
   <settingsTab name="Power">
     <settingsPane description="Device charging currents are composed of input current coming into the device (Nominal 5V) and charge current fed to the battery (Battery Charge Voltage). Charger detection divides charging cable types into three categories: DCP - Dedicated Charging Port and AC Connector plugs; SDP - Standard Downstream Port for typical USB connectors; and CDP - Charging Downstream Port for USB connectors adhering to BC 1.1 specification. Input current is the sum of device load and charging load. If charging current exceeds input load, then charging current is dynamically adjusted. For avoiding battery deterioration, charging currents of less than 0.7 Coloumb are advised; ex. 2100mAh (Capacity) * 0.7C = ~1470mA."
 		  name="Charging currents">
-      <seekBar  description="Dedicated Charging Port and Mains input current limit applied when detection of a standalone charger happens, or if a USB connector with shorted D+ and D- pins is attached. Default: '"`cat /sys/devices/platform/samsung-battery/dcp_ac_input_curr`"'" 
+      <seekBar  description="Dedicated Charging Port and Mains input current limit applied when detection of a standalone charger happens, or if a USB connector with shorted D+ and D- pins is attached. Default: `cat /sys/devices/platform/samsung-battery/dcp_ac_input_curr`" 
 		name="DCP and Mains AC Input Current" 
                 action="generic /sys/devices/platform/samsung-battery/dcp_ac_input_curr"
                 unit="mA" min="100" reversed="false" step="25" max="2000"/>
-      <seekBar  description="Dedicated Charging Port and Mains charge current supplied to battery during charging. Default: '"`cat /sys/devices/platform/samsung-battery/dcp_ac_chrg_curr`"'"   
+      <seekBar  description="Dedicated Charging Port and Mains charge current supplied to battery during charging. Default: `cat /sys/devices/platform/samsung-battery/dcp_ac_chrg_curr`"   
 		name="DCP and Mains AC Charge Current."
                 action="generic /sys/devices/platform/samsung-battery/dcp_ac_chrg_curr"
                 unit="mA" min="100" reversed="false" step="25" max="2300"/>
-      <seekBar  description="Standard Downstream Port input current limit applied on plain and compliant USB data connectivity ports. Default: '"`cat /sys/devices/platform/samsung-battery/sdp_input_curr`"'" 
+      <seekBar  description="Standard Downstream Port input current limit applied on plain and compliant USB data connectivity ports. Default: `cat /sys/devices/platform/samsung-battery/sdp_input_curr`" 
 		name="SDP Input Current" 
                 action="generic /sys/devices/platform/samsung-battery/sdp_input_curr"
                 unit="mA" min="100" reversed="false" step="25" max="1500"/>
-      <seekBar  description="Standard Downstream Port charge current supplied to battery during charging. Default: '"`cat /sys/devices/platform/samsung-battery/sdp_chrg_curr`"'" 
+      <seekBar  description="Standard Downstream Port charge current supplied to battery during charging. Default: `cat /sys/devices/platform/samsung-battery/sdp_chrg_curr`" 
 		name="SDP Charge Current" 
                 action="generic /sys/devices/platform/samsung-battery/sdp_chrg_curr"
                 unit="mA" min="100" reversed="false" step="25" max="1700"/>
-      <seekBar  description="Charging Downstream Port input current limit applied on BCS 1.1 special charging USB data connectivity ports. Default: '"`cat /sys/devices/platform/samsung-battery/cdp_input_curr`"'" 
+      <seekBar  description="Charging Downstream Port input current limit applied on BCS 1.1 special charging USB data connectivity ports. Default: `cat /sys/devices/platform/samsung-battery/cdp_input_curr`" 
 		name="CDP Input Current" 
                 action="generic /sys/devices/platform/samsung-battery/cdp_input_curr"
                 unit="mA" min="100" reversed="false" step="25" max="1500"/>
-      <seekBar  description="Charging Downstream Port and Mains charge current supplied to battery during charging. Default: '"`cat /sys/devices/platform/samsung-battery/cdp_chrg_curr`"'"  
+      <seekBar  description="Charging Downstream Port and Mains charge current supplied to battery during charging. Default: `cat /sys/devices/platform/samsung-battery/cdp_chrg_curr`"  
 		name="CDP Charge Current"
                 action="generic /sys/devices/platform/samsung-battery/cdp_chrg_curr"
                 unit="mA" min="100" reversed="false" step="25" max="1700"/>
@@ -750,7 +750,7 @@ done
              <spinnerItem name="4.35V (Default)" value="2"/>
              <spinnerItem name="4.40V" value="3"/>
       </spinner>
-      <seekBar  description="Charge voltage the battery has to reach until the charger regulation turns off charging, as measured by the fuelgauge. Default: '"`cat /sys/devices/platform/samsung-battery/batt_chrg_soft_volt`"'"
+      <seekBar  description="Charge voltage the battery has to reach until the charger regulation turns off charging, as measured by the fuelgauge. Default: `cat /sys/devices/platform/samsung-battery/batt_chrg_soft_volt`"
 		name="Charge soft voltage"
                 action="generic /sys/devices/platform/samsung-battery/batt_chrg_soft_volt"
                 unit="µV" min="3600000" reversed="false" step="25000" max="4500000"/>
@@ -1036,4 +1036,4 @@ done
 		</settingsPane>
 	</settingsTab>
 </settingsRoot>
- ENDCONFIG
+ENDCONFIG

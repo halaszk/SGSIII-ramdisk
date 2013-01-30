@@ -822,42 +822,42 @@ done
       <seekBar  description="Chroma saturation weight for RGB/YCM chroma gains"
 		name="Chromatic Saturation Weight"
                 action="mdnie CS_WEIGHT_DELTA"
-                unit="" min="-10" reversed="false" step="1" max="10"/>
+                unit="" min="-16" reversed="false" step="1" max="32"/>
 
       <seekBar  description="TBD"
 		name="Chromatic Grey threshold"
                 action="mdnie CS_GREY_DELTA"
-                unit="" min="-4" reversed="false" step="1" max="10"/>
+                unit="" min="-16" reversed="false" step="1" max="32"/>
 
       <seekBar  description=""
 		name="Red-Yellow Chroma Gain"
                 action="mdnie CS_RY_DELTA"
-                unit="" min="-10" reversed="false" step="1" max="10"/>
+                unit="" min="-16" reversed="false" step="1" max="32"/>
 
       <seekBar  description=""
 		name="Red-Yellow Chroma Curve"
                 action="mdnie CS_HG_RY_DELTA"
-                unit="" min="-10" reversed="false" step="1" max="10"/>
+                unit="" min="-16" reversed="false" step="1" max="32"/>
 
       <seekBar  description=""
 		name="Green-Cyan Chroma Curve"
                 action="mdnie CS_HG_GC_DELTA"
-                unit="" min="-10" reversed="false" step="1" max="10"/>
+                unit="" min="-16" reversed="false" step="1" max="32"/>
 
       <seekBar  description=""
 		name="Green-Cyan Chroma Gain"
                 action="mdnie CS_GC_DELTA"
-                unit="" min="-10" reversed="false" step="1" max="10"/>
+                unit="" min="-16" reversed="false" step="1" max="32"/>
 
       <seekBar  description=""
 		name="Blue-Magenta Chroma Curve"
                 action="mdnie CS_HG_BM_DELTA"
-                unit="" min="-10" reversed="false" step="1" max="10"/>
+                unit="" min="-16" reversed="false" step="1" max="32"/>
 
       <seekBar  description=""
 		name="Blue-Magenta Chroma Gain"
                 action="mdnie CS_BM_DELTA"
-                unit="" min="-10" reversed="false" step="1" max="10"/>
+                unit="" min="-16" reversed="false" step="1" max="32"/>
 
     </settingsPane>
 	

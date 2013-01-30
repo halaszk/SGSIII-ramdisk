@@ -702,6 +702,60 @@ done
       </spinner>
     </settingsPane>
   </settingsTab>
+  <settingsTab name="Power">
+    <settingsPane description="Device charging currents are composed of input current coming into the device (Nominal 5V) and charge current fed to the battery (Battery Charge Voltage). Charger detection divides charging cable types into three categories: DCP - Dedicated Charging Port and AC Connector plugs; SDP - Standard Downstream Port for typical USB connectors; and CDP - Charging Downstream Port for USB connectors adhering to BC 1.1 specification. Input current is the sum of device load and charging load. If charging current exceeds input load, then charging current is dynamically adjusted. For avoiding battery deterioration, charging currents of less than 0.7 Coloumb are advised; ex. 2100mAh (Capacity) * 0.7C = ~1470mA."
+		  name="Charging currents">
+      <seekBar  description="Dedicated Charging Port and Mains input current limit applied when detection of a standalone charger happens, or if a USB connector with shorted D+ and D- pins is attached. Default: '"`cat /sys/devices/platform/samsung-battery/dcp_ac_input_curr`"'" 
+		name="DCP and Mains AC Input Current" 
+                action="generic /sys/devices/platform/samsung-battery/dcp_ac_input_curr"
+                unit="mA" min="100" reversed="false" step="25" max="2000"/>
+      <seekBar  description="Dedicated Charging Port and Mains charge current supplied to battery during charging. Default: '"`cat /sys/devices/platform/samsung-battery/dcp_ac_chrg_curr`"'"   
+		name="DCP and Mains AC Charge Current."
+                action="generic /sys/devices/platform/samsung-battery/dcp_ac_chrg_curr"
+                unit="mA" min="100" reversed="false" step="25" max="2300"/>
+      <seekBar  description="Standard Downstream Port input current limit applied on plain and compliant USB data connectivity ports. Default: '"`cat /sys/devices/platform/samsung-battery/sdp_input_curr`"'" 
+		name="SDP Input Current" 
+                action="generic /sys/devices/platform/samsung-battery/sdp_input_curr"
+                unit="mA" min="100" reversed="false" step="25" max="1500"/>
+      <seekBar  description="Standard Downstream Port charge current supplied to battery during charging. Default: '"`cat /sys/devices/platform/samsung-battery/sdp_chrg_curr`"'" 
+		name="SDP Charge Current" 
+                action="generic /sys/devices/platform/samsung-battery/sdp_chrg_curr"
+                unit="mA" min="100" reversed="false" step="25" max="1700"/>
+      <seekBar  description="Charging Downstream Port input current limit applied on BCS 1.1 special charging USB data connectivity ports. Default: '"`cat /sys/devices/platform/samsung-battery/cdp_input_curr`"'" 
+		name="CDP Input Current" 
+                action="generic /sys/devices/platform/samsung-battery/cdp_input_curr"
+                unit="mA" min="100" reversed="false" step="25" max="1500"/>
+      <seekBar  description="Charging Downstream Port and Mains charge current supplied to battery during charging. Default: '"`cat /sys/devices/platform/samsung-battery/cdp_chrg_curr`"'"  
+		name="CDP Charge Current"
+                action="generic /sys/devices/platform/samsung-battery/cdp_chrg_curr"
+                unit="mA" min="100" reversed="false" step="25" max="1700"/>
+    </settingsPane>
+    <settingsPane description="The charger logic makes additional adjustments to the set up currents limits resulting in different live limits being applied. The actual resultant max input limit is decribed in /sys/devices/platform/samsung-battery/power_supply/battery/current_max"
+		  name="Charging current adjustments">
+      <checkbox  description="The charger chip is capable of detecting instabilities in the power supplied to the chip, it dynamically adjusts input currents until it reaches a stable power readout - at this point it reduces it further by an additional 100mA step as a safety margin. This ignores that margin." 
+                name="Ignore 100mA step safety margin" 
+                action="generic01 /sys/devices/platform/samsung-battery/ignore_stable_margin"
+                label="Ignore margin"/>
+      <checkbox  description="This completely disables the unstable power detection. WARNING: USE AT YOUR OWN RISK." 
+                name="Ignore unstable power detection" 
+                action="generic01 /sys/devices/platform/samsung-battery/ignore_unstable_power"
+                label="Ignore unstable power"/>
+    </settingsPane>
+    <settingsPane description="Charging voltage control supplied to the battery. A majority of third-party batteries have a 3.7V nominal battery chemistry and are charged at 4.2V as opposed to the stock and advanced 3.8V nominal / 4.35V charging batteries. Full charge is decided by the state-of-charge (Dynamicially calibrated in hardware) reported by the fuelgauge and the target charge voltage reached and measured by the fuelgauge. WARNING: USE AT YOUR OWN RISK. OVERCHARGING BATTERIES CAN LEAD INTO BATTERY FAILURE, OVERHEATING, AND MELTDOWN." 
+                  name="Battery charging voltages">
+      <spinner  description="Charger chip charge voltage supplied to the battery." 
+                name="Charge hard voltage"
+                action="generic /sys/devices/platform/samsung-battery/batt_chrg_hard_volt">
+             <spinnerItem name="4.20V" value="1"/>
+             <spinnerItem name="4.35V (Default)" value="2"/>
+             <spinnerItem name="4.40V" value="3"/>
+      </spinner>
+      <seekBar  description="Charge voltage the battery has to reach until the charger regulation turns off charging, as measured by the fuelgauge. Default: '"`cat /sys/devices/platform/samsung-battery/batt_chrg_soft_volt`"'"
+		name="Charge soft voltage"
+                action="generic /sys/devices/platform/samsung-battery/batt_chrg_soft_volt"
+                unit="µV" min="3600000" reversed="false" step="25000" max="4500000"/>
+    </settingsPane>
+  </settingsTab>
   <settingsTab name="Screen">
     <settingsPane description="Other screen related settings" name="Other Settings">
         <checkbox description="mDNIe sharpness tweaks from hardcore. Requires reboot to be effective." name="mDNIe Sharpness Tweaks" action="generic /tmp/mdniemod" label="mDNIe Sharpness Tweaks"/>
@@ -791,8 +845,6 @@ done
 			 <spinnerItem name="Force Mass Storage Mode" value="mass_storage-adb"/>
 			 <spinnerItem name="Force MTP Mode" value="mtp-adb"/>
 		</spinner>
-		<seekBar description="AC,CDP,Dock charge currents (default 1000)" name="AC Charge" action="chargecurrent_ac" unit="mA" min="500" reversed="false" step="50" max="1200"/>
-		<seekBar description="USB charge current (default 475)" name="USB Charge" action="chargecurrent_usb" unit="mA" min="450" reversed="false" step="25" max="1000"/>
 		<button description="If checked, before yournaling partition scan and fix all (SYSTEM, DATA, CACHE) partitions with fsck." name="partition repair" action="push-actions/partition_repair" label="Auto-Repair all partitions"/>
 		<button description="Enable or disable journaling for more speed on all partitions. Push once to activate, push again to abort. You have to reboot for action to work!" name="Partitions Journaling" action="push-actions/part_yourn" label="PARTITIONS YOURNALING ON/OFF"/>
 		<button description="Clean the media cache on your sdcard. Push once to clean, push again to abort. You have to reboot for action to work!" name="Clean media-cache" action="push-actions/fix_media" label="FIX MEDIA ON/OFF"/>

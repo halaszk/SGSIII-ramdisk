@@ -793,7 +793,7 @@ done
       <seekBar  description="Dither8 UC4 ABC2 CP1 | CC8 MCM4 SCR2 SCC1 | CS8 DE4 DNR2 HDR1 - Calibrated default value: -4"
 		name="Sharpness delta"
                 action="mdnie DITHER_DELTA"
-                unit="" min="-10" reversed="false" step="1" max="10"/>
+                unit="" min="-16" reversed="false" step="1" max="16"/>
 
       <checkbox  description="Turns off DE registers when on (Calibrated), uses stock values when off."
                 name="DE Killswitch" 

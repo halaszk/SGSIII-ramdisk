@@ -145,14 +145,11 @@ CONFIG_XML=/res/customconfig/customconfig.xml;
 if [ ! -f $CONFIG_XML ]; then
 mount -o remount,rw /;
   . /res/customconfig/customconfig.xml.generate > $CONFIG_XML;
-  mount -o remount,ro /;
 fi;
 # apply STweaks settings
 echo "booting" > /data/.siyah/booting;
 pkill -f "com.gokhanmoral.stweaks.app";
-export CONFIG_BOOTING=1
 $BB sh /res/uci.sh restore;
-export CONFIG_BOOTING=
 # restore all the PUSH Button Actions back to there location
 $BB mount -o remount,rw rootfs;
 $BB mv /res/no-push-on-boot/* /res/customconfig/actions/push-actions/;

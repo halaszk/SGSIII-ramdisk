@@ -16,13 +16,6 @@ $BB mount -o remount,ro rootfs;
 # first mod the partitions then boot
 $BB sh /sbin/ext/system_tune_on_init.sh;
 
-# check whether custom boot animation is available to be played
-if $BB [ -f /data/local/bootanimation.zip ] || $BB [ -f /system/media/bootanimation.zip ]; then
-        /system/bin/bootanimation &;
-else
-        /system/bin/samsungani &;
-fi;
-
 PIDOFINIT=`pgrep -f "/sbin/ext/post-init.sh"`;
 for i in $PIDOFINIT; do
 echo "-600" > /proc/$i/oom_score_adj;

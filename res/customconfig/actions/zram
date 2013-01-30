@@ -9,12 +9,8 @@
 # $1 - "zram"
 # $2 - value=
 
-if [ "a$2" == "a" ]; then
-	echo "$zram";
-else
-	zram=$2;
-	echo "$zram";
-fi;
+if [ "a$2" != "a" ]; then
+zram=$2;
 
 case "${zram}" in
 	1)
@@ -106,8 +102,10 @@ case "${zram}" in
 		fi;
 	;;
 	*)
-		zram=4;
-	;;
+	zram=4;
+;;
 esac;
+fi;
 
+echo ${zram};
 

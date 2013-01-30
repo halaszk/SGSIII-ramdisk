@@ -26,9 +26,9 @@ cat << ENDCONFIG
     </settingsPane>
     <settingsPane description=""
 		name="CPU Scaling Settings">
-       <spinner description="This will set the default CPU governor. Default CPU governor will only be set during early stages of booting (before init.d execution) and can be overriden by later scripts or apps. Default: `cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor`" name="Default CPU Governor" action="generic /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor">
+       <spinner description="This will set the default CPU governor. Default CPU governor will only be set during early stages of booting (before init.d execution) and can be overriden by later scripts or apps." name="Default CPU Governor" action="generic /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor">
 `#Start CPU governor
-for GOVERNOR in `cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors`;
+for GOVERNOR in \`cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors\`;
 do
 echo ' <spinnerItem name="'$GOVERNOR'" value="'$GOVERNOR'"/>'
 done
@@ -56,7 +56,7 @@ done
 	<spinner description="This will set the DEEP SLEEP (screen off) CPU governor. Depends on cortex background process to be enabled."
 		name="Deep-Sleep! CPU Governor" action="generic /tmp/deep_sleep">
 `#Start CPU governor
-for GOVERNOR in `cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors`;
+for GOVERNOR in \`cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors\`;
 do
 echo ' <spinnerItem name="'$GOVERNOR'" value="'$GOVERNOR'"/>'
 done
@@ -984,4 +984,4 @@ done
 		</settingsPane>
 	</settingsTab>
 </settingsRoot>
-ENDCONFIG
+ ENDCONFIG

@@ -26,7 +26,7 @@ for i in $actions;do
   if [ "a$action" != a ];then
     . $ACTION_SCRIPTS/$action $action $actionparam
     actionval=`. $ACTION_SCRIPTS/$action $action $actionparam`
-    echo applying: /res/uci_for_loop.sh $action $actionparam $actionval
+    echo applying: /res/uci.sh $action $actionparam $actionval
     . $ACTION_SCRIPTS/$action $action $actionparam $actionval
   fi
 done

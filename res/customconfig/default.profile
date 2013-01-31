@@ -135,6 +135,7 @@ cortexbrain_io=on
 cortexbrain_multitaskingfix=on
 cortexbrain_wifi=off
 cortexbrain_wifi_tx=8
+cortexbrain_seeder_entropy=off
 sleep_scheduler=noop
 oom_config=medium
 oom_config_sleep=light

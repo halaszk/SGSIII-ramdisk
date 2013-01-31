@@ -748,15 +748,15 @@ DONT_KILL_CORTEX()
 
 MOUNT_SD_CARD()
 {
-        if [ "$auto_mount_sd" == on ]; then
+if [ "$auto_mount_sd" == on ]; then
 		$PROP persist.sys.usb.config mass_storage,adb;
-if [ -e /dev/block/vold/179:49 ]; then
-echo "/dev/block/vold/179:49" > /sys/devices/virtual/android_usb/android0/f_mass_storage/lun1/file;
-fi;
-log -p i -t $FILE_NAME "*** MOUNT_SD_CARD ***";
+	if [ -e /dev/block/vold/179:49 ]; then
+		echo "/dev/block/vold/179:49" > /sys/devices/virtual/android_usb/android0/f_mass_storage/lun1/file;
+	fi;
+	log -p i -t $FILE_NAME "*** MOUNT_SD_CARD ***";
 fi;
 }
-
+MOUNT_SD_CARD;
 # set wakeup booster delay to prevent mp3 music shattering when screen turned ON
 WAKEUP_DELAY()
 {
@@ -902,14 +902,15 @@ KERNEL_SCHED()
 }
 SEEDER()
 {
+if [ "$cortexbrain_seeder_entropy" == on ]; then
 	local state="$1";
 	if [ "${state}" == "awake" ]; then
 		$BB sh /sbin/ext/seed.sh > /dev/null 2>&1;
 	elif [ "${state}" == "sleep" ]; then
 		killall -9 rngd;
 	fi;
-
 	log -p i -t $FILE_NAME "*** SEEDER ***: ${state}";
+fi;
 }
 
 LOWMMKILLER()
@@ -974,7 +975,6 @@ AWAKE_MODE()
 	
 	MEGA_BOOST_CPU_TWEAKS;
 	
-	MOUNT_SD_CARD;
 	
 	if [ "$cortexbrain_ksm_control" == on ]; then
 		ADJUST_KSM;
@@ -1006,6 +1006,7 @@ AWAKE_MODE()
 	# set I/O-Scheduler
 	echo "$scheduler" > /sys/block/mmcblk0/queue/scheduler;
 	echo "$scheduler" > /sys/block/mmcblk1/queue/scheduler;
+	
 	if [ "$mali_resume_enable" == on ]; then
 	echo "$GPUFREQ1" > /sys/module/mali/parameters/step0_clk;
 	fi;
@@ -1019,14 +1020,15 @@ AWAKE_MODE()
 
 	# set wifi.supplicant_scan_interval
 	$PROP wifi.supplicant_scan_interval $supplicant_scan_interval;
+	
 	if [ "$cortexbrain_cpu_boost" == on ]; then
 	# bus freq back to normal
 	echo "$dmc_max_threshold" > /sys/devices/system/cpu/busfreq/dmc_max_threshold;
 	echo "$max_cpu_threshold" > /sys/devices/system/cpu/busfreq/max_cpu_threshold;
 	echo "$up_cpu_threshold" > /sys/devices/system/cpu/busfreq/up_cpu_threshold;
-	
 	MALI_TIMEOUT "awake";
 	fi;
+	
 	# set the vibrator - force in case it's has been reseted
 	echo "$pwm_val" > /sys/vibrator/pwm_val;
 
@@ -1069,6 +1071,7 @@ SLEEP_MODE()
 
 	# set CPU-Tweak
 	CPU_GOV_TWEAKS "sleep";
+	
 	if [ "$cortexbrain_cpu_boost" == on ]; then
 	# bus freq to min 100Mhz
 	echo "80" > /sys/devices/system/cpu/busfreq/dmc_max_threshold;
@@ -1122,7 +1125,7 @@ SLEEP_MODE()
 
 		LOGGER "sleep";
 
-                SEEDER "sleep";
+        SEEDER "sleep";
 
 		log -p i -t $FILE_NAME "*** SLEEP mode ***";
 

@@ -1041,7 +1041,7 @@ done
 			<spinnerItem name="exterminate" value="exterminate"/> 
 		</spinner>
 		<spinner description="Here you can set the level of low mem managemet by kernel lowmemkiller function for sleep mode, more aggressive, then more free RAM but more killed apps"
-                                     name="OOM Level Tuning Sleep" action="generic_cortex /tmp/oom_config_sleep">
+                        name="OOM Level Tuning Sleep" action="generic_cortex /tmp/oom_config_sleep">
                         <spinnerItem name="very_light" value="very_light"/>
                         <spinnerItem name="light" value="light"/>
                         <spinnerItem name="medium" value="medium"/>
@@ -1089,8 +1089,7 @@ done
 		<checkbox description='Enable or Disable "less set brightnes". Depends on Cortexbrain-Background-Process!'
 			name="Less-Brightness" action="generic_cortex /tmp/cortexbrain_auto_less_brightness" label="Less-Brightness"/>
 		<seekBar description='Here you can set a value for less brightnes. Works only if "Less-Brightness" tweak is Enabled!'
-			name="Set value (0 - 255)" action="generic /tmp/cortexbrain_less_brightness"
-			unit="" min="0" reversed="false" step="5" max="255"/>
+			name="Set value (0 - 255)" action="generic /tmp/cortexbrain_less_brightness" unit="" min="0" reversed="false" step="5" max="255"/>
 		<checkbox description='Enable or Disable "Firewall-Tweaks". (To update after change REBOOT)'
 			name="Firewall-Tweaks" action="generic_cortex /tmp/cortexbrain_firewall" label="Firewall-Tweaks"/>
 		<checkbox description='Enable or Disable "TCP-Tweaks". (To update after change REBOOT)'
@@ -1115,12 +1114,14 @@ done
 			name="Kernel-Tweaks" action="generic_cortex /tmp/cortexbrain_kernel_tweaks" label="Kernel-Tweaks"/>
 		<checkbox description='Enable or Disable "I/O-Tweaks". (To update after change REBOOT)'
 			name="I/O-Tweaks" action="generic_cortex /tmp/cortexbrain_io" label="I/O-Tweaks"/>
-                <checkbox description="Here you can allow WIFI to use LOW PWR when Screen is turned OFF. When screen is back ON, WIFI turns back to high PWR). If not set, WIFI uses HIGH PWR and get fast WIFI transfers on screen OFF"
-                        name="Wifi Low PWR Switch" action="generic_cortex /tmp/wifi_pwr" label="Wifi Low PWR"/>
+        <checkbox description="Here you can allow WIFI to use LOW PWR when Screen is turned OFF. When screen is back ON, WIFI turns back to high PWR). If not set, WIFI uses HIGH PWR and get fast WIFI transfers on screen OFF"
+            name="Wifi Low PWR Switch" action="generic_cortex /tmp/wifi_pwr" label="Wifi Low PWR"/>
 		<checkbox description='Enable or Disable "WIFI-Tweaks". (To update after change REBOOT)'
 			name="WIFI-Tweaks" action="generic_cortex /tmp/cortexbrain_wifi" label="WIFI-Tweaks"/>
+		<checkbox description='Significant lag reduction (for some people). To update after change, turn OFF screen and turn it ON after 3sec!)'
+			name="Seeder entropy generator" action="generic_cortex /tmp/cortexbrain_seeder_entropy" label="Seeder entropy generator"/>
 		 <seekBar description=""
-	                name="wifi power limit" action="generic_cortex /tmp/cortexbrain_wifi_tx" unit=" dBm" min="1" reversed="false" step="2" max="100"/>
+	        name="wifi power limit" action="generic_cortex /tmp/cortexbrain_wifi_tx" unit=" dBm" min="1" reversed="false" step="2" max="100"/>
 		<button description="KSM check for active state" name="KSM STATS" action="push-actions/ksmstats" label="KSM STATS"/>
 		</settingsPane>
 	</settingsTab>  

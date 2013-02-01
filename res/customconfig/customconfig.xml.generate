@@ -1154,3 +1154,10 @@ done
 	</settingsTab>
 </settingsRoot>
 ENDCONFIG
+"Bug-Report for Kernel" name="Kernel-Bug" action="push-actions/debug_to_sd 1" label="KERNEL-BUG"/>
+			<button description="Bug-Report for Apps" name="App-Bug" action="push-actions/debug_to_sd 2" label="APP-BUG"/>
+			<button description="Bug-Report for Kernel Messages" name="Last Kernel Messages" action="push-actions/debug_to_sd 3" label="LAST-KMSG"/>
+		</settingsPane>
+	</settingsTab>
+</settingsRoot>
+ENDCONFIG

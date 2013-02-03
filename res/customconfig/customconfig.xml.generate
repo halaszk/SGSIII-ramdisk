@@ -997,6 +997,9 @@ done
 			
 		<checkbox description="Cron Task to Zipalign all DATA APPS every 4:50AM only if CPU is resting(IDLE)! This can help to reduce errors, bugs, applications FC, and improve applications load speed. Backup all apps before use! This process will remove apps that are BROKEN and not compressed or compiled correctly, so you may find some apps missing. Use it at your own risk and update the broken Apps!"
 			name="Zipalign Task" action="generic_cortex /tmp/cron_zipalign" label="Zipalign Task Every 4:50AM"/>
+
+		<checkbox description="Cron to DB Optimize every day at 3:00AM, only if CPU is resting (IDLE)!"
+			name="DB Optimization" action="generic_cortex /tmp/cron_db_optimizing" label="DB Optimization task every day at 3:00AM"/>
 			
 		<button description="Use this button to check if Cron Task Jobs are done as requested. This will show the log for all finished jobs." name="Test Cron Task Jobs" action="push-actions/crontab_log" label="Test Cron Task Jobs"/>
 	</settingsPane>

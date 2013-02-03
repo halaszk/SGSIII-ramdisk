@@ -111,6 +111,7 @@ up_threshold=80
 gpuandpowersavetweaks=off
 printk_mode=0
 crontab=on
+cron_db_optimizing=off
 cron_drop_cache=on
 cron_clear_app_cache=on
 cron_fix_permissions=off

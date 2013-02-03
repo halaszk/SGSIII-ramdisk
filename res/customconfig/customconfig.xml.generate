@@ -702,7 +702,7 @@ done
 		name="GPU Voltage Level5" action="gpu-voltage 5" unit="mV" min="600" reversed="false" step="25" max="1200"/>
     </settingsPane>
 	
-	<settingsPane description="Sets the MEMORY Interface undervolting value which will be applied during boot time only. It will not have any effect until you restart your device. Remember: if you change this value and your device doesn't boot you will have to reset extweaks settings using CWM recovery. This value will be applied to all CPU steps before any script or app execution. If you use any script or voltage control app this setting may be overriden by those." name="GPU Voltage Levels">
+	<settingsPane description="Sets the MEMORY Interface undervolting value which will be applied during boot time only. It will not have any effect until you restart your device. Remember: if you change this value and your device doesn't boot you will have to reset extweaks settings using CWM recovery. This value will be applied to all CPU steps before any script or app execution. If you use any script or voltage control app this setting may be overriden by those." name="MEMORY Interface Voltage Levels">
       <seekBar description="MEMORY Interface Voltage for 100MHz step (Default: 900000µV)" 
 		name="MEMORY Interface Voltage 100Mhz" action="mif-voltage 1" unit="µV" min="600000" reversed="false" step="12500" max="1400000"/>
       <seekBar description="MEMORY Interface Voltage for 133Mhz step (Default: 900000µV)" 

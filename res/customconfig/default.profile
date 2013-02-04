@@ -180,6 +180,7 @@ freq_for_fast_down_sleep=1200000
 sampling_rate_sleep=120000
 sampling_down_factor_sleep=1
 up_threshold_sleep=80
+boost=0
 down_differential_sleep=5
 up_threshold_at_min_freq_sleep=40
 up_threshold_at_fast_down_sleep=95

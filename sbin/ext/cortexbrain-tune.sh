@@ -358,6 +358,7 @@ CPU_GOV_TWEAKS()
 	echo "$hotplug_rq_4_0" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_rq_4_0;
 	echo "$flexrate_max_freq" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/flexrate_max_freq;
 	echo "$flexrate_forcerate" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/flexrate_forcerate;
+	echo "$boost" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/boost;
 	echo "$cpu_online_bias_count" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_count;
 	echo "$cpu_online_bias_up_threshold" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_up_threshold;
 	echo "$cpu_online_bias_down_threshold" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_down_threshold;

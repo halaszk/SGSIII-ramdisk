@@ -25,6 +25,13 @@ if [ ! -d /data/.siyah ]; then
 $BB mkdir -p /data/.siyah;
 fi;
 
+CONFIG_XML=/res/customconfig/customconfig.xml;
+if [ ! -f $CONFIG_XML ]; then
+mount -o remount,rw /;
+  . /res/customconfig/customconfig.xml.generate > $CONFIG_XML;
+fi;
+
+
 . /res/customconfig/customconfig-helper
 
 [ ! -f /data/.siyah/default.profile ] && cp /res/customconfig/default.profile /data/.siyah;
@@ -141,11 +148,6 @@ $BB mv /res/customconfig/actions/push-actions/* /res/no-push-on-boot/;
 $BB chmod 6755 /sbin/ext/cortexbrain-tune.sh;
 
 # some initialization code
-CONFIG_XML=/res/customconfig/customconfig.xml;
-if [ ! -f $CONFIG_XML ]; then
-mount -o remount,rw /;
-  . /res/customconfig/customconfig.xml.generate > $CONFIG_XML;
-fi;
 ccxmlsum=`md5sum $CONFIG_XML | awk '{print $1}'`
 if [ "a${ccxmlsum}" != "a`cat /data/.siyah/.ccxmlsum`" ];
 then

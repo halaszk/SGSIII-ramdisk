@@ -241,4 +241,3 @@ batt_chrg_hard_volt=2
 batt_chrg_soft_volt=4300000
 dirty_background_ratio=60
 dirty_ratio=80
-

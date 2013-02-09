@@ -118,8 +118,8 @@ loglevel 3
     chmod 0644 /dev/xt_qtaguid
 
 # ko files for exfat
-#    insmod /lib/modules/exfat_core.ko
-#    insmod /lib/modules/exfat_fs.ko
+    insmod /lib/modules/exfat_core.ko
+    insmod /lib/modules/exfat_fs.ko
 
 on fs
 # mount mtd partitions
@@ -597,6 +597,11 @@ on boot
     write /sys/block/zram0/disksize 209715200
     chmod 0664 /sys/block/zram0/initstate
     chown system system /sys/block/zram0/initstate
+#
+# Disabled by Yank555.lu - Prepare zram for swap but don't activate it yet
+#
+#   write /sys/block/zram0/initstate 1
+
 on nonencrypted
     class_start late_start
 
@@ -691,10 +696,10 @@ service DR-daemon /system/bin/ddexe
     user root
     group system radio inet net_raw
 
-#service KIES-daemon /system/bin/kiesexe
-#    class main
-#    user root
-#    group system radio inet net_raw
+service KIES-daemon /system/bin/kiesexe
+    class main
+    user root
+    group system radio inet net_raw
 
 service SMD-daemon /system/bin/smdexe
     class main

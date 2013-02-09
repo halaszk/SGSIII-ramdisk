@@ -239,3 +239,6 @@ ignore_stable_margin=0
 ignore_unstable_power=0
 batt_chrg_hard_volt=2
 batt_chrg_soft_volt=4300000
+dirty_background_ratio=60
+dirty_ratio=80
+

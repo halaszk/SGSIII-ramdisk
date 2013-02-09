@@ -35,6 +35,13 @@ wifi_idle_wait=10000;
 #renice 15 -p `pgrep -f "kswapd0"`;
 #renice 15 -p `pgrep -f "logcat"`;
 
+# check if dumpsys exist in ROM
+if [ -e /system/bin/dumpsys ]; then
+	DUMPSYS=1;
+else
+	DUMPSYS=0;
+fi;
+
 # replace kernel version info for repacked kernels
 cat /proc/version | grep infra && (kmemhelper -t string -n linux_proc_banner -o 15 `cat /res/version`);
 
@@ -224,8 +231,8 @@ BATTERY_TWEAKS()
 	  $BB mount -t debugfs none /sys/kernel/debug;
 	  $BB umount /sys/kernel/debug;
 	  # vm tweaks
-	  $BB sysctl -w vm.dirty_background_ratio=70;
-	  $BB sysctl -w vm.dirty_ratio=90;
+	  echo "$dirty_background_ratio" > /proc/sys/vm/dirty_background_ratio; # default: 10
+          echo "$dirty_ratio" > /proc/sys/vm/dirty_ratio; # default: 20
 	  $BB sysctl -w vm.vfs_cache_pressure=10;
 
 	# System tweaks: Hardcore speedmod
@@ -392,20 +399,9 @@ MEMORY_TWEAKS()
 	#	echo "128 128" > /proc/sys/vm/lowmem_reserve_ratio;
 	#	echo "3" > /proc/sys/vm/page-cluster; # default: 3
 		echo "2896" > /proc/sys/vm/min_free_kbytes;
+		echo "$dirty_background_ratio" > /proc/sys/vm/dirty_background_ratio; # default: 10
+		echo "$dirty_ratio" > /proc/sys/vm/dirty_ratio; # default: 20
 		# =========
-# VM Settings
-# =========
-mem=`free|grep Mem | awk '{print $2}'`;
-if [ "$mem" -lt 524288 ];then
-	$BB sysctl -w vm.dirty_background_ratio=20;
-	$BB sysctl -w vm.dirty_ratio=40;
-elif [ "$mem" -lt 1049776 ];then
-	$BB sysctl -w vm.dirty_background_ratio=10;
-	$BB sysctl -w vm.dirty_ratio=20;
-else 
-	$BB sysctl -w vm.dirty_background_ratio=5;
-	$BB sysctl -w vm.dirty_ratio=10;
-fi;
 
 		log -p i -t $FILE_NAME "*** MEMORY_TWEAKS ***: enabled";
 	fi;
@@ -887,12 +883,12 @@ KERNEL_SCHED()
 	local state="$1";
 
 	if [ "${state}" == "awake" ]; then
-		echo "0" > /proc/sys/kernel/sched_child_runs_first;
+#		echo "0" > /proc/sys/kernel/sched_child_runs_first;
 		echo "1000000" > /proc/sys/kernel/sched_latency_ns;
 		echo "100000" > /proc/sys/kernel/sched_min_granularity_ns;
 		echo "2000000" > /proc/sys/kernel/sched_wakeup_granularity_ns;
 	elif [ "${state}" == "sleep" ]; then
-		echo "1" > /proc/sys/kernel/sched_child_runs_first;
+#		echo "1" > /proc/sys/kernel/sched_child_runs_first;
 		echo "10000000" > /proc/sys/kernel/sched_latency_ns;
 		echo "1500000" > /proc/sys/kernel/sched_min_granularity_ns;
 		echo "2000000" > /proc/sys/kernel/sched_wakeup_granularity_ns;
@@ -1060,6 +1056,15 @@ SLEEP_MODE()
 	PROFILE=`cat /data/.siyah/.active.profile`;
 	. /data/.siyah/$PROFILE.profile;
 
+	if [ "$DUMPSYS" == 1 ]; then
+		# check the call state, not on call = 0, on call = 2
+		CALL_STATE=`dumpsys telephony.registry | grep mCallState= | cut -c 3-14`;
+	else
+		CALL_STATE="mCallState=0";
+	fi;
+
+	if [ "$CALL_STATE" == "mCallState=0" ]; then
+
 	if [ "$cortexbrain_cpu_boost" == on ]; then
 		# set CPU-Governor
 	echo "$deep_sleep" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor;
@@ -1126,9 +1131,14 @@ SLEEP_MODE()
 
 		LOGGER "sleep";
 
-        SEEDER "sleep";
+        	SEEDER "sleep";
 
 		log -p i -t $FILE_NAME "*** SLEEP mode ***";
+
+		else
+		log -p i -t $FILE_NAME "*** On Call! SLEEP aborted! ***";
+
+		fi;
 
 }
 
@@ -1144,7 +1154,7 @@ if [ "$cortexbrain_background_process" == 1 ] && [ `pgrep -f "cat /sys/power/wai
 		# AWAKE State. all system ON.
 		cat /sys/power/wait_for_fb_wake > /dev/null 2>&1;
 		AWAKE_MODE;
-		sleep 3;
+		sleep 5;
 
 		# SLEEP state. All system to power save.
 		cat /sys/power/wait_for_fb_sleep > /dev/null 2>&1;

@@ -393,14 +393,15 @@ fi;
 MEMORY_TWEAKS()
 {
 	if [ "$cortexbrain_memory" == on ]; then
-	#	echo "4" > /proc/sys/vm/min_free_order_shift; # default: 4
-	#	echo "0" > /proc/sys/vm/overcommit_memory; # default: 0
-	#	echo "50" > /proc/sys/vm/overcommit_ratio; # default: 50
-	#	echo "128 128" > /proc/sys/vm/lowmem_reserve_ratio;
-	#	echo "3" > /proc/sys/vm/page-cluster; # default: 3
-		echo "2896" > /proc/sys/vm/min_free_kbytes;
 		echo "$dirty_background_ratio" > /proc/sys/vm/dirty_background_ratio; # default: 10
 		echo "$dirty_ratio" > /proc/sys/vm/dirty_ratio; # default: 20
+		echo "4" > /proc/sys/vm/min_free_order_shift; # default: 4
+		echo "0" > /proc/sys/vm/overcommit_memory; # default: 0
+		echo "700" > /proc/sys/vm/overcommit_ratio; # default: 50
+		echo "32 32" > /proc/sys/vm/lowmem_reserve_ratio;
+		echo "3" > /proc/sys/vm/page-cluster; # default: 3
+		# must be set 8192 or more, mem stability critical value
+		echo "8192" > /proc/sys/vm/min_free_kbytes;
 		# =========
 
 		log -p i -t $FILE_NAME "*** MEMORY_TWEAKS ***: enabled";

@@ -497,8 +497,8 @@ TCP_TWEAKS()
 	echo "1" > /proc/sys/net/ipv4/tcp_dsack;
 	echo "1" > /proc/sys/net/ipv4/tcp_tw_recycle;
 	echo "1" > /proc/sys/net/ipv4/tcp_window_scaling;
-	echo "5" > /proc/sys/net/ipv4/tcp_keepalive_probes;
-	echo "30" > /proc/sys/net/ipv4/tcp_keepalive_intvl;
+	echo "3" > /proc/sys/net/ipv4/tcp_keepalive_probes;
+	echo "20" > /proc/sys/net/ipv4/tcp_keepalive_intvl;
 	echo "30" > /proc/sys/net/ipv4/tcp_fin_timeout;
 	echo "1" > /proc/sys/net/ipv4/tcp_moderate_rcvbuf;
 	echo "1" > /proc/sys/net/ipv4/route/flush;

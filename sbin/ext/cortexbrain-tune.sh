@@ -28,6 +28,9 @@ BB=/sbin/busybox;
 PROP=/system/bin/setprop;
 sqlite=/sbin/sqlite3;
 wifi_idle_wait=10000;
+# set initial vm.dirty vales
+echo "1000" > /proc/sys/vm/dirty_writeback_centisecs;
+echo "1000" > /proc/sys/vm/dirty_expire_centisecs;
 
 # =========
 # Renice - kernel thread responsible for managing the swap memory and logs
@@ -70,10 +73,9 @@ IO_TWEAKS()
 		done;
 
 		MMC=`ls -d /sys/block/mmc*`;
-		for i in $MMC; do
-
+for i in $MMC; do
 			if [ -e $i/queue/scheduler ]; then
-				echo "$scheduler" > $i/queue/scheduler;
+				echo $scheduler > $i/queue/scheduler;
 			fi;
 
 			if [ -e $i/queue/rotational ]; then
@@ -88,9 +90,9 @@ IO_TWEAKS()
 				echo "$cortexbrain_read_ahead_kb" >  $i/queue/read_ahead_kb; # default: 128
 			fi;
 
-			if [ -e $i/queue/nr_requests ]; then
-				if [ "$scheduler" == "sio" ] || [ "$scheduler" == "zen" ]; then
-					echo "20" > $i/queue/nr_requests; # default: 128
+			if [ "$scheduler" == "sio" ] || [ "$scheduler" == "zen" ]; then
+				if [ -e $i/queue/nr_requests ]; then
+					echo "64" > $i/queue/nr_requests; # default: 128
 				fi;
 			fi;
 
@@ -105,14 +107,13 @@ IO_TWEAKS()
 			if [ -e $i/queue/iosched/fifo_batch ]; then
 				echo "1" > $i/queue/iosched/fifo_batch;
 			fi;
-
 		done;
 
 		if [ -e /sys/devices/virtual/bdi/default/read_ahead_kb ]; then
 			echo "$cortexbrain_read_ahead_kb" > /sys/devices/virtual/bdi/default/read_ahead_kb;
 		fi;
 
-		SDCARDREADAHEAD=`ls -d /sys/devices/virtual/bdi/179*`;
+		local SDCARDREADAHEAD=`ls -d /sys/devices/virtual/bdi/179*`;
 		for i in $SDCARDREADAHEAD; do
 			echo "$cortexbrain_read_ahead_kb" > $i/read_ahead_kb;
 		done;
@@ -123,6 +124,13 @@ IO_TWEAKS()
 		echo "0" > /proc/sys/kernel/randomize_va_space;
 
 
+		echo "10" > /proc/sys/fs/lease-break-time;
+		echo "84331" > /proc/sys/fs/file-max;
+		echo "1048576" > /proc/sys/fs/nr_open;
+		echo "16384" > /proc/sys/fs/inotify/max_queued_events;
+		echo "128" > /proc/sys/fs/inotify/max_user_instances;
+		echo "8192" > /proc/sys/fs/inotify/max_user_watches;
+		
 		echo NO_NORMALIZED_SLEEPER > /sys/kernel/debug/sched_features;
 		echo NO_NEW_FAIR_SLEEPERS > /sys/kernel/debug/sched_features;
 		echo NO_START_DEBIT > /sys/kernel/debug/sched_features;
@@ -141,17 +149,17 @@ IO_TWEAKS;
 KERNEL_TWEAKS()
 {
 	if [ "$cortexbrain_kernel_tweaks" == on ]; then
-		echo "1" > /proc/sys/vm/oom_kill_allocating_task;
-		sysctl -w vm.panic_on_oom=0;
-		echo "65536" > /proc/sys/kernel/msgmax;
-		echo "2048" > /proc/sys/kernel/msgmni;
-		echo "128" > /proc/sys/kernel/random/read_wakeup_threshold;
-		echo "256" > /proc/sys/kernel/random/write_wakeup_threshold;
+		echo "0" > /proc/sys/vm/oom_kill_allocating_task;
+		echo "0" > /proc/sys/vm/panic_on_oom;
+		echo "30" > /proc/sys/kernel/panic;
+		echo "8192" > /proc/sys/kernel/msgmax;
+		echo "1189" > /proc/sys/kernel/msgmni;
+		echo "64" > /proc/sys/kernel/random/read_wakeup_threshold;
+		echo "128" > /proc/sys/kernel/random/write_wakeup_threshold;
 		echo "500 512000 64 2048" > /proc/sys/kernel/sem;
-		echo "2097152" > /proc/sys/kernel/shmall;
-		echo "268435456" > /proc/sys/kernel/shmmax;
-		echo "524288" > /proc/sys/kernel/threads-max;
-  		$BB sysctl -w kernel.panic=10;
+		echo "524288" > /proc/sys/kernel/shmall;
+		echo "33554432" > /proc/sys/kernel/shmmax;
+		echo "13180" > /proc/sys/kernel/threads-max;
 	
 		log -p i -t $FILE_NAME "*** KERNEL_TWEAKS ***: enabled";
 	fi;
@@ -333,7 +341,21 @@ CPU_GOV_TWEAKS()
 	echo "$cpu_online_bias_down_threshold_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_down_threshold;
 	#echo "1" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/max_cpu_lock; # force cpu to single core mode when screen is off!
 	#echo "0" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/lcdfreq_enable;
-	echo "$hotplug_compare_level_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_compare_level;
+	echo "$screen_off_min_step" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/screen_off_min_step;
+	echo "$freq_cpu1on_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_cpu1on;
+	echo "$freq_cpu1off_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_cpu1off;
+	echo "$trans_load_h0_scroff" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/trans_load_h0_scroff;
+	echo "$trans_load_h1_scroff" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/trans_load_h1_scroff;
+	echo "$trans_load_l1_scroff" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/trans_load_l1_scroff;
+	echo "$trans_rq_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/trans_rq;
+	echo "$freq_up_brake_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_up_brake;
+	echo "$pump_up_step_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/pump_up_step;
+	echo "$trans_latency_one_core_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/trans_latency_one_core;
+	echo "$trans_latency_two_cores_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/trans_latency_two_cores;
+	echo "$sampling_up_factor_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/sampling_up_factor;
+	echo "$freq_for_calc_incr_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_for_calc_incr;
+	echo "$freq_for_calc_decr_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_for_calc_decr;
+	echo "$inc_cpu_load_at_min_freq_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/inc_cpu_load_at_min_freq;
 	
 		# awake-settings
 	elif [ "${state}" == "awake" ]; then
@@ -371,7 +393,20 @@ CPU_GOV_TWEAKS()
 	echo "$cpu_online_bias_down_threshold" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_down_threshold;
 	echo "$max_cpu_lock" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/max_cpu_lock;
 	echo "$lcdfreq" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/lcdfreq_enable;
-	echo "$hotplug_compare_level" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/hotplug_compare_level;
+	echo "$freq_cpu1on" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_cpu1on;
+	echo "$freq_cpu1off" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_cpu1off;
+	echo "$trans_load_h0" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/trans_load_h0_scroff;
+	echo "$trans_load_h1" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/trans_load_h1_scroff;
+	echo "$trans_load_l1" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/trans_load_l1_scroff;
+	echo "$trans_rq" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/trans_rq;
+	echo "$freq_up_brake" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_up_brake;
+	echo "$pump_up_step" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/pump_up_step;
+	echo "$trans_latency_one_core" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/trans_latency_one_core;
+	echo "$trans_latency_two_cores" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/trans_latency_two_cores;
+	echo "$sampling_up_factor" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/sampling_up_factor;
+	echo "$freq_for_calc_incr" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_for_calc_incr;
+	echo "$freq_for_calc_decr" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_for_calc_decr;
+	echo "$inc_cpu_load_at_min_freq" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/inc_cpu_load_at_min_freq;
 	
 	fi;
 

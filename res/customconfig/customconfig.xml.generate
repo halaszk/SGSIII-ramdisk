@@ -131,6 +131,52 @@ done
                unit="core(s)" min="1" reversed="false" step="1" max="4"/>
    </settingsPane>
    
+   <settingsPane description="Nightmare Gov Configuration, see descriptions" name="NIGHTMARE GOV CONFIGURATON">
+
+		<seekBar description="Acts as a multiplier for sampling interval for re-evaluating the load when CPU is truly busy and is on highest clock frequency (policy max). (Only for Nightmare) (default is 1)"
+			name="sampling_up_factor" action="generic_cortex /tmp/sampling_up_factor" unit=" int" min="1" reversed="false" step="1" max="10"/>
+
+		<seekBar description="This is the delay of CPU that makes decisions on what to do about the frequency when one core is online. too long transition latency of HW, fallback to performance governor! if you don't know what it means, please don't change! (Only for Nightmare) (default is 60000)"
+			name="trans_latency_one_core" action="generic_cortex /tmp/trans_latency_one_core" unit="nS" min="10000" reversed="false" step="10000" max="130000"/>
+
+		<seekBar description="This is the delay of CPU that makes decisions on what to do about the frequency when two cores are online. too long transition latency of HW, fallback to performance governor! if you don't know what it means, please don't change! (Only for Nightmare) (default is 60000)"
+			name="trans_latency_two_cores" action="generic_cortex /tmp/trans_latency_two_cores" unit="nS" min="10000" reversed="false" step="10000" max="130000"/>
+
+		<seekBar description="cpu load, freq_step and freq_up_brake will be multiplied by freq_for_calc_incr. It defines how much the frequency increment is during cpu scaling! It has been configured to 200000 Khz. if you don't know what it means, please don't change! (Only for Nightmare) (default is 200000)"
+			name="freq_for_calc_incr" action="generic_cortex /tmp/freq_for_calc_incr" unit="kHz" min="50000" reversed="false" step="50000" max="400000"/>
+
+		<seekBar description="cpu load and freq_step_dec will be multiplied by freq_for_calc_decr. It defines how much the frequency decrement is during cpu scaling! It has been configured to 200000 Khz. if you don't know what it means, please don't change! (Only for Nightmare) (default is 200000)"
+			name="freq_for_calc_decr" action="generic_cortex /tmp/freq_for_calc_decr" unit="kHz" min="150000" reversed="false" step="50000" max="400000"/>
+
+		<seekBar description="When 2nd core is offline, If frequency of 1st core is 'big or equal' freq_cpu1on and load average is 'big or equal' trans_load_h0 2nd core will turn on. (Only for Nightmare) (default is 1000000)"
+			name="freq_cpu1on" action="generic_cortex /tmp/freq_cpu1on" unit="kHz" min="100000" reversed="false" step="100000" max="1500000"/>
+
+		<seekBar description="When 2nd core is online, If frequency of 1st core is less than freq_cpu1off and load average is less than trans_load_l1, 2nd core will turn off. (Only for Nightmare) (default is 700000)"
+			name="freq_cpu1off" action="generic_cortex /tmp/freq_cpu1off" unit="kHz" min="100000" reversed="false" step="100000" max="1500000"/>
+
+		<seekBar description="Defines how much as a percentage of maximum frequency, governor should decrease CPU frequency each time CPU load reaches dec_cpu_load. (Only for Nightmare) (default is 15)"
+			name="freq_step_dec" action="generic_cortex /tmp/freq_step_dec" unit="%" min="0" reversed="false" step="1" max="100"/>
+
+		<seekBar description="Brake scale up frequency when load 'big or equal' inc_cpu_load. (Only for Nightmare) (default is 15)"
+			name="freq_up_brake" action="generic_cortex /tmp/freq_up_brake" unit="step" min="0" reversed="false" step="1" max="100"/>
+
+		<seekBar description="This threshold is used as up threshold while sampling at frequencies less than freq_for_responsiveness. Above that, normal inc_cpu_load is used. This gives us an option to make scaling aggressive/relaxed until a frequency and normal for higher frequencies. Again, during calculation of optimal frequency which should not trigger up policy, down threshold to consider is difference between inc_cpu_load_at_min_freq and freq_up_brake. (Only for Nightmare) (default is 60)"
+			name="inc_cpu_load_at_min_freq" action="generic_cortex /tmp/inc_cpu_load_at_min_freq" unit="%" min="1" reversed="false" step="1" max="100"/>
+
+		<seekBar description="When 2nd core is offline, If frequency of 1st core is 'big or equal' freq_cpu1on and load average is 'big or equal' trans_load_h0 2nd core will turn on. (Only for Nightmare) (default is 20)"
+			name="trans_load_h0" action="generic_cortex /tmp/trans_load_h0" unit="%" min="1" reversed="false" step="1" max="100"/>
+
+		<seekBar description="When 2nd core is online, If frequency of 1st core is less than freq_cpu1off and load average is less than trans_load_l1, 2nd core will turn off. (default is 20)"
+			name="trans_load_l1" action="generic_cortex /tmp/trans_load_l1" unit="%" min="1" reversed="false" step="1" max="100"/>
+
+		<seekBar description="When 2nd core is online, if rq_min less than trans_rq and its load is less than trans_load_rq, 2nd core will turn off. (Only for Nightmare) (default is 20)"
+			name="trans_load_rq" action="generic_cortex /tmp/trans_load_rq" unit="%" min="0" reversed="false" step="1" max="50"/>
+
+		<seekBar description="When 2nd core is online, if rq_min less than trans_rq and its load is less than trans_load_rq, 2nd core will turn off. (Only for Nightmare) (default is 2)"
+			name="trans_rq" action="generic_cortex /tmp/trans_rq" unit="int" min="0" reversed="false" step="1" max="2"/>
+
+	</settingsPane>
+   
    <settingsPane description="To bring up a core, all of the given conditions must be fulfilled. The governor analyses the up/down rate amount of sample information collected to this point, and taking the roof of each value type over the whole rate period. If the conditions from the starting point of the current core count are met, it triggers a CPU up or down. The frequency thresholds are the maximum frequency reached during the whole rate period. The runqueue thresholds are the 100th factor of the thread count averages running on the system." 
                   name="Hotplug conditionals">      
 		     <spinner description="Sets the number of CPUs to be used in hotplugging (only for PegasusQ, nightmare, hydrxq, ondemandq)" name="Max CPU Lock" action="cpu-governor max_cpu_lock">
@@ -358,6 +404,52 @@ done
                action="generic /tmp/up_nr_cpus_sleep"
                unit="core(s)" min="1" reversed="false" step="1" max="4"/>
     </settingsPane>
+	
+	<settingsPane description="Nightmare Gov Configuration, see descriptions" name="NIGHTMARE GOV CONFIGURATON">
+
+		<seekBar description="Acts as a multiplier for sampling interval for re-evaluating the load when CPU is truly busy and is on highest clock frequency (policy max). (Only for Nightmare) (default is 1)"
+			name="sampling_up_factor_sleep" action="generic_cortex /tmp/sampling_up_factor_sleep" unit="int" min="1" reversed="false" step="1" max="10"/>
+
+		<seekBar description="This is the delay of CPU that makes decisions on what to do about the frequency when one core is online. too long transition latency of HW, fallback to performance governor! if you don't know what it means, please don't change! (Only for Nightmare) (default is 70000)"
+			name="trans_latency_one_core_sleep" action="generic_cortex /tmp/trans_latency_one_core_sleep" unit="nS" min="10000" reversed="false" step="10000" max="150000"/>
+
+		<seekBar description="This is the delay of CPU that makes decisions on what to do about the frequency when two cores are online. too long transition latency of HW, fallback to performance governor! if you don't know what it means, please don't change! (Only for Nightmare) (default is 70000)"
+			name="trans_latency_two_cores_sleep" action="generic_cortex /tmp/trans_latency_two_cores_sleep" unit="nS" min="10000" reversed="false" step="10000" max="150000"/>
+
+		<seekBar description="cpu load, freq_step and freq_up_brake will be multiplied by freq_for_calc_incr. It defines how much the frequency increment is during cpu scaling! It has been configured to 200000 Khz. if you don't know what it means, please don't change! (Only for Nightmare) (default is 200000)"
+			name="freq_for_calc_incr_sleep" action="generic_cortex /tmp/freq_for_calc_incr_sleep" unit="kHz" min="50000" reversed="false" step="50000" max="400000"/>
+
+		<seekBar description="cpu load and freq_step_dec will be multiplied by freq_for_calc_decr. It defines how much the frequency decrement is during cpu scaling! It has been configured to 200000 Khz. if you don't know what it means, please don't change! (Only for Nightmare) (default is 200000)"
+			name="freq_for_calc_decr_sleep" action="generic_cortex /tmp/freq_for_calc_decr_sleep" unit="kHz" min="150000" reversed="false" step="50000" max="400000"/>
+
+		<seekBar description="When 2nd core is offline, If frequency of 1st core is 'big or equal' freq_cpu1on_sleep and load average is 'big or equal' trans_load_h0_scroff 2nd core will turn on. (Only for Nightmare) (default is 600000)"
+			name="freq_cpu1on_sleep" action="generic_cortex /tmp/freq_cpu1on_sleep" unit="kHz" min="100000" reversed="false" step="100000" max="1500000"/>
+
+		<seekBar description="When 2nd core is online, If frequency of 1st core is less than freq_cpu1off_sleep and load average is less than trans_load_l1_scroff, 2nd core will turn off. (Only for Nightmare) (default is 500000)"
+			name="freq_cpu1off_sleep" action="generic_cortex /tmp/freq_cpu1off_sleep" unit="kHz" min="100000" reversed="false" step="100000" max="1500000"/>
+
+		<seekBar description="Defines how much as a percentage of maximum frequency, governor should decrease CPU frequency each time CPU load reaches dec_cpu_load. (Only for Nightmare) (default is 15)"
+			name="freq_step_dec_sleep" action="generic_cortex /tmp/freq_step_dec_sleep" unit="%" min="0" reversed="false" step="1" max="100"/>
+
+		<seekBar description="Brake scale up frequency when load 'big or equal' inc_cpu_load. (Only for Nightmare) (default is 15)"
+			name="freq_up_brake_sleep" action="generic_cortex /tmp/freq_up_brake_sleep" unit="step" min="0" reversed="false" step="1" max="100"/>
+
+		<seekBar description="This threshold is used as up threshold while sampling at frequencies less than freq_for_responsiveness. Above that, normal inc_cpu_load is used. This gives us an option to make scaling aggressive/relaxed until a frequency and normal for higher frequencies. Again, during calculation of optimal frequency which should not trigger up policy, down threshold to consider is difference between inc_cpu_load_at_min_freq and freq_up_brake. (Only for Nightmare) (default is 60)"
+			name="inc_cpu_load_at_min_freq_sleep" action="generic_cortex /tmp/inc_cpu_load_at_min_freq_sleep" unit="%" min="1" reversed="false" step="1" max="100"/>
+
+		<seekBar description="When 2nd core is offline, If frequency of 1st core is 'big or equal' freq_cpu1on_sleep and load average is 'big or equal' trans_load_h0_scroff 2nd core will turn on. (Only for Nightmare) (default is 20)"
+			name="trans_load_h0_scroff" action="generic_cortex /tmp/trans_load_h0_scroff" unit="%" min="1" reversed="false" step="1" max="100"/>
+
+		<seekBar description="When 2nd core is online, If frequency of 1st core is less than freq_cpu1off_sleep and load average is less than trans_load_l1_scroff, 2nd core will turn off. (Only for Nightmare) (default is 20)"
+			name="trans_load_l1_scroff" action="generic_cortex /tmp/trans_load_l1_scroff" unit="%" min="1" reversed="false" step="1" max="100"/>
+
+		<seekBar description="When 2nd core is online, if rq_min less than trans_rq_sleep and its load is less than trans_load_rq_sleep, 2nd core will turn off. (Only for Nightmare) (default is 10)"
+			name="trans_load_rq_sleep" action="generic_cortex /tmp/trans_load_rq_sleep" unit="%" min="0" reversed="false" step="1" max="50"/>
+
+		<seekBar description="When 2nd core is online, if rq_min less than trans_rq_sleep and its load is less than trans_load_rq_sleep, 2nd core will turn off. (Only for Nightmare) (default is 2)"
+			name="trans_rq_sleep" action="generic_cortex /tmp/trans_rq_sleep" unit=" int" min="0" reversed="false" step="1" max="2"/>
+
+	</settingsPane>
 	
     <settingsPane description="To bring up a core, all of the given conditions must be fulfilled. The governor analyses the up/down rate amount of sample information collected to this point, and taking the roof of each value type over the whole rate period. If the conditions from the starting point of the current core count are met, it triggers a CPU up or down. The frequency thresholds are the maximum frequency reached during the whole rate period. The runqueue thresholds are the 100th factor of the thread count averages running on the system." 
                   name="Hotplug conditionals">

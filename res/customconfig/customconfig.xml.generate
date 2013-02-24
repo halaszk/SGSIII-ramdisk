@@ -803,10 +803,6 @@ done
 			name="CPU Voltage 200Mhz" action="cpu-voltage 13" unit="µV" min="600000" reversed="false" step="12500" max="1400000"/>
 		<seekBar description="CPU Voltage for 100Mhz. Default: 900mV"
 			name="CPU Voltage 100Mhz" action="cpu-voltage 14" unit="µV" min="600000" reversed="false" step="12500" max="1400000"/>
-                <seekBar description="CPU Voltage for 50Mhz. Default: 900mV"
-                        name="CPU Voltage 50Mhz" action="cpu-voltage 15" unit="µV" min="600000" reversed="false" step="12500" max="1400000"/>
-                <seekBar description="CPU Voltage for 25Mhz. Default: 900mV"
-                        name="CPU Voltage 25Mhz" action="cpu-voltage 16" unit="µV" min="600000" reversed="false" step="12500" max="1400000"/>
 		</settingsPane>
 		
 	<settingsPane description="GPU Voltage Levels: The defaults are 875, 900, 950, 1025 and 1075." name="GPU Voltage Levels">

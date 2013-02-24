@@ -29,8 +29,8 @@ PROP=/system/bin/setprop;
 sqlite=/sbin/sqlite3;
 wifi_idle_wait=10000;
 # set initial vm.dirty vales
-echo "1000" > /proc/sys/vm/dirty_writeback_centisecs;
-echo "1000" > /proc/sys/vm/dirty_expire_centisecs;
+echo "500" > /proc/sys/vm/dirty_writeback_centisecs;
+echo "3000" > /proc/sys/vm/dirty_expire_centisecs;
 
 # =========
 # Renice - kernel thread responsible for managing the swap memory and logs
@@ -124,8 +124,8 @@ for i in $MMC; do
 		echo "0" > /proc/sys/kernel/randomize_va_space;
 
 
-		echo "10" > /proc/sys/fs/lease-break-time;
-		echo "84331" > /proc/sys/fs/file-max;
+		echo "45" > /proc/sys/fs/lease-break-time;
+		echo "289585" > /proc/sys/fs/file-max;
 		echo "1048576" > /proc/sys/fs/nr_open;
 		echo "16384" > /proc/sys/fs/inotify/max_queued_events;
 		echo "128" > /proc/sys/fs/inotify/max_user_instances;
@@ -153,13 +153,13 @@ KERNEL_TWEAKS()
 		echo "0" > /proc/sys/vm/panic_on_oom;
 		echo "30" > /proc/sys/kernel/panic;
 		echo "8192" > /proc/sys/kernel/msgmax;
-		echo "1189" > /proc/sys/kernel/msgmni;
+		echo "5756" > /proc/sys/kernel/msgmni;
 		echo "64" > /proc/sys/kernel/random/read_wakeup_threshold;
 		echo "128" > /proc/sys/kernel/random/write_wakeup_threshold;
-		echo "500 512000 64 2048" > /proc/sys/kernel/sem;
-		echo "524288" > /proc/sys/kernel/shmall;
+		echo "250 32000 32 128" > /proc/sys/kernel/sem;
+		echo "2097152" > /proc/sys/kernel/shmall;
 		echo "33554432" > /proc/sys/kernel/shmmax;
-		echo "13180" > /proc/sys/kernel/threads-max;
+		echo "45832" > /proc/sys/kernel/threads-max;
 	
 		log -p i -t $FILE_NAME "*** KERNEL_TWEAKS ***: enabled";
 	fi;
@@ -431,9 +431,9 @@ MEMORY_TWEAKS()
 		echo "$dirty_background_ratio" > /proc/sys/vm/dirty_background_ratio; # default: 10
 		echo "$dirty_ratio" > /proc/sys/vm/dirty_ratio; # default: 20
 		echo "4" > /proc/sys/vm/min_free_order_shift; # default: 4
-		echo "1" > /proc/sys/vm/overcommit_memory; # default: 0
+		echo "0" > /proc/sys/vm/overcommit_memory; # default: 0
 		echo "50" > /proc/sys/vm/overcommit_ratio; # default: 50
-		echo "32 32" > /proc/sys/vm/lowmem_reserve_ratio;
+		echo "256 256" > /proc/sys/vm/lowmem_reserve_ratio;
 		echo "3" > /proc/sys/vm/page-cluster; # default: 3
 		# must be set 8192 or more, mem stability critical value
 		echo "8192" > /proc/sys/vm/min_free_kbytes;
@@ -920,12 +920,12 @@ KERNEL_SCHED()
 
 	if [ "${state}" == "awake" ]; then
 #		echo "0" > /proc/sys/kernel/sched_child_runs_first;
-		echo "1000000" > /proc/sys/kernel/sched_latency_ns;
-		echo "100000" > /proc/sys/kernel/sched_min_granularity_ns;
-		echo "2000000" > /proc/sys/kernel/sched_wakeup_granularity_ns;
+		echo "24000000" > /proc/sys/kernel/sched_latency_ns;
+		echo "3000000" > /proc/sys/kernel/sched_min_granularity_ns;
+		echo "4000000" > /proc/sys/kernel/sched_wakeup_granularity_ns;
 	elif [ "${state}" == "sleep" ]; then
 #		echo "1" > /proc/sys/kernel/sched_child_runs_first;
-		echo "10000000" > /proc/sys/kernel/sched_latency_ns;
+		echo "12000000" > /proc/sys/kernel/sched_latency_ns;
 		echo "1500000" > /proc/sys/kernel/sched_min_granularity_ns;
 		echo "2000000" > /proc/sys/kernel/sched_wakeup_granularity_ns;
 	fi;

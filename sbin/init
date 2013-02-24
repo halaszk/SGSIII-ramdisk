@@ -143,9 +143,9 @@ echo 2 > /proc/sys/kernel/rom_feature_set;
 else
 echo 2 > /proc/sys/kernel/rom_feature_set;
     $BB mv -f /res/misc/init.41/* /
-  fi
+   fi
+ fi
 fi
-
 if [ "$SECONDROM" == "1" ];then
   $BB mv /init.smdk4x12.rc.2 /init.smdk4x12.rc
   $BB mv /init.rc.2 /init.rc

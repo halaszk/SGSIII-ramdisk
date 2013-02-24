@@ -93,8 +93,8 @@ $BB chmod -R 755 /lib;
 
 	sleep 10;
 	$BB insmod /lib/modules/auth_rpcgss.ko;
-	$BB insmod /lib/modules/nfs.ko;
-	$BB insmod /lib/modules/cifs.ko;
+#	$BB insmod /lib/modules/nfs.ko;
+#	$BB insmod /lib/modules/cifs.ko;
 	$BB insmod /lib/modules/sunrpc.ko;
 	$BB insmod /lib/modules/mvpkm.ko;
 	$BB insmod /lib/modules/lockd.ko;

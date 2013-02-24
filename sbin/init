@@ -118,10 +118,12 @@ ln -s /system/bin/ /bin;
 MIUI=0
 CM10=0
 CM101=0
+JBSAMMY42=0
 
 [ -f /system/framework/miui-framework.jar ] && MIUI=1
 [ -f /system/framework/seccamera.jar ] || CM10=1
 [ -f /system/framework/framework2.jar ] || CM101=1
+[ "`$BB grep -i ro.build.PDA=I9300XXUFMB3 /system/build.prop`" ] && JBSAMMY42=1;
 
 if [ "$CM101" == 1 ];
 then
@@ -132,12 +134,15 @@ else
 if [ "$CM10" == 1 ];
   then
 echo 3 > /proc/sys/kernel/rom_feature_set;
-    $BB mv -f /lib/modules/dhd_cm.ko /lib/modules/dhd.ko;
     $BB mv -f /res/misc/init.cm10/* /;
   else
+if [ "$JBSAMMY42" == 1 ];
+then
+echo 2 > /proc/sys/kernel/rom_feature_set;
+    $BB mv -f /res/misc/init.42/* /
+else
 echo 2 > /proc/sys/kernel/rom_feature_set;
     $BB mv -f /res/misc/init.41/* /
-    $BB rm -f /lib/modules/dhd_cm.ko
   fi
 fi
 

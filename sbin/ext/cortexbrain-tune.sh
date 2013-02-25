@@ -625,7 +625,6 @@ GESTURES()
 # KSM-TWEAKS
 # ==============================================================
 if [ "$cortexbrain_ksm_control" == on ]; then
-	KSM_MONITOR_INTERVAL=60;
 	KSM_NPAGES_BOOST=300;
 	KSM_NPAGES_DECAY=50;
 
@@ -637,19 +636,23 @@ if [ "$cortexbrain_ksm_control" == on ]; then
 	KSM_THRES_COEF=30;
 	KSM_THRES_CONST=2048;
 
-	npages=0;
-	total=`awk '/^MemTotal:/ {print $2}' /proc/meminfo`;
-	thres=$(( $total * $KSM_THRES_COEF / 100 ));
-	if [ $KSM_THRES_CONST -gt $thres ]; then
-		thres=$KSM_THRES_CONST;
-	fi;
-	total=$(( $total / 1024 ));
-	sleep=$(( $KSM_SLEEP_MSEC * 16 * 1024 / $total ));
-	if [ $sleep -le $KSM_SLEEP_MIN ]; then
-		sleep=$KSM_SLEEP_MIN;
+	KSM_NPAGES=0;
+	KSM_TOTAL=`awk '/^MemTotal:/ {print $2}' /proc/meminfo`;
+	KSM_THRES=$(( $KSM_TOTAL * $KSM_THRES_COEF / 100 ));
+
+	if [ $KSM_THRES_CONST -gt $KSM_THRES ]; then
+		KSM_THRES=$KSM_THRES_CONST;
 	fi;
 
-	KSMCTL() {
+	KSM_TOTAL=$(( $KSM_TOTAL / 1024 ));
+	KSM_SLEEP=$(( $KSM_SLEEP_MSEC * 16 * 1024 / $KSM_TOTAL ));
+
+	if [ $KSM_SLEEP -le $KSM_SLEEP_MIN ]; then
+		KSM_SLEEP=$KSM_SLEEP_MIN;
+	fi;
+
+	KSMCTL()
+	{
 		case x${1} in
 			xstop)
 				log -p i -t $FILE_NAME "*** ksm: stop ***";
@@ -662,45 +665,40 @@ if [ "$cortexbrain_ksm_control" == on ]; then
 				echo 1 > /sys/kernel/mm/ksm/run;
 				renice 10 -p "`pidof ksmd`";
 			;;
-		esac
+			esac
 	}
 
-	FREE_MEM() {
-		awk '/^(MemFree|Buffers|Cached):/ {free += $2}; END {print free}' /proc/meminfo;
-	}
-
-	INCREASE_NPAGES() {
+	INCREASE_NPAGES()
+	{
 		local delta=${1:-0};
-		npages=$(( $npages + $delta ));
-		if [ $npages -lt $KSM_NPAGES_MIN ]; then
-			npages=$KSM_NPAGES_MIN;
-		elif [ $npages -gt $KSM_NPAGES_MAX ]; then
-			npages=$KSM_NPAGES_MAX;
+
+		KSM_NPAGES=$(( $KSM_NPAGES + $delta ));
+		if [ $KSM_NPAGES -lt $KSM_NPAGES_MIN ]; then
+			KSM_NPAGES=$KSM_NPAGES_MIN;
+		elif [ $KSM_NPAGES -gt $KSM_NPAGES_MAX ]; then
+			KSM_NPAGES=$KSM_NPAGES_MAX;
 		fi;
-		echo $npages;
+
+		echo $KSM_NPAGES;
 	}
 
-	ADJUST_KSM() {
-		local free=`FREE_MEM`;
-		if [ $free -gt $thres ]; then
-			log -p i -t $FILE_NAME "*** ksm: $free > $thres ***";
+	ADJUST_KSM()
+	{
+		local free=`awk '/^(MemFree|Buffers|Cached):/ {free += $2}; END {print free}' /proc/meminfo;`
+
+		if [ $free -gt $KSM_THRES ]; then
+			log -p i -t $FILE_NAME "*** ksm: $free > $KSM_THRES ***";
 			npages=`INCREASE_NPAGES ${KSM_NPAGES_BOOST}`;
 			KSMCTL "stop";
 			return 1;
 		else
 			npages=`INCREASE_NPAGES $KSM_NPAGES_DECAY`;
-			log -p i -t $FILE_NAME "*** ksm: $free < $thres ***";
-			KSMCTL "start" $npages $sleep;
+			log -p i -t $FILE_NAME "*** ksm: $free < $KSM_THRES ***"
+			KSMCTL "start" $KSM_NPAGES $KSM_SLEEP;
 			return 0;
 		fi;
 	}
-
-	(while [ 1 ]; do
-		cat /sys/power/wait_for_fb_wake;
-		sleep $KSM_MONITOR_INTERVAL &
-		wait $!;
-		ADJUST_KSM;
-	done &);
+	ADJUST_KSM;
 fi;
 
 WIFI_TIMEOUT_TWEAKS()
@@ -948,8 +946,8 @@ AWAKE_MODE()
 	MEGA_BOOST_CPU_TWEAKS;
 	
 	
-	if [ "$cortexbrain_ksm_control" == on ]; then
-		ADJUST_KSM;
+	if [ "$cortexbrain_ksm_control" == on ] && [ "$KSM_TOTAL" != "" ]; then
+			ADJUST_KSM;
 	fi;
 
 	
@@ -1082,9 +1080,9 @@ SLEEP_MODE()
 	CROND_SAFETY;
 	
 	if [ "$cortexbrain_ksm_control" == on ]; then
-		KSMCTL "stop";
-	else
-		echo 2 > /sys/kernel/mm/ksm/run;
+			KSMCTL "stop";
+		else
+			echo 2 > /sys/kernel/mm/ksm/run;
 	fi;
 
 	SWAPPINESS;

@@ -205,17 +205,10 @@ SYSTEM_TWEAKS()
 	$PROP ro.media.dec.jpeg.memcap 8000000;
 	$PROP ro.media.enc.hprof.vid.bps 8000000;
 	$PROP ro.media.capture.maxres 8m;
-	#$PROP ro.media.capture.fast.fps 4
-	#$PROP ro.media.capture.slow.fps 120
-	#$PROP ro.media.capture.flashMinV 3300000
-	#$PROP ro.media.capture.torchIntensity 40
-	#$PROP ro.media.capture.flashIntensity 70
 	$PROP ro.media.panorama.defres 3264x1840;
 	$PROP ro.media.panorama.frameres 1280x720;
 	$PROP ro.camcorder.videoModes true;
 	$PROP ro.media.enc.hprof.vid.fps 65;
-	#$PROP ro.service.swiqi.supported true
-	#$PROP persist.service.swiqi.enable 1
 	$PROP media.stagefright.enable-player true;
 	$PROP media.stagefright.enable-meta true;
 	$PROP media.stagefright.enable-scan true;
@@ -339,23 +332,6 @@ CPU_GOV_TWEAKS()
 	echo "$cpu_online_bias_count_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_count;
 	echo "$cpu_online_bias_up_threshold_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_up_threshold;
 	echo "$cpu_online_bias_down_threshold_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_down_threshold;
-	#echo "1" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/max_cpu_lock; # force cpu to single core mode when screen is off!
-	#echo "0" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/lcdfreq_enable;
-	echo "$screen_off_min_step" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/screen_off_min_step;
-	echo "$freq_cpu1on_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_cpu1on;
-	echo "$freq_cpu1off_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_cpu1off;
-	echo "$trans_load_h0_scroff" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/trans_load_h0_scroff;
-	echo "$trans_load_h1_scroff" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/trans_load_h1_scroff;
-	echo "$trans_load_l1_scroff" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/trans_load_l1_scroff;
-	echo "$trans_rq_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/trans_rq;
-	echo "$freq_up_brake_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_up_brake;
-	echo "$pump_up_step_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/pump_up_step;
-	echo "$trans_latency_one_core_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/trans_latency_one_core;
-	echo "$trans_latency_two_cores_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/trans_latency_two_cores;
-	echo "$sampling_up_factor_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/sampling_up_factor;
-	echo "$freq_for_calc_incr_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_for_calc_incr;
-	echo "$freq_for_calc_decr_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_for_calc_decr;
-	echo "$inc_cpu_load_at_min_freq_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/inc_cpu_load_at_min_freq;
 	
 		# awake-settings
 	elif [ "${state}" == "awake" ]; then
@@ -393,20 +369,6 @@ CPU_GOV_TWEAKS()
 	echo "$cpu_online_bias_down_threshold" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_down_threshold;
 	echo "$max_cpu_lock" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/max_cpu_lock;
 	echo "$lcdfreq" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/lcdfreq_enable;
-	echo "$freq_cpu1on" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_cpu1on;
-	echo "$freq_cpu1off" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_cpu1off;
-	echo "$trans_load_h0" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/trans_load_h0_scroff;
-	echo "$trans_load_h1" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/trans_load_h1_scroff;
-	echo "$trans_load_l1" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/trans_load_l1_scroff;
-	echo "$trans_rq" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/trans_rq;
-	echo "$freq_up_brake" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_up_brake;
-	echo "$pump_up_step" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/pump_up_step;
-	echo "$trans_latency_one_core" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/trans_latency_one_core;
-	echo "$trans_latency_two_cores" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/trans_latency_two_cores;
-	echo "$sampling_up_factor" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/sampling_up_factor;
-	echo "$freq_for_calc_incr" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_for_calc_incr;
-	echo "$freq_for_calc_decr" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/freq_for_calc_decr;
-	echo "$inc_cpu_load_at_min_freq" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/inc_cpu_load_at_min_freq;
 	
 	fi;
 
@@ -583,15 +545,6 @@ FIREWALL_TWEAKS()
 		echo "1" > /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts;
 		echo "1" > /proc/sys/net/ipv4/icmp_echo_ignore_all;
 		echo "1" > /proc/sys/net/ipv4/icmp_ignore_bogus_error_responses;
-
-		# drop spoof, redirects, etc
-		#echo "1" > /proc/sys/net/ipv4/conf/all/rp_filter;
-		#echo "1" > /proc/sys/net/ipv4/conf/default/rp_filter;
-		#echo "0" > /proc/sys/net/ipv4/conf/all/send_redirects;
-		#echo "0" > /proc/sys/net/ipv4/conf/default/send_redirects;
-		#echo "0" > /proc/sys/net/ipv4/conf/default/accept_redirects;
-		#echo "0" > /proc/sys/net/ipv4/conf/all/accept_source_route;
-		#echo "0" > /proc/sys/net/ipv4/conf/default/accept_source_route;
 
 		log -p i -t $FILE_NAME "*** FIREWALL_TWEAKS ***: enabled";
 	fi;
@@ -932,19 +885,6 @@ KERNEL_SCHED()
 	log -p i -t $FILE_NAME "*** KERNEL_SCHED ***: ${state}";
 }
 
-SEEDER()
-{
-if [ "$cortexbrain_seeder_entropy" == on ]; then
-	local state="$1";
-	if [ "${state}" == "awake" ]; then
-		$BB sh /sbin/ext/seed.sh > /dev/null 2>&1;
-	elif [ "${state}" == "sleep" ]; then
-		killall -9 rngd;
-	fi;
-	log -p i -t $FILE_NAME "*** SEEDER ***: ${state}";
-fi;
-}
-
 LOWMMKILLER()
 {
         local state="$1";
@@ -1072,8 +1012,6 @@ AWAKE_MODE()
 	DONT_KILL_CORTEX;
 	
 	SWAPPINESS;
-	
-	SEEDER "awake";
 
 	LOWMMKILLER "awake";
 
@@ -1170,8 +1108,6 @@ SLEEP_MODE()
 		LOWMMKILLER "sleep";
 
 		LOGGER "sleep";
-
-        SEEDER "sleep";
 
 		log -p i -t $FILE_NAME "*** SLEEP mode ***";
 

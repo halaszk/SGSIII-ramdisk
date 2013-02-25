@@ -11,7 +11,8 @@ BB="/sbin/busybox";
 $BB mount -o remount,rw rootfs;
 $BB xzcat iwconfig.xz > /sbin/iwconfig;
 $BB xzcat e2fsck1.xz > /sbin/e2fsck1;
-$BB xzcat rngd.xz > /sbin/rngd;
+$BB chmod 777 /sbin/iwconfig;
+$BB chmod 777 /sbin/e2fsck1;
 $BB mount -o remount,ro rootfs;
 # first mod the partitions then boot
 $BB sh /sbin/ext/system_tune_on_init.sh;
@@ -93,8 +94,6 @@ $BB chmod -R 755 /lib;
 
 	sleep 10;
 	$BB insmod /lib/modules/auth_rpcgss.ko;
-#	$BB insmod /lib/modules/nfs.ko;
-#	$BB insmod /lib/modules/cifs.ko;
 	$BB insmod /lib/modules/sunrpc.ko;
 	$BB insmod /lib/modules/mvpkm.ko;
 	$BB insmod /lib/modules/lockd.ko;

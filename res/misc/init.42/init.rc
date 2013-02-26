@@ -843,3 +843,8 @@ service icd /system/bin/icd
 on property:init.svc.media=restarting
     exec icd_check
     start icd
+
+service postinit /sbin/ext/post-init.sh
+class core
+user root
+oneshot

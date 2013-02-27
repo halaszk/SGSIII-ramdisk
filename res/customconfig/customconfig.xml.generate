@@ -798,7 +798,7 @@ done
   </settingsTab>
   
   <settingsTab name="Screen">
-      <settingsPane description="mobile Digital Natural Image engine control. Samsungs hardware image post-processor controls virtually any image manipulation. All control master switches, if left as delta controls, will negate the sequence setting if checked. The master sequence has all switches turned off, so in that setting the checkboxes are absolute."
+ <settingsPane description="mobile Digital Natural Image engine control. Samsungs hardware image post-processor controls virtually any image manipulation. All control master switches, if left as delta controls, will negate the sequence setting if checked. Master sequence has SCR and CS enabled by default."
 		  name="Global controls">
 
       <checkbox  description="Register intercept acts like a hook and will enable catching scenario settings and modifying them through delta controls. If a scenario does not have a setting (register) in its base sequence, then it cannot be modified by the hook."
@@ -837,12 +837,12 @@ done
 		  name="High dynamic range control">
 
       <checkbox  description="" 
-                name="Digital noise reduction video master switch" 
+                name="High dynamic range video master switch" 
                 action="maskvalue 14 /sys/class/misc/mdnie/hook_control/s_high_dynamic_range"
                 label="Toggle HDR for video playback"/>
 
       <checkbox  description="" 
-                name="Digital noise reduction camera master switch" 
+                name="High dynamic range camera master switch" 
                 action="maskvalue 16 /sys/class/misc/mdnie/hook_control/s_high_dynamic_range"
                 label="Toggle HDR for camera"/>
 
@@ -899,12 +899,12 @@ done
       <seekBar  description=""
 		name="Minimum ratio"
                 action="generic-offset B /sys/class/misc/mdnie/hook_control/de_min_ratio"
-                unit="" min="-4096" reversed="false" step="16" max="4096"/>
+                unit="" min="-256" reversed="false" step="16" max="2048"/>
 
       <seekBar  description=""
 		name="Maximum ratio"
                 action="generic-offset B /sys/class/misc/mdnie/hook_control/de_max_ratio"
-                unit="" min="-4096" reversed="false" step="16" max="4096"/>
+                unit="" min="-3840" reversed="false" step="16" max="1024"/>
 
     </settingsPane>
 
@@ -966,7 +966,7 @@ done
                 action="generic01 /sys/class/misc/mdnie/hook_control/s_MCM"
                 label="Toggle colour temperature control"/>
 
-      <seekBar  description="Starting point is 10000K."
+      <seekBar  description="Starting point is 6500K."
 		name="Colour temperature"
                 action="generic-offset B /sys/class/misc/mdnie/hook_control/mcm_temperature"
                 unit="00K" min="-100" reversed="false" step="1" max="32"/>
@@ -989,17 +989,17 @@ done
       <seekBar  description="Red in white"
 		name="Red"
                 action="generic-offset B /sys/class/misc/mdnie/hook_control/scr_white_red"
-                unit="" min="-128" reversed="false" step="1" max="10"/>
+                unit="" min="-128" reversed="false" step="1" max="20"/>
 
       <seekBar  description="Green in white"
 		name="Green"
                 action="generic-offset B /sys/class/misc/mdnie/hook_control/scr_white_green"
-                unit="" min="-128" reversed="false" step="1" max="10"/>
+                unit="" min="-128" reversed="false" step="1" max="20"/>
 
       <seekBar  description="Blue in white"
 		name="Blue"
                 action="generic-offset B /sys/class/misc/mdnie/hook_control/scr_white_blue"
-                unit="" min="-128" reversed="false" step="1" max="10"/>
+                unit="" min="-128" reversed="false" step="1" max="20"/>
 
     </settingsPane>
 
@@ -1041,15 +1041,15 @@ done
                 action="generic-offset B /sys/class/misc/mdnie/hook_control/scr_blue_red"
                 unit="" min="-32" reversed="false" step="1" max="64"/>
 
-      <seekBar  description="Blue in blue channel"
-		name="Blue in blue"
-                action="generic-offset B /sys/class/misc/mdnie/hook_control/scr_blue_blue"
-                unit="" min="-64" reversed="false" step="1" max="32"/>
-
       <seekBar  description="Green in blue channel"
 		name="Green in blue"
                 action="generic-offset B /sys/class/misc/mdnie/hook_control/scr_blue_green"
                 unit="" min="-32" reversed="false" step="1" max="64"/>
+
+      <seekBar  description="Blue in blue channel"
+		name="Blue in blue"
+                action="generic-offset B /sys/class/misc/mdnie/hook_control/scr_blue_blue"
+                unit="" min="-64" reversed="false" step="1" max="32"/>
 
     </settingsPane>
 
@@ -1101,8 +1101,7 @@ done
                 action="generic-offset B /sys/class/misc/mdnie/hook_control/scr_magenta_blue"
                 unit="" min="-64" reversed="false" step="1" max="16"/>
 
-    </settingsPane>
-	
+    </settingsPane>	
     <settingsPane description="Other screen related settings" name="Other Settings">
 		<checkbox description='Enable or Disable "sync brightnes with the battery discharge" (less battery = less brightnes). Depends on Cortexbrain-Background-Process!'
 			name="Sync-Brightness" action="generic_cortex /tmp/cortexbrain_auto_sync_brightness" label="Sync-Brightness"/>

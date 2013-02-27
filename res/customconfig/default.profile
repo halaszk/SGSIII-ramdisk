@@ -271,3 +271,9 @@ trans_load_h0_scroff=20
 trans_load_l1_scroff=20
 trans_load_rq_sleep=20
 trans_rq_sleep=2
+hook_intercept=off
+sequence_intercept=off
+s_chroma_saturation=off
+s_factory_chroma_saturation=off
+s_channel_filters=off
+

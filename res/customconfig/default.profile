@@ -119,6 +119,7 @@ cron_clear_app_cache=on
 cron_fix_permissions=off
 cron_zipalign=off
 ad_block_update=on
+cron_mobile_data=on
 gesture_tweak=off
 cortexbrain_background_process=1
 cortexbrain_auto_sync_brightness=off

@@ -156,8 +156,8 @@ fi
 
 
 # network tuning reset to allow real ROM control over H/H+/3G/G signal.
-$BB sed -i "s/ro.ril.hsxpa=[0-9]*//g" /system/build.prop;
-$BB sed -i "s/ro.ril.gprsclass=[0-9]*//g" /system/build.prop;
+#$BB sed -i "s/ro.ril.hsxpa=[0-9]*//g" /system/build.prop;
+#$BB sed -i "s/ro.ril.gprsclass=[0-9]*//g" /system/build.prop;
 
 #$BB umount -f /system;
 $BB umount -f /.secondrom;

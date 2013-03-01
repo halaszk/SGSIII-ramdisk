@@ -31,13 +31,14 @@ wifi_idle_wait=10000;
 # set initial vm.dirty vales
 echo "500" > /proc/sys/vm/dirty_writeback_centisecs;
 echo "3000" > /proc/sys/vm/dirty_expire_centisecs;
-
-# =========
-# Renice - kernel thread responsible for managing the swap memory and logs
-# =========
-#renice 15 -p `pgrep -f "kswapd0"`;
-#renice 15 -p `pgrep -f "logcat"`;
-
+# init functions.
+sleeprun=1;
+wifi_helper_awake=1;
+TELE_DATA=`dumpsys telephony.registry`;
+mobile_helper_awake=1;
+echo 1 > /tmp/wifi_helper;
+echo 1 > /tmp/mobile_helper;
+chmod 777 -R /tmp/
 # check if dumpsys exist in ROM
 if [ -e /system/bin/dumpsys ]; then
 	DUMPSYS=1;
@@ -275,6 +276,9 @@ BATTERY_TWEAKS()
 		log -p i -t $FILE_NAME "*** BATTERY_TWEAKS ***: enabled";
 	fi;
 }
+if [ "$cortexbrain_background_process" == 0 ]; then
+	BATTERY_TWEAKS;
+fi;
 
 # ==============================================================
 # CPU-TWEAKS
@@ -397,9 +401,7 @@ MEMORY_TWEAKS()
 		echo "50" > /proc/sys/vm/overcommit_ratio; # default: 50
 		echo "256 256" > /proc/sys/vm/lowmem_reserve_ratio;
 		echo "3" > /proc/sys/vm/page-cluster; # default: 3
-		# must be set 8192 or more, mem stability critical value
-		echo "8192" > /proc/sys/vm/min_free_kbytes;
-		# =========
+		echo "4096" > /proc/sys/vm/min_free_kbytes;
 
 		log -p i -t $FILE_NAME "*** MEMORY_TWEAKS ***: enabled";
 	fi;
@@ -566,7 +568,9 @@ WIFI_PM()
 		fi;
 
 		if [ "$supplicant_scan_interval" -le 180 ]; then
-			$PROP wifi.supplicant_scan_interval 360;
+			setprop wifi.supplicant_scan_interval 360;
+		else
+			setprop wifi.supplicant_scan_interval $supplicant_scan_interval;
 		fi;
 	elif [ "${state}" == "awake" ]; then
 		if [ -e /sys/module/dhd/parameters/wifi_pm ]; then
@@ -578,6 +582,62 @@ WIFI_PM()
 
 	log -p i -t $FILE_NAME "*** WIFI_PM ***: ${state}";
 }
+
+MOBILE_DATA_DISABLE()
+{
+	svc data disable;
+	svc wifi disable;
+	# not declared as local - therefore, it's global
+	mobile_helper_awake=1;
+	log -p i -t $FILE_NAME "*** MOBILE DATA AND WIFI ***: disabled";
+}
+MOBILE_DATA()
+{
+	local state="$1";
+	if [ "$cortexbrain_auto_tweak_mobile" == on ]; then
+		if [ "${state}" == "sleep" ]; then
+			local DATA_STATE=`echo "$TELE_DATA" | awk '/mDataConnectionState/ {print $1}'`;
+			if [ "$DATA_STATE" != "mDataConnectionState=0" ]; then
+				if [ "$cortexbrain_auto_tweak_mobile_sleep_delay" == 0 ]; then
+					MOBILE_DATA_DISABLE;
+				else
+					(
+						echo "0" > /tmp/mobile_helper;
+						# screen time out but user want to keep it on and have mobile data
+						sleep 10;
+						if [ `cat /tmp/mobile_helper` == 0 ]; then
+							# user did not turned screen on, so keep waiting
+							SLEEP_TIME_DATA=$(( $cortexbrain_auto_tweak_mobile_sleep_delay - 10 ));
+							log -p i -t $FILE_NAME "*** DISABLE_MOBILE $cortexbrain_auto_tweak_mobile_sleep_delay Sec Delay Mode ***";
+							sleep $SLEEP_TIME_DATA;
+							if [ `cat /tmp/mobile_helper` == 0 ]; then
+								# user left the screen off, then disable mobile data
+								MOBILE_DATA_DISABLE;
+							fi;
+						fi;
+					)&
+				fi;
+			else
+				mobile_helper_awake=0;
+			fi;
+		elif [ "${state}" == "awake" ]; then
+			echo "1" > /tmp/mobile_helper;
+			if [ "$mobile_helper_awake" == 1 ]; then
+				svc data enable;
+				svc wifi enable;
+				log -p i -t $FILE_NAME "*** MOBILE DATA ***: enabled";
+			fi;
+		fi;
+	fi;
+}
+
+# this needed for data tweaks apply from STweaks in real time.
+apply_mdata=$2;
+if [ "${apply_mdata}" == "switch_on" ]; then
+MOBILE_DATA "awake";
+elif [ "${apply_mdata}" == "switch_off" ]; then
+MOBILE_DATA "sleep";
+fi;
 
 LOGGER()
 {
@@ -928,6 +988,20 @@ GAMMA_FIX()
 
 	log -p i -t $FILE_NAME "*** GAMMA_FIX: min: $min_gamma max: $max_gamma ***: done";
 }
+
+
+NET()
+{
+	local state="$1";
+
+	if [ "${state}" == "awake" ]; then
+		echo "1800" > /proc/sys/net/ipv4/tcp_keepalive_time;
+	elif [ "${state}" == "sleep" ]; then
+		echo "7200" > /proc/sys/net/ipv4/tcp_keepalive_time;
+	fi;
+
+	log -p i -t $FILE_NAME "*** NET ***: ${state}";	
+}
 # ==============================================================
 # TWEAKS: if Screen-ON
 # ==============================================================
@@ -970,6 +1044,8 @@ AWAKE_MODE()
 	WIFI_PM "awake";
 	
 	TUNE_IPV6;
+	
+	NET "awake";
 
 	CPU_GOV_TWEAKS "awake";
 
@@ -1106,10 +1182,13 @@ SLEEP_MODE()
 		LOWMMKILLER "sleep";
 
 		LOGGER "sleep";
+		
+		NET "sleep";
 
 		log -p i -t $FILE_NAME "*** SLEEP mode ***";
 
 		else
+		
 		log -p i -t $FILE_NAME "*** On Call! SLEEP aborted! ***";
 
 		fi;

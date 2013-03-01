@@ -157,7 +157,11 @@ fi
 # apply STweaks settings
 echo "booting" > /data/.siyah/booting;
 pkill -f "com.gokhanmoral.stweaks.app";
+sleep 13
+# apply STweaks defaults
+export CONFIG_BOOTING=1
 nohup $BB sh /res/uci.sh restore;
+export CONFIG_BOOTING=
 # restore all the PUSH Button Actions back to there location
 $BB mount -o remount,rw rootfs;
 $BB mv /res/no-push-on-boot/* /res/customconfig/actions/push-actions/;

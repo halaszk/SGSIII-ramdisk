@@ -594,7 +594,7 @@ MOBILE_DATA_DISABLE()
 MOBILE_DATA()
 {
 	local state="$1";
-	if [ "$cortexbrain_auto_tweak_mobile" == on ]; then
+	if [ "$cron_mobile_data" == on ]; then
 		if [ "${state}" == "sleep" ]; then
 			local DATA_STATE=`echo "$TELE_DATA" | awk '/mDataConnectionState/ {print $1}'`;
 			if [ "$DATA_STATE" != "mDataConnectionState=0" ]; then

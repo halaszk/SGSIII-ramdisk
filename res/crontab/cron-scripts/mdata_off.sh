@@ -6,7 +6,8 @@
 	. /data/.siyah/$PROFILE.profile;
 
 	if [ "$cron_mobile_data" == "on" ]; then
-	/sbin/ext/cortexbrain-tune.sh apply_mdata sleep > /dev/null;
+	svc data disable;
+	svc wifi disable;
 	date +%H:%M-%D-%Z > /data/crontab/mdata_off;
 	echo "Done! Mobile network disabled" >> /data/crontab/mdata_off;
 	fi;

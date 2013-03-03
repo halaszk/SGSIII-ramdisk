@@ -586,16 +586,19 @@ WIFI_PM()
 LOGGER()
 {
 	local state="$1";
+	local dev_log_sleep="/dev/log-sleep";
+	local dev_log="/dev/log";
+
 	if [ "${state}" == "awake" ]; then
 		if [ "$android_logger" == auto ] || [ "$android_logger" == debug ]; then
-			if [ -e /dev/log-sleep ] && [ ! -e /dev/log ]; then
-				mv /dev/log-sleep/ /dev/log/
+			if [ -e $dev_log_sleep ] && [ ! -e $dev_log ]; then
+				mv $dev_log_sleep $dev_log
 			fi;
 		fi;
 	elif [ "${state}" == "sleep" ]; then
 		if [ "$android_logger" == auto ] || [ "$android_logger" == disabled ]; then
-			if [ -e /dev/log ]; then
-				mv /dev/log/ /dev/log-sleep/;
+			if [ -e $dev_log ]; then
+				mv $dev_log $dev_log_sleep;
 			fi;
 		fi;
 	fi;
@@ -947,14 +950,47 @@ NET()
 
 	log -p i -t $FILE_NAME "*** NET ***: ${state}";	
 }
+
+VFS_CACHE_PRESSURE()
+{
+	local state="$1";
+	local sys_vfs_cache="/proc/sys/vm/vfs_cache_pressure";
+
+	if [ "${state}" == "awake" ]; then
+		echo "20" > $sys_vfs_cache;
+	elif [ "${state}" == "sleep" ]; then
+		echo "20" > $sys_vfs_cache;
+	fi;
+
+	log -p i -t $FILE_NAME "*** VFS_CACHE_PRESSURE: ${state} ***";
+}
+
+
+IO_SCHEDULER()
+{
+	local state="$1";
+	local sys_mmc0_scheduler="/sys/block/mmcblk0/queue/scheduler";
+	local sys_mmc1_scheduler="/sys/block/mmcblk1/queue/scheduler";
+
+	if [ "${state}" == "awake" ]; then
+		echo "$scheduler" > $sys_mmc0_scheduler;
+		echo "$scheduler" > $sys_mmc1_scheduler;
+	elif [ "${state}" == "sleep" ]; then
+		echo "$sleep_scheduler" > $sys_mmc0_scheduler;
+		echo "$sleep_scheduler" > $sys_mmc1_scheduler;
+	fi;
+
+	log -p i -t $FILE_NAME "*** IO_SCHEDULER: ${state} ***: done";	
+}
+
 # ==============================================================
 # TWEAKS: if Screen-ON
 # ==============================================================
 AWAKE_MODE()
 {
-	IO_TWEAKS;
-
 	LOGGER "awake";
+
+	IO_TWEAKS;
 
 	GAMMA_FIX;
 
@@ -994,14 +1030,13 @@ AWAKE_MODE()
 
 	CPU_GOV_TWEAKS "awake";
 
-	# set I/O-Scheduler
-	echo "$scheduler" > /sys/block/mmcblk0/queue/scheduler;
-	echo "$scheduler" > /sys/block/mmcblk1/queue/scheduler;
+	IO_SCHEDULER "awake";
 	
 	if [ "$mali_resume_enable" == on ]; then
 	echo "$GPUFREQ1" > /sys/module/mali/parameters/step0_clk;
 	fi;
-	echo "50" > /proc/sys/vm/vfs_cache_pressure;
+
+	VFS_CACHE_PRESSURE "awake";
 
 	if [ "$cortexbrain_cpu_boost" == on ]; then
 	# set CPU speed
@@ -1115,22 +1150,19 @@ SLEEP_MODE()
 			$PROP wifi.supplicant_scan_interval 360;
 		fi;
 		
-			# set disk I/O sched to noop simple and battery saving.
-		echo "$sleep_scheduler" > /sys/block/mmcblk0/queue/scheduler;
-		echo "$sleep_scheduler" > /sys/block/mmcblk1/queue/scheduler;
+		IO_SCHEDULER "sleep";
 
-		# set battery value
-		echo "50" > /proc/sys/vm/vfs_cache_pressure; # default: 100
+		VFS_CACHE_PRESSURE "sleep";
 
 		DISABLE_NMI;
 
 		LOWMMKILLER "sleep";
 
-		LOGGER "sleep";
-		
 		NET "sleep";
 
 		log -p i -t $FILE_NAME "*** SLEEP mode ***";
+
+		LOGGER "sleep";
 
 		else
 		

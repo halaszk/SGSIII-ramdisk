@@ -583,62 +583,6 @@ WIFI_PM()
 	log -p i -t $FILE_NAME "*** WIFI_PM ***: ${state}";
 }
 
-MOBILE_DATA_DISABLE()
-{
-	svc data disable;
-	svc wifi disable;
-	# not declared as local - therefore, it's global
-	mobile_helper_awake=1;
-	log -p i -t $FILE_NAME "*** MOBILE DATA AND WIFI ***: disabled";
-}
-MOBILE_DATA()
-{
-	local state="$1";
-	if [ "$cron_mobile_data" == on ]; then
-		if [ "${state}" == "sleep" ]; then
-			local DATA_STATE=`echo "$TELE_DATA" | awk '/mDataConnectionState/ {print $1}'`;
-			if [ "$DATA_STATE" != "mDataConnectionState=0" ]; then
-				if [ "$cortexbrain_auto_tweak_mobile_sleep_delay" == 0 ]; then
-					MOBILE_DATA_DISABLE;
-				else
-					(
-						echo "0" > /tmp/mobile_helper;
-						# screen time out but user want to keep it on and have mobile data
-						sleep 10;
-						if [ `cat /tmp/mobile_helper` == 0 ]; then
-							# user did not turned screen on, so keep waiting
-							SLEEP_TIME_DATA=$(( $cortexbrain_auto_tweak_mobile_sleep_delay - 10 ));
-							log -p i -t $FILE_NAME "*** DISABLE_MOBILE $cortexbrain_auto_tweak_mobile_sleep_delay Sec Delay Mode ***";
-							sleep $SLEEP_TIME_DATA;
-							if [ `cat /tmp/mobile_helper` == 0 ]; then
-								# user left the screen off, then disable mobile data
-								MOBILE_DATA_DISABLE;
-							fi;
-						fi;
-					)&
-				fi;
-			else
-				mobile_helper_awake=0;
-			fi;
-		elif [ "${state}" == "awake" ]; then
-			echo "1" > /tmp/mobile_helper;
-			if [ "$mobile_helper_awake" == 1 ]; then
-				svc data enable;
-				svc wifi enable;
-				log -p i -t $FILE_NAME "*** MOBILE DATA ***: enabled";
-			fi;
-		fi;
-	fi;
-}
-
-# this needed for data tweaks apply from STweaks in real time.
-apply_mdata=$2;
-if [ "${apply_mdata}" == "switch_on" ]; then
-MOBILE_DATA "awake";
-elif [ "${apply_mdata}" == "switch_off" ]; then
-MOBILE_DATA "sleep";
-fi;
-
 LOGGER()
 {
 	local state="$1";

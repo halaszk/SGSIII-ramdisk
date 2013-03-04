@@ -11,9 +11,11 @@ BB="/sbin/busybox";
 $BB mount -o remount,rw rootfs;
 $BB xzcat iwconfig.xz > /sbin/iwconfig;
 $BB xzcat e2fsck1.xz > /sbin/e2fsck1;
+$BB xzcat swapon.xz > /sbin/swapon;
 $BB chmod 777 /sbin/iwconfig;
 $BB chmod 777 /sbin/e2fsck1;
-$BB mount -o remount,ro rootfs;
+$BB chmod 777 /sbin/swapon;
+
 # first mod the partitions then boot
 $BB sh /sbin/ext/system_tune_on_init.sh;
 

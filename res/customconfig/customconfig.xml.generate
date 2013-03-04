@@ -1110,7 +1110,6 @@ done
 		<seekBar description='Here you can set a value for less brightnes. Works only if "Less-Brightness" tweak is Enabled!'
 			name="Set value (0 - 255)" action="generic /tmp/cortexbrain_less_brightness" unit="" min="0" reversed="false" step="5" max="255"/>
 			
-        <checkbox description="mDNIe sharpness tweaks from hardcore. Requires reboot to be effective." name="mDNIe Sharpness Tweaks" action="generic /tmp/mdniemod" label="mDNIe Sharpness Tweaks"/>
 	    <checkbox description="Enable inverting the screen colors by quickly pressing Home button 4 times" name="mDNIe Negative Toggle" action="generic01 /sys/module/gpio_keys/parameters/mdnie_shortcut_enabled" label="mDNIe Negative Toggle"/>
 		
 		<spinner description="Enables or disables the mechanic, disabled by default" name="LCDfreq_enable" action="cpu-governor lcdfreq" label="Dynamic Screen Frequency Scaling for CPU Governors">

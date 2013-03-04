@@ -42,11 +42,6 @@ $BB chmod 0777 /data/.siyah/ -R;
 read_defaults;
 read_config;
 
-#mdnie sharpness tweak
-if [ "$mdniemod" == "on" ];then
-. /sbin/ext/mdnie-sharpness-tweak.sh;
-fi
-
 # Cortex parent should be ROOT/INIT and not STweaks
 nohup /sbin/ext/cortexbrain-tune.sh; 
 

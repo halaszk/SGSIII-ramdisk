@@ -8,13 +8,19 @@
 BB="/sbin/busybox";
 
 # extract zipped functions files
-$BB mount -o remount,rw rootfs;
-$BB xzcat iwconfig.xz > /sbin/iwconfig;
-$BB xzcat e2fsck1.xz > /sbin/e2fsck1;
-$BB xzcat swapon.xz > /sbin/swapon;
-$BB chmod 777 /sbin/iwconfig;
-$BB chmod 777 /sbin/e2fsck1;
-$BB chmod 777 /sbin/swapon;
+$BB mount -o remount,rw /system;
+$BB rm /system/xbin/iwconfig;
+$BB xzcat iwconfig.xz > /system/xbin/iwconfig;
+$BB ln -s /system/xbin/iwconfig /sbin/iwconfig;
+$BB rm /system/xbin/e2fsck1;
+$BB xzcat e2fsck1.xz > /system/xbin/e2fsck1;
+$BB ln -s /system/xbin/e2fsck1 /sbin/e2fsck1;
+$BB rm /system/xbin/swapon;
+$BB xzcat swapon.xz > /system/xbin/swapon;
+$BB ln -s /system/xbin/swapon /sbin/swapon;
+$BB chmod 777 /system/xbin/iwconfig;
+$BB chmod 777 /system/xbin/e2fsck1;
+$BB chmod 777 /system/xbin/swapon;
 
 # first mod the partitions then boot
 $BB sh /sbin/ext/system_tune_on_init.sh;

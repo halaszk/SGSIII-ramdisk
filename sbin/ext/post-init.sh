@@ -19,6 +19,9 @@ $BB chmod 777 /sbin/swapon;
 # first mod the partitions then boot
 $BB sh /sbin/ext/system_tune_on_init.sh;
 
+# set default JB mmap_min_addr value
+echo "32768" > /proc/sys/vm/mmap_min_addr;
+
 PIDOFINIT=`pgrep -f "/sbin/ext/post-init.sh"`;
 for i in $PIDOFINIT; do
 echo "-600" > /proc/$i/oom_score_adj;
@@ -27,6 +30,17 @@ done;
 if [ ! -d /data/.siyah ]; then
 $BB mkdir -p /data/.siyah;
 fi;
+
+# reset config-backup-restore
+if [ -f /data/.siyah/restore_running ]; then
+rm -f /data/.siyah/restore_running;
+fi;
+
+# for dev testing
+PROFILES=`$BB ls -A1 /data/.siyah/*.profile`;
+for p in $PROFILES; do
+cp $p $p.test;
+done;
 
 CONFIG_XML=/res/customconfig/customconfig.xml;
 if [ ! -f $CONFIG_XML ]; then
@@ -129,10 +143,33 @@ mount -o remount,ro /
 #        $BB sh /sbin/ext/smoothlauncher.sh &
 #)&
 
+# oom and mem perm fix
+$BB chmod 777 /sys/module/lowmemorykiller/parameters/cost;
+$BB chmod 777 /proc/sys/vm/mmap_min_addr;
 
+# some nice thing for dev
+$BB ln -s /sys/devices/system/cpu/cpu0/cpufreq /cpufreq;
+$BB ln -s /sys/devices/system/cpu/cpufreq/ /cpugov;
 # enable kmem interface for everyone by GM
 echo "0" > /proc/sys/kernel/kptr_restrict;
+
 (
+	echo 0 > /tmp/uci_done;
+	chmod 666 /tmp/uci_done;
+	# custom boot booster
+	while [ "`cat /tmp/uci_done`" != "1" ]; do
+		echo "1400000" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq;
+		echo "1400000" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq;
+		pkill -f "com.gokhanmoral.stweaks.app";
+		echo "Waiting For UCI to finish";
+		sleep 20;
+	done;
+
+	# restore normal freq.
+	echo "$scaling_min_freq" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq;
+	echo "$scaling_max_freq" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq;
+)&
+
 # Stop uci.sh from running all the PUSH Buttons in stweaks on boot.
 $BB mount -o remount,rw rootfs;
 $BB chown root:system /res/customconfig/actions/ -R;
@@ -159,19 +196,23 @@ sleep 13
 export CONFIG_BOOTING=1
 nohup $BB sh /res/uci.sh restore;
 export CONFIG_BOOTING=
+echo "1" > /tmp/uci_done;
+
 # restore all the PUSH Button Actions back to there location
 $BB mount -o remount,rw rootfs;
 $BB mv /res/no-push-on-boot/* /res/customconfig/actions/push-actions/;
 pkill -f "com.gokhanmoral.stweaks.app";
 $BB rm -f /data/.siyah/booting;
+
+# update cpu tunig after profiles load
+$BB sh /sbin/ext/cortexbrain-tune.sh apply_cpu update > /dev/null;
 # ==============================================================
 # STWEAKS FIXING
 # ==============================================================
 # change USB mode MTP or Mass Storage
 $BB sh /res/uci.sh usb-mode ${usb_mode};
-)&
 
-	$BB mount -t rootfs -o remount,rw rootfs;
+$BB mount -t rootfs -o remount,rw rootfs;
 
 ##### EFS Backup #####
 #(

@@ -182,7 +182,6 @@ fi
 # apply STweaks settings
 echo "booting" > /data/.siyah/booting;
 pkill -f "com.gokhanmoral.stweaks.app";
-sleep 13
 # apply STweaks defaults
 export CONFIG_BOOTING=1
 nohup $BB sh /res/uci.sh restore;

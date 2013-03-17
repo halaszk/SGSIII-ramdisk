@@ -150,7 +150,7 @@ IO_TWEAKS;
 KERNEL_TWEAKS()
 {
 	if [ "$cortexbrain_kernel_tweaks" == on ]; then
-		echo "1" > /proc/sys/vm/oom_kill_allocating_task;
+		echo "0" > /proc/sys/vm/oom_kill_allocating_task;
 		echo "0" > /proc/sys/vm/panic_on_oom;
 		echo "30" > /proc/sys/kernel/panic;
 		echo "8192" > /proc/sys/kernel/msgmax;

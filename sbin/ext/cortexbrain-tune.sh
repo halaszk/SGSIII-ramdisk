@@ -126,11 +126,11 @@ for i in $MMC; do
 
 
 		echo "10" > /proc/sys/fs/lease-break-time;
-		echo "84336" > /proc/sys/fs/file-max;
-		echo "1048576" > /proc/sys/fs/nr_open;
-		echo "16384" > /proc/sys/fs/inotify/max_queued_events;
-		echo "128" > /proc/sys/fs/inotify/max_user_instances;
-		echo "8192" > /proc/sys/fs/inotify/max_user_watches;
+#		echo "84336" > /proc/sys/fs/file-max;
+#		echo "1048576" > /proc/sys/fs/nr_open;
+#		echo "16384" > /proc/sys/fs/inotify/max_queued_events;
+#		echo "128" > /proc/sys/fs/inotify/max_user_instances;
+#		echo "8192" > /proc/sys/fs/inotify/max_user_watches;
 		
 		echo NO_NORMALIZED_SLEEPER > /sys/kernel/debug/sched_features;
 		echo NO_NEW_FAIR_SLEEPERS > /sys/kernel/debug/sched_features;
@@ -150,17 +150,17 @@ IO_TWEAKS;
 KERNEL_TWEAKS()
 {
 	if [ "$cortexbrain_kernel_tweaks" == on ]; then
-		echo "0" > /proc/sys/vm/oom_kill_allocating_task;
+		echo "1" > /proc/sys/vm/oom_kill_allocating_task;
 		echo "0" > /proc/sys/vm/panic_on_oom;
 		echo "30" > /proc/sys/kernel/panic;
-		echo "8192" > /proc/sys/kernel/msgmax;
-		echo "1189" > /proc/sys/kernel/msgmni;
-		echo "64" > /proc/sys/kernel/random/read_wakeup_threshold;
-		echo "128" > /proc/sys/kernel/random/write_wakeup_threshold;
-		echo "250 32000 32 128" > /proc/sys/kernel/sem;
-		echo "2097152" > /proc/sys/kernel/shmall;
-		echo "33554432" > /proc/sys/kernel/shmmax;
-		echo "13180" > /proc/sys/kernel/threads-max;
+#		echo "8192" > /proc/sys/kernel/msgmax;
+#		echo "1189" > /proc/sys/kernel/msgmni;
+#		echo "64" > /proc/sys/kernel/random/read_wakeup_threshold;
+#		echo "128" > /proc/sys/kernel/random/write_wakeup_threshold;
+#		echo "250 32000 32 128" > /proc/sys/kernel/sem;
+#		echo "2097152" > /proc/sys/kernel/shmall;
+#		echo "33554432" > /proc/sys/kernel/shmmax;
+#		echo "13180" > /proc/sys/kernel/threads-max;
 	
 		log -p i -t $FILE_NAME "*** KERNEL_TWEAKS ***: enabled";
 	fi;
@@ -240,8 +240,6 @@ BATTERY_TWEAKS()
 	# System tweaks: Hardcore speedmod
 	  # vm tweaks
 	  echo "12288" > /proc/sys/vm/min_free_kbytes
-	  echo "1500" > /proc/sys/vm/dirty_writeback_centisecs
-	  echo "200" > /proc/sys/vm/dirty_expire_centisecs
 	
 	if [ "$power_reduce" == on ]; then
 	# LCD Power-Reduce
@@ -399,9 +397,9 @@ MEMORY_TWEAKS()
 		echo "4" > /proc/sys/vm/min_free_order_shift; # default: 4
 		echo "1" > /proc/sys/vm/overcommit_memory; # default: 0
 		echo "50" > /proc/sys/vm/overcommit_ratio; # default: 50
-		echo "32 32" > /proc/sys/vm/lowmem_reserve_ratio;
+		echo "256 256" > /proc/sys/vm/lowmem_reserve_ratio;
 		echo "3" > /proc/sys/vm/page-cluster; # default: 3
-		echo "4096" > /proc/sys/vm/min_free_kbytes;
+		echo "8192" > /proc/sys/vm/min_free_kbytes;
 
 		log -p i -t $FILE_NAME "*** MEMORY_TWEAKS ***: enabled";
 	fi;

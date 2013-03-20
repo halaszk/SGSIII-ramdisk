@@ -522,9 +522,9 @@ TCP_TWEAKS()
 	echo "1440000" > /proc/sys/net/ipv4/tcp_max_tw_buckets;
 	echo "57344 57344 524288" > /proc/sys/net/ipv4/tcp_mem;
 	echo "1440000" > /proc/sys/net/ipv4/tcp_max_tw_buckets;
-	echo "2097152" > /proc/sys/net/core/rmem_max;
-	echo "2097152" > /proc/sys/net/core/wmem_max;
-	echo "262144" > /proc/sys/net/core/rmem_default;
+#	echo "2097152" > /proc/sys/net/core/rmem_max;
+#	echo "2097152" > /proc/sys/net/core/wmem_max;
+#	echo "262144" > /proc/sys/net/core/rmem_default;
 	echo "262144" > /proc/sys/net/core/wmem_default;
 	echo "20480" > /proc/sys/net/core/optmem_max;
 	echo "2500" > /proc/sys/net/core/netdev_max_backlog;

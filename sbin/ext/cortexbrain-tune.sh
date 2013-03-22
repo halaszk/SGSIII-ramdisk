@@ -1019,8 +1019,6 @@ AWAKE_MODE()
 	if [ "$cortexbrain_cpu_boost" == on ]; then
 	echo "$scaling_governor" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor;
 	fi;
-
-	WIFI_PM "awake";
 	
 	TUNE_IPV6;
 	
@@ -1141,8 +1139,6 @@ SLEEP_MODE()
 
 	SWAPPINESS;
 	
-	WIFI_PM "sleep";
-
 		# set wifi.supplicant_scan_interval
 		if [ "$supplicant_scan_interval" -le 180 ]; then
 			$PROP wifi.supplicant_scan_interval 360;

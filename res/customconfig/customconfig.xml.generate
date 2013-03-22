@@ -401,74 +401,126 @@ done
   
   <settingsTab name="Audio">
     <settingsPane description="Speaker Tuning Settings" name="Speaker Tuning">
-      <checkbox description="Enable speaker tuning for better bass response on main speakers" name="Speaker Tuning" action="generic01 /sys/class/misc/boeffla_sound/boeffla_sound" label="Speaker Tuning"/>
-      <seekBar description="Speaker Amplification Offset. 57 means stock value. Having too much amplification may cause distortion." 
-		name="Speaker Amplification Offset" action="eq-presets speaker_volume" unit="" min="0" reversed="false" step="1" max="63"/>
+      <checkbox description="Enable speaker equalizer for better bass response on main speakers" 
+                name="Speaker equalizer" 
+                action="generic01 /sys/class/misc/wolfson_control/switch_eq_speaker" 
+                label="Enable speaker equalizer"/>
+
+      <seekBar  description="External speaker amlification level." 
+		name="Speaker left channel volume" 
+                action="generic /sys/class/misc/wolfson_control/speaker_left" 
+                unit="" min="57" reversed="false" step="1" max="63"/>
+
+      <seekBar  description="" 
+		name="Speaker right channel volume"
+                action="generic /sys/class/misc/wolfson_control/speaker_right" 
+                unit="" min="57" reversed="false" step="1" max="63"/>
+
+      <seekBar  description="" 
+		name="Speaker boost level"
+                action="generic /sys/class/misc/wolfson_control/speaker_boost_level" 
+                unit="" min="0" reversed="false" step="1" max="7"/>
+
+      <checkbox  description="Prevents any sound to be outputted via speaker when headphones are connected." 
+                name="Privacy mode" 
+                action="generic01 /sys/class/misc/wolfson_control/switch_privacy_mode"
+                label="Enable privacy mode"/>
     </settingsPane>
-    <settingsPane description="Headphone Amplification Settings" name="Headphone Amplification">
-      <seekBar description="Headphone Amplifier Level (0-63 which corresponds to -57db-6db)" 
-		name="Headphone Amplifier" action="eq-presets headphone_volume" unit="" min="0" reversed="false" step="1" max="63"/>
+
+    <settingsPane description="Headphone amplification increases volume only on headphones and headsets." 
+		  name="Headphone Amplification">
+      <seekBar  description="Headphone Amplifier Level (0-63 which corresponds to -57db-6db)" 
+		name="Headphone left channel volume"
+                action="generic /sys/class/misc/wolfson_control/headphone_left" 
+                unit="" min="0" reversed="false" step="1" max="63"/>      
+
+      <seekBar  description="" 
+		name="Headphone right channel volume"
+                action="generic /sys/class/misc/wolfson_control/headphone_right" 
+                unit="" min="0" reversed="false" step="1" max="63"/>
     </settingsPane>
-    <settingsPane description="EQ Settings" name="EQ Settings">
-      <spinner description="Choose which equalizer settings to use: Presets or Graphical Equalizer." name="EQ Presets" action="eq-presets eq_selection">
-             <spinnerItem name="Use presets" value="0"/> 
-             <spinnerItem name="Use graphical equalizer" value="1"/> 
-      </spinner>
+
+    <settingsPane description="The stereo expansion effect produces a virtual 3D effect on sound." 
+		  name="Stereo expansion">
+      <seekBar  description="Stereo expansion level (0-31dB). 0 disables the control." 
+		name="Stereo expansion"
+                action="generic /sys/class/misc/wolfson_control/stereo_expansion" 
+                unit="" min="0" reversed="false" step="1" max="31"/>
     </settingsPane>
-	
-    <settingsPane description="EQ Presets" name="EQ Presets">
-      <spinner description="Hardware Equalizer Presets" name="EQ Presets" action="eq-presets eq_preset">
-             <spinnerItem name="Flat (Disabled)" value="0"/> 
-             <spinnerItem name="Bass-extreme" value="1"/> 
-             <spinnerItem name="Bass and Treble" value="2"/> 
-             <spinnerItem name="Treble" value="3"/> 
-             <spinnerItem name="Classic" value="4"/> 
-             <spinnerItem name="Pleasant for ears" value="5"/> 
-             <spinnerItem name="Eargasm" value="6"/> 
-      </spinner>
+
+    <settingsPane description="Controls the hardware equalizer." 
+                  name="Equalizer settings">
+
+      <checkbox description="Enable headphone equalizer for gain controls." 
+                name="Headphone equalizer" 
+                action="maskvalue 1 /sys/class/misc/wolfson_control/switch_eq_headphone" 
+                label="Enable headphone equalizer"/>
+
+      <checkbox description="Enable saturation prevention for headphone equalizer" 
+                name="Saturation prevention" 
+                action="maskvalue 2 /sys/class/misc/wolfson_control/switch_eq_headphone"
+                label="Enable saturation prevention"/>
+
+      <seekBar  description="" 
+		name="Band1 gain" 
+                action="generic /sys/class/misc/wolfson_control/eq_hp_gain_1" 
+                unit=" dB" min="-12" reversed="false" step="1" max="12"/>
+
+      <seekBar  description="" 
+		name="Band2 gain" 
+                action="generic /sys/class/misc/wolfson_control/eq_hp_gain_2" 
+                unit=" dB" min="-12" reversed="false" step="1" max="12"/>
+
+      <seekBar  description="" 
+		name="Band3 gain" 
+                action="generic /sys/class/misc/wolfson_control/eq_hp_gain_3" 
+                unit=" dB" min="-12" reversed="false" step="1" max="12"/>
+
+      <seekBar  description="" 
+		name="Band4 gain" 
+                action="generic /sys/class/misc/wolfson_control/eq_hp_gain_4" 
+                unit=" dB" min="-12" reversed="false" step="1" max="12"/>
+
+      <seekBar  description="" 
+		name="Band5 gain" 
+                action="generic /sys/class/misc/wolfson_control/eq_hp_gain_5" 
+                unit=" dB" min="-12" reversed="false" step="1" max="12"/>
     </settingsPane>
-	
-    <settingsPane description="Graphical Equalizer" name="Graphical Equalizer">
-      <seekBar description="" 
-		name="Band1 gain" action="eq-presets eq_band1" unit=" dB" min="-12" reversed="false" step="1" max="12"/>
-      <seekBar description="" 
-		name="Band2 gain" action="eq-presets eq_band2" unit=" dB" min="-12" reversed="false" step="1" max="12"/>
-      <seekBar description="" 
-		name="Band3 gain" action="eq-presets eq_band3" unit=" dB" min="-12" reversed="false" step="1" max="12"/>
-      <seekBar description="" 
-		name="Band4 gain" action="eq-presets eq_band4" unit=" dB" min="-12" reversed="false" step="1" max="12"/>
-      <seekBar description="" 
-		name="Band5 gain" action="eq-presets eq_band5" unit=" dB" min="-12" reversed="false" step="1" max="12"/>
+
+    <settingsPane description="The microphone levels control the mic sensitivity." 
+		  name="Microphone control">
+      <seekBar  description="" 
+		name="Microphone level general"
+                action="generic /sys/class/misc/wolfson_control/mic_level_general" 
+                unit="" min="0" reversed="false" step="1" max="31"/>
+
+      <seekBar  description="" 
+		name="Microphone level in-call"
+                action="generic /sys/class/misc/wolfson_control/mic_level_call"
+                unit="" min="0" reversed="false" step="1" max="31"/>
     </settingsPane>
-	
-    <settingsPane description="EQ Extras" name="EQ Extras">
-      <seekBar description="This will prevent distortion by decreasing the output volume by the selected amount. Leave it 0 if you do not have a distortion problem." 
-		name="Negative Digital Gain" action="eq-presets digital_gain" unit=" dB" min="0" reversed="false" step="1" max="12"/>
-    </settingsPane>
-	
+
     <settingsPane description="Optimization, conversion quality, signal processing and effect settings" name="Other Settings">
-      <spinner description="Tuned WM1811 FLL to generate clock source" name="FLL Tuning" action="generic /sys/class/misc/boeffla_sound/fll_tuning">
-             <spinnerItem name="Disabled" value="0"/> 
-             <spinnerItem name="Enabled" value="1"/> 
-      </spinner>
-      <spinner description="For 48kHz sample rate, the DAC oversample rate is 128fs when this option is selected, which makes the music sound better." name="DAC OverSampling" action="generic /sys/class/misc/boeffla_sound/dac_oversampling">
-             <spinnerItem name="Disabled" value="0"/> 
-             <spinnerItem name="Enabled" value="1"/> 
-      </spinner>
-      <spinner description="Bypass analog channel mixer and redirect the sound directly to the output." name="dac direct" action="generic /sys/class/misc/boeffla_sound/dac_direct">
-             <spinnerItem name="Disabled" value="0"/> 
-             <spinnerItem name="Enabled" value="1"/> 
-      </spinner>
-      <spinner description="This forces Mute speaker when headphone plugged." name="Privacy Mode" action="generic /sys/class/misc/boeffla_sound/privacy_mode">
-             <spinnerItem name="Disabled" value="0"/> 
-             <spinnerItem name="Enabled" value="1"/> 
-      </spinner>
-	   <spinner description="Microphone mode recording preset.(Default: Stock)" name="Microphone Mode" action="generic /sys/class/misc/boeffla_sound/mic_mode">
-             <spinnerItem name="Stock" value="0"/> 
-             <spinnerItem name="Light" value="1"/> 
-			 <spinnerItem name="Concert" value="2"/>
-			 <spinnerItem name="Noisy" value="3"/>
-      </spinner>
+      <checkbox  description="Tuned WM1811 FLL to generate clock source" 
+                name="FLL Tuning" 
+                action="generic01 /sys/class/misc/wolfson_control/switch_fll_tuning"
+                label="Enable FLL Tuning"/>
+
+      <checkbox  description="For 48kHz sample rate, the DAC oversample rate is 128fs when this option is selected, which makes the music sound better." 
+                name="DAC OverSampling" 
+                action="generic01 /sys/class/misc/wolfson_control/switch_oversampling"
+                label="Enable DAC Oversampling"/>
+
+      <checkbox  description="Bypass analog channel mixer and redirect the sound directly to the output." 
+                name="DAC Direct" 
+                action="generic01 /sys/class/misc/wolfson_control/switch_dac_direct"
+                label="Enable DAC direct"/>
+
+      <checkbox  description="This forces the output to be mono even if the source is stereo" 
+                name="Force Mono Downmix" 
+                action="generic01 /sys/class/misc/wolfson_control/switch_mono_downmix"
+                label="Enable force mono downmix"/>
+
     </settingsPane>
   </settingsTab>
   
@@ -947,7 +999,7 @@ done
        <checkbox description="Enable slide2wake feature which will let you unlock the phone by swiping your finger straight over the screen from left to right. Enabling this feature may decrease your battery life." name="Slide2Wake" action="generic01 /sys/devices/virtual/sec/tsp/tsp_slide2wake" label="Slide2Wake"/>
 	   
        <seekBar description="FB earlysuspend delay to run CRT animation when you turn the screen off."
-			 name="FB Earlysuspend Delay" action="generickmem fbearlysuspend_delay 0 int" unit=" ms" min="0" reversed="false" step="100" max="500"/>
+			 name="FB Earlysuspend Delay" action="generickmem fbearlysuspend_delay 0 int" unit=" ms" min="0" reversed="false" step="50" max="500"/>
     </settingsPane>
 	
 	<settingsPane description="Here you can control kernel screen gestures, set at /data/gesture_set.sh. More can be added by user. This tweak depends on cortex background service to be ON"
@@ -1212,8 +1264,6 @@ done
 			name="System-Tweaks" action="generic_cortex /tmp/cortexbrain_system" label="System-Tweaks"/>
 		<checkbox description='Enable or Disable "Kernel-Tweaks". (To update after change REBOOT)'
 			name="Kernel-Tweaks" action="generic_cortex /tmp/cortexbrain_kernel_tweaks" label="Kernel-Tweaks"/>
-        <checkbox description="Here you can allow WIFI to use LOW PWR when Screen is turned OFF. When screen is back ON, WIFI turns back to high PWR). If not set, WIFI uses HIGH PWR and get fast WIFI transfers on screen OFF"
-            name="Wifi Low PWR Switch" action="generic_cortex /tmp/wifi_pwr" label="Wifi Low PWR"/>
 		<checkbox description='Enable or Disable "WIFI-Tweaks". (To update after change REBOOT)'
 			name="WIFI-Tweaks" action="generic_cortex /tmp/cortexbrain_wifi" label="WIFI-Tweaks"/>
 		 <seekBar description=""

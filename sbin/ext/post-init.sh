@@ -141,6 +141,22 @@ $BB chmod 777 /proc/sys/vm/mmap_min_addr;
 # some nice thing for dev
 $BB ln -s /sys/devices/system/cpu/cpu0/cpufreq /cpufreq;
 $BB ln -s /sys/devices/system/cpu/cpufreq/ /cpugov;
+
+$BB echo 1 > /sys/class/misc/wolfson_control/switch_master;
+
+$BB echo 1 > /sys/class/misc/wolfson_control/switch_fll_tuning;
+$BB echo 1 > /sys/class/misc/wolfson_control/switch_oversampling;
+$BB echo 1 > /sys/class/misc/wolfson_control/switch_dac_direct;
+
+$BB echo 2 > /sys/class/misc/wolfson_control/eq_sp_gain_1;
+$BB echo 4 > /sys/class/misc/wolfson_control/eq_sp_gain_2;
+$BB echo -12 > /sys/class/misc/wolfson_control/eq_sp_gain_3;
+$BB echo -8 > /sys/class/misc/wolfson_control/eq_sp_gain_4;
+$BB echo 4 > /sys/class/misc/wolfson_control/eq_sp_gain_5;
+
+$BB echo 3 > /sys/class/misc/wolfson_control/switch_eq_headphone;
+$BB echo 1 > /sys/class/misc/wolfson_control/switch_eq_speaker;
+
 # enable kmem interface for everyone by GM
 echo "0" > /proc/sys/kernel/kptr_restrict;
 

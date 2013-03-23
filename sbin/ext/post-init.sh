@@ -142,9 +142,14 @@ mount -o remount,ro /
 #        $BB sh /sbin/ext/smoothlauncher.sh &
 #)&
 
-# oom and mem perm fix
-$BB chmod 777 /sys/module/lowmemorykiller/parameters/cost;
-$BB chmod 777 /proc/sys/vm/mmap_min_addr;
+
+# give home launcher, oom protection
+	ACORE_APPS=`pgrep acore`;
+	if [ "a$ACORE_APPS" != "a" ]; then
+		for c in `pgrep acore`; do
+			echo "-900" > /proc/${c}/oom_score_adj;
+		done;
+	fi;
 
 # some nice thing for dev
 $BB ln -s /sys/devices/system/cpu/cpu0/cpufreq /cpufreq;

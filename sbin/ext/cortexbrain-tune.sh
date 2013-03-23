@@ -149,23 +149,37 @@ IO_TWEAKS;
 # ==============================================================
 KERNEL_TWEAKS()
 {
+	local state="$1";
+
 	if [ "$cortexbrain_kernel_tweaks" == on ]; then
-		echo "1" > /proc/sys/vm/oom_kill_allocating_task;
-		echo "0" > /proc/sys/vm/panic_on_oom;
-		echo "30" > /proc/sys/kernel/panic;
+		if [ "${state}" == "awake" ]; then
+			echo "1" > /proc/sys/vm/oom_kill_allocating_task;
+			echo "0" > /proc/sys/vm/panic_on_oom;
+			echo "120" > /proc/sys/kernel/panic;
+			if [ "$cortexbrain_memory" == on ]; then
+				echo "32 32" > /proc/sys/vm/lowmem_reserve_ratio;
+			fi;
+		elif [ "${state}" == "sleep" ]; then
+			echo "0" > /proc/sys/vm/oom_kill_allocating_task;
+			echo "0" > /proc/sys/vm/panic_on_oom;
+			echo "60" > /proc/sys/kernel/panic;
+			if [ "$cortexbrain_memory" == on ]; then
+				echo "64 64" > /proc/sys/vm/lowmem_reserve_ratio;
+			fi;
+		fi;
+
 #		echo "8192" > /proc/sys/kernel/msgmax;
-#		echo "1189" > /proc/sys/kernel/msgmni;
+#		echo "5756" > /proc/sys/kernel/msgmni;
 #		echo "64" > /proc/sys/kernel/random/read_wakeup_threshold;
 #		echo "128" > /proc/sys/kernel/random/write_wakeup_threshold;
 #		echo "250 32000 32 128" > /proc/sys/kernel/sem;
 #		echo "2097152" > /proc/sys/kernel/shmall;
 #		echo "33554432" > /proc/sys/kernel/shmmax;
-#		echo "13180" > /proc/sys/kernel/threads-max;
+#		echo "45832" > /proc/sys/kernel/threads-max;
 	
-		log -p i -t $FILE_NAME "*** KERNEL_TWEAKS ***: enabled";
+		log -p i -t $FILE_NAME "*** KERNEL_TWEAKS ***: ${state} ***: enabled";
 	fi;
 }
-KERNEL_TWEAKS;
 
 # ==============================================================
 # SYSTEM-TWEAKS
@@ -235,7 +249,6 @@ BATTERY_TWEAKS()
 	  # vm tweaks
 	  echo "$dirty_background_ratio" > /proc/sys/vm/dirty_background_ratio; # default: 10
           echo "$dirty_ratio" > /proc/sys/vm/dirty_ratio; # default: 20
-	  $BB sysctl -w vm.vfs_cache_pressure=10;
 
 	# System tweaks: Hardcore speedmod
 	  # vm tweaks
@@ -955,7 +968,7 @@ VFS_CACHE_PRESSURE()
 	local sys_vfs_cache="/proc/sys/vm/vfs_cache_pressure";
 
 	if [ "${state}" == "awake" ]; then
-		echo "200" > $sys_vfs_cache;
+		echo "100" > $sys_vfs_cache;
 	elif [ "${state}" == "sleep" ]; then
 		echo "20" > $sys_vfs_cache;
 	fi;
@@ -987,6 +1000,8 @@ IO_SCHEDULER()
 AWAKE_MODE()
 {
 	LOGGER "awake";
+
+	KERNEL_TWEAKS "awake"; 
 
 	IO_TWEAKS;
 
@@ -1153,6 +1168,8 @@ SLEEP_MODE()
 		LOWMMKILLER "sleep";
 
 		NET "sleep";
+
+		KERNEL_TWEAKS "sleep";
 
 		log -p i -t $FILE_NAME "*** SLEEP mode ***";
 

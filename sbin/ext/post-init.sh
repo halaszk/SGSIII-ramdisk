@@ -10,8 +10,16 @@ BB="/sbin/busybox";
 # first mod the partitions then boot
 $BB sh /sbin/ext/system_tune_on_init.sh;
 
+# oom and mem perm fix, we have auto adj code, do not allow changes in adj
+$BB chmod 777 /sys/module/lowmemorykiller/parameters/cost;
+$BB chmod 444 /sys/module/lowmemorykiller/parameters/adj;
+$BB chmod 777 /proc/sys/vm/mmap_min_addr;
+
 # set default JB mmap_min_addr value
 echo "32768" > /proc/sys/vm/mmap_min_addr;
+
+# protect init from oom
+echo "-1000" > /proc/1/oom_score_adj; # -1000 = -17
 
 PIDOFINIT=`pgrep -f "/sbin/ext/post-init.sh"`;
 for i in $PIDOFINIT; do
@@ -233,6 +241,26 @@ renice -15 -p $i;
 log -p 10 i -t boot "*** do not kill -> android.process.acore ***";
 done;
 
+	# ###############################################################
+	# I/O related tweaks
+	# ###############################################################
+
+	DM=`ls -d /sys/block/dm*`;
+	for i in ${DM}; do
+		if [ -e $i/queue/rotational ]; then
+			echo "0" > ${i}/queue/rotational;
+		fi;
+
+		if [ -e $i/queue/iostats ]; then
+			echo "0" > ${i}/queue/iostats;
+		fi;
+	done;
+
+mount -o remount,rw /system;
+mount -o remount,rw /;
+# correct oom tuning, if changed by apps/rom
+$BB sh /res/uci.sh oom_config_screen_on $oom_config_screen_on;
+$BB sh /res/uci.sh oom_config_screen_off $oom_config_screen_off;
 ##### init scripts #####
 
 if [ $init_d == on ]; then

@@ -30,7 +30,7 @@ sqlite=/sbin/sqlite3;
 wifi_idle_wait=10000;
 # set initial vm.dirty vales
 echo "1000" > /proc/sys/vm/dirty_writeback_centisecs;
-echo "1000" > /proc/sys/vm/dirty_expire_centisecs;
+echo "3000" > /proc/sys/vm/dirty_expire_centisecs;
 # init functions.
 sleeprun=1;
 wifi_helper_awake=1;
@@ -125,7 +125,7 @@ for i in $MMC; do
 		echo "0" > /proc/sys/kernel/randomize_va_space;
 
 
-		echo "10" > /proc/sys/fs/lease-break-time;
+		echo "45" > /proc/sys/fs/lease-break-time;
 #		echo "84336" > /proc/sys/fs/file-max;
 #		echo "1048576" > /proc/sys/fs/nr_open;
 #		echo "16384" > /proc/sys/fs/inotify/max_queued_events;
@@ -144,9 +144,6 @@ for i in $MMC; do
 }
 IO_TWEAKS;
 
-# ==============================================================
-# KERNEL-TWEAKS
-# ==============================================================
 KERNEL_TWEAKS()
 {
 	local state="$1";
@@ -166,6 +163,10 @@ KERNEL_TWEAKS()
 			if [ "$cortexbrain_memory" == on ]; then
 				echo "64 64" > /proc/sys/vm/lowmem_reserve_ratio;
 			fi;
+		else
+			echo "1" > /proc/sys/vm/oom_kill_allocating_task;
+			echo "0" > /proc/sys/vm/panic_on_oom;
+			echo "120" > /proc/sys/kernel/panic;
 		fi;
 
 #		echo "8192" > /proc/sys/kernel/msgmax;
@@ -180,16 +181,13 @@ KERNEL_TWEAKS()
 		log -p i -t $FILE_NAME "*** KERNEL_TWEAKS ***: ${state} ***: enabled";
 	fi;
 }
-
+KERNEL_TWEAKS;
 # ==============================================================
 # SYSTEM-TWEAKS
 # ==============================================================
 SYSTEM_TWEAKS()
 {
 	if [ "$cortexbrain_system" == on ]; then
-	# render UI with GPU
-	$PROP hwui.render_dirty_regions false;
-	$PROP windowsmgr.max_events_per_sec 100;
 	# enable Hardware Rendering
 	$PROP video.accelerate.hw 1;
 	$PROP debug.performance.tuning 1;
@@ -199,7 +197,7 @@ SYSTEM_TWEAKS()
 
 	# render UI with GPU
 	$PROP hwui.render_dirty_regions false;
-	$PROP windowsmgr.max_events_per_sec 120;
+	$PROP windowsmgr.max_events_per_sec 180;
 	$PROP profiler.force_disable_err_rpt 1;
 	$PROP profiler.force_disable_ulog 1;
 
@@ -250,27 +248,24 @@ BATTERY_TWEAKS()
 	  echo "$dirty_background_ratio" > /proc/sys/vm/dirty_background_ratio; # default: 10
           echo "$dirty_ratio" > /proc/sys/vm/dirty_ratio; # default: 20
 
-	# System tweaks: Hardcore speedmod
-	  # vm tweaks
-	  echo "12288" > /proc/sys/vm/min_free_kbytes
-	
-	if [ "$power_reduce" == on ]; then
-	# LCD Power-Reduce
-	if [ -e /sys/class/lcd/panel/power_reduce ]; then
-	echo "1" > /sys/class/lcd/panel/power_reduce;
-	fi;
-	else
-	if [ -e /sys/class/lcd/panel/power_reduce ]; then
-	echo "0" > /sys/class/lcd/panel/power_reduce;
-	fi;
+# LCD Power-Reduce
+		if [ -e /sys/class/lcd/panel/power_reduce ]; then
+			if [ "$power_reduce" == on ]; then
+				echo "1" > /sys/class/lcd/panel/power_reduce;
+			else
+				echo "0" > /sys/class/lcd/panel/power_reduce;
+			fi;
 		fi;
 
 		# USB power support
-		for i in `ls /sys/bus/usb/devices/*/power/level`; do
+		local POWER_LEVEL=`ls /sys/bus/usb/devices/*/power/level`;
+		for i in $POWER_LEVEL; do
 			chmod 777 $i;
 			echo "auto" > $i;
 		done;
-		for i in `ls /sys/bus/usb/devices/*/power/autosuspend`; do
+
+		local POWER_AUTOSUSPEND=`ls /sys/bus/usb/devices/*/power/autosuspend`;
+		for i in $POWER_AUTOSUSPEND; do
 			chmod 777 $i;
 			echo "1" > $i;
 		done;
@@ -278,7 +273,8 @@ BATTERY_TWEAKS()
 		# BUS power support
 		buslist="spi i2c sdio";
 		for bus in $buslist; do
-			for i in `ls /sys/bus/$bus/devices/*/power/control`; do
+			local POWER_CONTROL=`ls /sys/bus/$bus/devices/*/power/control`;
+			for i in $POWER_CONTROL; do
 				chmod 777 $i;
 				echo "auto" > $i;
 			done;
@@ -890,13 +886,13 @@ KERNEL_SCHED()
 
 	# this is the correct order to input this settings, every value will be x2 after set
 	if [ "${state}" == "awake" ]; then
-		$BB sysctl -w kernel.sched_min_granularity_ns=200000 > /dev/null;
-    		$BB sysctl -w kernel.sched_latency_ns=400000 > /dev/null;
-    		$BB sysctl -w kernel.sched_wakeup_granularity_ns=100000 > /dev/null;
+		$BB sysctl -w kernel.sched_min_granularity_ns=200000 > /dev/null 2>&1;
+    		$BB sysctl -w kernel.sched_latency_ns=400000 > /dev/null 2>&1;
+    		$BB sysctl -w kernel.sched_wakeup_granularity_ns=100000 > /dev/null 2>&1;
 	elif [ "${state}" == "sleep" ]; then
-		echo "20000000" > /proc/sys/kernel/sched_latency_ns;
-		echo "4000000" > /proc/sys/kernel/sched_wakeup_granularity_ns;
-		echo "2000000" > /proc/sys/kernel/sched_min_granularity_ns;
+		$BB sysctl -w kernel.sched_wakeup_granularity_ns=1000000 > /dev/null 2>&1;
+		$BB sysctl -w kernel.sched_min_granularity_ns=750000 > /dev/null 2>&1;
+		$BB sysctl -w kernel.sched_latency_ns=6000000 > /dev/null 2>&1;
 	fi;
 
 	log -p i -t $FILE_NAME "*** KERNEL_SCHED ***: ${state}";
@@ -1195,7 +1191,7 @@ if [ "$cortexbrain_background_process" == 1 ] && [ `pgrep -f "cat /sys/power/wai
 		# AWAKE State. all system ON.
 		cat /sys/power/wait_for_fb_wake > /dev/null 2>&1;
 		AWAKE_MODE;
-		sleep 2;
+		sleep 3;
 
 		# SLEEP state. All system to power save.
 		cat /sys/power/wait_for_fb_sleep > /dev/null 2>&1;

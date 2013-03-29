@@ -29,8 +29,8 @@ PROP=/system/bin/setprop;
 sqlite=/sbin/sqlite3;
 wifi_idle_wait=10000;
 # set initial vm.dirty vales
-echo "1000" > /proc/sys/vm/dirty_writeback_centisecs;
-echo "3000" > /proc/sys/vm/dirty_expire_centisecs;
+echo "2000" > /proc/sys/vm/dirty_writeback_centisecs;
+echo "1000" > /proc/sys/vm/dirty_expire_centisecs;
 # init functions.
 sleeprun=1;
 wifi_helper_awake=1;
@@ -91,6 +91,11 @@ for i in $MMC; do
 				echo "$cortexbrain_read_ahead_kb" >  $i/queue/read_ahead_kb; # default: 128
 			fi;
 
+			     	if [ -e $i/queue/nr_requests ]; then
+                                        echo "3072" > $i/queue/nr_requests; # default: 128
+                                fi;
+
+
 			if [ "$scheduler" == "sio" ] || [ "$scheduler" == "zen" ]; then
 				if [ -e $i/queue/nr_requests ]; then
 					echo "64" > $i/queue/nr_requests; # default: 128
@@ -126,6 +131,7 @@ for i in $MMC; do
 
 
 		echo "45" > /proc/sys/fs/lease-break-time;
+		echo "0" > /proc/sys/fs/leases-enable;
 #		echo "84336" > /proc/sys/fs/file-max;
 #		echo "1048576" > /proc/sys/fs/nr_open;
 #		echo "16384" > /proc/sys/fs/inotify/max_queued_events;
@@ -964,7 +970,7 @@ VFS_CACHE_PRESSURE()
 	local sys_vfs_cache="/proc/sys/vm/vfs_cache_pressure";
 
 	if [ "${state}" == "awake" ]; then
-		echo "100" > $sys_vfs_cache;
+		echo "75" > $sys_vfs_cache;
 	elif [ "${state}" == "sleep" ]; then
 		echo "20" > $sys_vfs_cache;
 	fi;

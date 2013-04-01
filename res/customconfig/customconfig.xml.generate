@@ -1112,13 +1112,6 @@ done
 	</settingsPane>
 	
     <settingsPane description="Misc Settings" name="Misc Settings">	
-	<spinner description="WIFI supplicant scan interval, here you can set the time in sec for WIFI to look for access points when ON, Higher the range, less battery used by WIFI! but if you want WIFI to be off on screen OFF, and you set it in ROM settings!, then set it 60sec, if cortex process ON then no problem, will be set by auto and set your setting on screen ON to 360sec and off to 60sec!" name="WIFI supplicant scan interval" action="supplicant_scan_interval">
-	<spinnerItem name="Set WIFI SCAN 60Sec" value="60"/>
-	<spinnerItem name="Set WIFI SCAN 120Sec" value="120"/>
-	<spinnerItem name="Set WIFI SCAN 180Sec" value="180"/>
-	<spinnerItem name="Set WIFI SCAN 240Sec" value="240"/>
-	<spinnerItem name="Set WIFI SCAN 360Sec" value="360"/>
-	</spinner>
 	
 	<checkbox description="Enable or Disable INIT.D scripts RUN on boot. Many new ROMS are running the init.d scripts automatically. You can also force running the scripts, but if you run them and ROM runs them too, we have a problem: all scripts are running X2 times! To avoid conflicts, Stweaks RUN-control is disabled by default. If you know that your ROM is NOT supporting init.d script running, then turn it ON here and reboot."
 				 name="INIT.D Scripts RUN control" action="generic /tmp/init_d" label="Enable INIT.D scripts RUN-control"/>

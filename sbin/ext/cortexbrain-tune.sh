@@ -580,17 +580,11 @@ WIFI_PM()
 			fi;
 		fi;
 
-		if [ "$supplicant_scan_interval" -le 180 ]; then
-			setprop wifi.supplicant_scan_interval 360;
-		else
-			setprop wifi.supplicant_scan_interval $supplicant_scan_interval;
-		fi;
 	elif [ "${state}" == "awake" ]; then
 		if [ -e /sys/module/dhd/parameters/wifi_pm ]; then
 			echo "0" > /sys/module/dhd/parameters/wifi_pm;
 		fi;
 
-		$PROP wifi.supplicant_scan_interval $supplicant_scan_interval;
 	fi;
 
 	log -p i -t $FILE_NAME "*** WIFI_PM ***: ${state}";
@@ -1057,9 +1051,6 @@ AWAKE_MODE()
 	echo "$scaling_max_freq" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq;
 	fi;
 
-	# set wifi.supplicant_scan_interval
-	$PROP wifi.supplicant_scan_interval $supplicant_scan_interval;
-	
 	if [ "$cortexbrain_cpu_boost" == on ]; then
 	# bus freq back to normal
 	echo "$dmc_max_threshold" > /sys/devices/system/cpu/busfreq/dmc_max_threshold;
@@ -1156,11 +1147,6 @@ SLEEP_MODE()
 
 	SWAPPINESS;
 	
-		# set wifi.supplicant_scan_interval
-		if [ "$supplicant_scan_interval" -le 180 ]; then
-			$PROP wifi.supplicant_scan_interval 360;
-		fi;
-		
 		IO_SCHEDULER "sleep";
 
 		VFS_CACHE_PRESSURE "sleep";

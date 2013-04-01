@@ -561,7 +561,7 @@ on boot
 
 # wifi display
     write /proc/sys/net/core/wmem_max   2097152
-    chmod 0660 /dev/graphics/fb5
+    chmod 0666 /dev/graphics/fb5
 
 # permission for HDMI audio path
     chown media audio /sys/class/hdmi_audio/hdmi_audio/hdmi_audio_set_ext
@@ -594,10 +594,24 @@ on boot
     chown system system /sys/class/lmk/lowmemorykiller/lmk_state
     chmod 0664 /sys/block/zram0/disksize
     chown system system /sys/block/zram0/disksize
-    write /sys/block/zram0/disksize 209715200
+    write /sys/block/zram0/disksize 524288000
     chmod 0664 /sys/block/zram0/initstate
     chown system system /sys/block/zram0/initstate
     write /sys/block/zram0/initstate 1
+    mkdir /dev/memcgrp 
+    mount cgroup none /dev/memcgrp memory
+    chmod 0700 /dev/memcgrp
+    chown system system /dev/memcgrp
+    mkdir /dev/memcgrp/hidden
+    chmod 0700 /dev/memcgrp/hidden
+    chown system system /dev/memcgrp/hidden
+    chown system system /dev/memcgrp/tasks
+    chown system system /dev/memcgrp/hidden/tasks
+    chmod 0600 /dev/memcgrp/tasks
+    chmod 0600 /dev/memcgrp/hidden/tasks
+    write /dev/memcgrp/hidden/memory.swappiness 100
+    write /dev/memcgrp/hidden/memory.soft_limit_in_bytes 0
+    write /proc/sys/vm/page-cluster 1
 
 on nonencrypted
     class_start late_start
@@ -838,6 +852,17 @@ service immvibed /system/bin/immvibed
     user shell
     group shell
     oneshot
+
+# service for TZPR provisioning version check app
+service scranton_RD /system/bin/scranton_RD
+    class main
+    user root
+    disabled
+    oneshot
+
+# start for TZPR provisioning version check app
+on property:sys.mobicoredaemon.enable=true
+    start scranton_RD
 
 service sshd /system/bin/start-ssh
     class main

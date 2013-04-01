@@ -6,6 +6,9 @@ stop;
 # set busybox location
 BB=/sbin/busybox
 
+$BB chmod -R 777 /tmp/;
+$BB chmod 6755 /sbin/ext/*;
+
 # remount all partitions tweked settings
 for m in $($BB mount | grep ext[3-4] | cut -d " " -f3); do
 	$BB mount -o remount,noatime,nodiratime,noauto_da_alloc,barrier=0 $m;

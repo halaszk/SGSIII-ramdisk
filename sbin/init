@@ -1,20 +1,18 @@
 #!/sbin/busybox sh
-cd /;
+cd /
 
-BB=/sbin/busybox
+busybox mount -t proc proc /proc
+busybox mount -t sysfs sysfs /sys
 
-$BB mount -t proc proc /proc;
-$BB mount -t sysfs sysfs /sys;
-
-if $BB grep -q 1 /sys/class/power_supply/battery/batt_lp_charging ; then
+if busybox grep -q 1 /sys/class/power_supply/battery/batt_lp_charging ; then
   # low power mode
-  echo 0 > /proc/sys/kernel/rom_feature_set;
-  $BB cp -a /res/misc/init.41/* /
-  $BB chmod 755 /innt
-  $BB chmod 644 /*.rc
-  $BB chmod 644 /*.prop
-  exec /sbin/init2;
-fi;
+  echo 0 > /proc/sys/kernel/rom_feature_set
+  cp -a /res/misc/init.41/* /
+  chmod 755 /innt
+  chmod 644 /*.rc
+  chmod 644 /*.prop
+  exec /sbin/init2
+fi
 
 SECONDROM=1
 NOBOOTLOGO=0
@@ -31,13 +29,13 @@ mknod /dev/block/mmcblk0p9 b 179 9
 mknod /dev/block/mmcblk0p12 b 179 12
 mknod /dev/block/loop0 b 7 0
 
-mkdir /mnt;
-$BB chmod 755 /mnt;
-mkdir /.secondrom;
-$BB mount -t ext4 /dev/block/mmcblk0p12 /.secondrom;
+mkdir /mnt
+chmod 755 /mnt
+mkdir /.secondrom
+mount -t ext4 /dev/block/mmcblk0p12 /.secondrom
 
 NEXTBOOT=`cat /.secondrom/media/.nextboot`
-$BB rm -f /.secondrom/media/.nextboot
+rm -f /.secondrom/media/.nextboot
 DEFAULTROM=`cat /.secondrom/media/.defaultrom`
 
 if grep -q bootmode=2 /proc/cmdline ; then
@@ -47,25 +45,25 @@ fi
 #move .secondrom folder back to the original location if cm10.1 moved it to a subfolder
 if [ -d /.secondrom/media/0/.secondrom ];then
   if [ ! -d /.secondrom/media/.secondrom ];then
-    $BB mkdir /.secondrom/media/.secondrom
-    $BB mv -f /.secondrom/media/0/.secondrom/* /.secondrom/media/.secondrom
-    $BB rmdir /.secondrom/media/0/.secondrom
+    mkdir /.secondrom/media/.secondrom
+    mv -f /.secondrom/media/0/.secondrom/* /.secondrom/media/.secondrom
+    rmdir /.secondrom/media/0/.secondrom
   fi
 fi
 
 if [ "$NEXTBOOT" == "0" ]; then
- $BB mv -f /res/etc /
-  $BB umount /.secondrom;
-  echo 0 > /proc/sys/kernel/rom_feature_set;
-  $BB mv -f /res/misc/init.41/* /
-  $BB mv -f /res/misc/recovery/* /
-  $BB chmod 755 /innt;
-  $BB chmod 644 /*.smdk4x12;
-  $BB chmod 644 /*.rc;
-  $BB chmod 644 /*.prop;
-  $BB chmod -R 755 /lib;
+  mv -f /res/etc /
+  umount /.secondrom
+  echo 0 > /proc/sys/kernel/rom_feature_set
+  mv -f /res/misc/init.41/* /
+  mv -f /res/misc/recovery/* /
+  chmod 755 /innt
+  chmod 644 /*.smdk4x12
+  chmod 644 /*.rc
+  chmod 644 /*.prop
+  chmod -R 755 /lib
   exec /sbin/init2
-fi;
+fi
 
 SECONDROM=1
 NOBOOTLOGO=0
@@ -107,67 +105,69 @@ else
 fi
 
 if [ "$SECONDROM" == "1" ]; then
-  $BB mount -t ext4 /.secondrom/media/.secondrom/system.img /system;
+  mount -t ext4 /.secondrom/media/.secondrom/system.img /system
 else
-  $BB mount -t ext4 /dev/block/mmcblk0p9 /system;
-fi;
+  mount -t ext4 /dev/block/mmcblk0p9 /system
+fi
 
-# linking /system/bin to /bin for crond
-ln -s /system/bin/ /bin;
 
 MIUI=0
 CM10=0
 CM101=0
-JBSAMMY42=0
+SAMMY42=0
 
 [ -f /system/framework/miui-framework.jar ] && MIUI=1
 [ -f /system/framework/seccamera.jar ] || CM10=1
 [ -f /system/framework/framework2.jar ] || CM101=1
-[ "`$BB grep -i ro.build.PDA=I9300XXUFMB3 /system/build.prop`" ] && JBSAMMY42=1;
+[ -f /system/framework/telephony-common.jar ] && SAMMY42=1
 
 if [ "$CM101" == 1 ];
 then
-echo 3 > /proc/sys/kernel/rom_feature_set;
-  $BB mv -f /lib/modules/dhd_cm.ko /lib/modules/dhd.ko;
-  $BB mv -f /res/misc/init.cm10.1/* /;
+  echo 7 > /proc/sys/kernel/rom_feature_set
+#  mv -f /lib/modules/dhd_cm.ko /lib/modules/dhd.ko
+  mv -f /res/misc/init.cm10.1/* /
 else
-if [ "$CM10" == 1 ];
+  if [ "$CM10" == 1 ];
   then
-echo 3 > /proc/sys/kernel/rom_feature_set;
-    $BB mv -f /res/misc/init.cm10/* /;
+    echo 3 > /proc/sys/kernel/rom_feature_set
+    mv -f /lib/modules/dhd_cm.ko /lib/modules/dhd.ko
+    mv -f /res/misc/init.cm10/* /
   else
-if [ "$JBSAMMY42" == 1 ];
-then
-echo 2 > /proc/sys/kernel/rom_feature_set;
-    $BB mv -f /res/misc/init.42/* /
-else
-echo 2 > /proc/sys/kernel/rom_feature_set;
-    $BB mv -f /res/misc/init.41/* /
-   fi
- fi
+    if [ "$SAMMY42" == 1 ];
+    then
+      echo 6 > /proc/sys/kernel/rom_feature_set
+      mv -f /res/misc/init.42/* /
+    else
+      echo 2 > /proc/sys/kernel/rom_feature_set
+      mv -f /res/misc/init.41/* /
+    fi
+  fi
 fi
+
 if [ "$SECONDROM" == "1" ];then
-  $BB mv /init.smdk4x12.rc.2 /init.smdk4x12.rc
-  $BB mv /init.rc.2 /init.rc
-  $BB mv /fstab.smdk4x12.2 /fstab.smdk4x12
+  mv /init.smdk4x12.rc.2 /init.smdk4x12.rc
+  mv /init.rc.2 /init.rc
+  mv /fstab.smdk4x12.2 /fstab.smdk4x12
 else
-  $BB rm -f /init.rc.2 /init.smdk4x12.rc.2 /fstab.smdk4x12.2
+  rm -f /init.rc.2 /init.smdk4x12.rc.2 /fstab.smdk4x12.2
 fi
 
-
-# network tuning reset to allow real ROM control over H/H+/3G/G signal.
-#$BB sed -i "s/ro.ril.hsxpa=[0-9]*//g" /system/build.prop;
-#$BB sed -i "s/ro.ril.gprsclass=[0-9]*//g" /system/build.prop;
-
-#$BB umount -f /system;
-$BB umount -f /.secondrom;
+umount -f /system
+umount -f /.secondrom
 	
-$BB rm -rf /res/misc/init*;
-$BB chmod 755 /innt;
-$BB chmod 644 /*.smdk4x12;
-$BB chmod 644 /*.rc;
-$BB chmod 644 /*.prop;
-$BB chmod -R 755 /lib;
+rm -rf /res/misc/init*
+chmod 755 /innt
+chmod 644 /*.smdk4x12
+chmod 644 /*.rc
+chmod 644 /*.prop
+chmod -R 755 /lib
+
+# misc mods for i9300
+insmod /lib/modules/m0_mods.ko
+# cpu undervolting interfaces
+insmod /lib/modules/cpu_undervolting.ko
+# mali (gpu) interfaces
+insmod /lib/modules/mali_control.ko
 
 # only if asked by user via stweaks
 if [ -e /system/run_fix_media ]; then
@@ -219,5 +219,6 @@ fi;
 $BB rm /system/run_fix_partitions;
 $BB rm /system/run_fix_yournaling;
 $BB umount -f /system;
+
 exec /sbin/init2
 

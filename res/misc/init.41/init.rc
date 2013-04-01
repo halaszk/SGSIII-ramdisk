@@ -10,7 +10,7 @@ import /init.trace.rc
 
 on early-init
     # Set init and its forked children's oom_adj.
-    write /proc/1/oom_adj -1000
+    write /proc/1/oom_adj -16
 
     symlink /efs /factory
     start ueventd
@@ -324,8 +324,8 @@ on boot
 # parameters to match how it is managing things.
     write /proc/sys/vm/overcommit_memory 1
     write /proc/sys/vm/min_free_order_shift 4
-#    chown root system /sys/module/lowmemorykiller/parameters/adj
-#    chmod 0664 /sys/module/lowmemorykiller/parameters/adj
+    chown root system /sys/module/lowmemorykiller/parameters/adj
+    chmod 0664 /sys/module/lowmemorykiller/parameters/adj
     chown root system /sys/module/lowmemorykiller/parameters/minfree
     chmod 0664 /sys/module/lowmemorykiller/parameters/minfree
 
@@ -561,7 +561,7 @@ on boot
 
 # wifi display
     write /proc/sys/net/core/wmem_max   2097152
-    chmod 0666 /dev/graphics/fb5
+    chmod 0660 /dev/graphics/fb5
 
 # permission for HDMI audio path
     chown media audio /sys/class/hdmi_audio/hdmi_audio/hdmi_audio_set_ext
@@ -597,10 +597,7 @@ on boot
     write /sys/block/zram0/disksize 209715200
     chmod 0664 /sys/block/zram0/initstate
     chown system system /sys/block/zram0/initstate
-#
-# Disabled by Yank555.lu - Prepare zram for swap but don't activate it yet
-#
-#   write /sys/block/zram0/initstate 1
+    write /sys/block/zram0/initstate 1
 
 on nonencrypted
     class_start late_start
@@ -696,10 +693,10 @@ service DR-daemon /system/bin/ddexe
     user root
     group system radio inet net_raw
 
-service KIES-daemon /system/bin/kiesexe
-    class main
-    user root
-    group system radio inet net_raw
+#service KIES-daemon /system/bin/kiesexe
+#    class main
+#    user root
+#    group system radio inet net_raw
 
 service SMD-daemon /system/bin/smdexe
     class main
@@ -724,7 +721,7 @@ service mobex-daemon /system/bin/npsmobex
 service surfaceflinger /system/bin/surfaceflinger
     class main
     user system
-    group graphics
+    group system graphics
     onrestart restart zygote
 
 service zygote /system/bin/app_process -Xzygote /system/bin --zygote --start-system-server
@@ -803,6 +800,10 @@ service installd /system/bin/installd
     class main
     socket installd stream 600 system system
 
+#service flash_recovery /system/etc/install-recovery.sh
+#    class main
+#    oneshot
+
 service racoon /system/bin/racoon
     class main
     socket racoon stream 600 system system
@@ -837,17 +838,6 @@ service immvibed /system/bin/immvibed
     user shell
     group shell
     oneshot
-
-# service for TZPR provisioning version check app
-service scranton_RD /system/bin/scranton_RD
-    class main
-    user root
-    disabled
-    oneshot
-
-# start for TZPR provisioning version check app
-on property:sys.mobicoredaemon.enable=true
-    start scranton_RD
 
 service sshd /system/bin/start-ssh
     class main

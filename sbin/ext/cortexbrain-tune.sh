@@ -132,18 +132,13 @@ for i in $MMC; do
 
 		echo "45" > /proc/sys/fs/lease-break-time;
 		echo "0" > /proc/sys/fs/leases-enable;
-#		echo "84336" > /proc/sys/fs/file-max;
-#		echo "1048576" > /proc/sys/fs/nr_open;
-#		echo "16384" > /proc/sys/fs/inotify/max_queued_events;
-#		echo "128" > /proc/sys/fs/inotify/max_user_instances;
-#		echo "8192" > /proc/sys/fs/inotify/max_user_watches;
 		
-		echo NO_NORMALIZED_SLEEPER > /sys/kernel/debug/sched_features;
-		echo NO_NEW_FAIR_SLEEPERS > /sys/kernel/debug/sched_features;
-		echo NO_START_DEBIT > /sys/kernel/debug/sched_features;
-		echo NO_WAKEUP_PREEMPT > /sys/kernel/debug/sched_features;
-		echo NEXT_BUDDY > /sys/kernel/debug/sched_features;
-		echo SYNC_WAKEUPS > /sys/kernel/debug/sched_features;
+		#echo NO_NORMALIZED_SLEEPER > /sys/kernel/debug/sched_features;
+		#echo NO_NEW_FAIR_SLEEPERS > /sys/kernel/debug/sched_features;
+		#echo NO_START_DEBIT > /sys/kernel/debug/sched_features;
+		#echo NO_WAKEUP_PREEMPT > /sys/kernel/debug/sched_features;
+		#echo NEXT_BUDDY > /sys/kernel/debug/sched_features;
+		#echo SYNC_WAKEUPS > /sys/kernel/debug/sched_features;
 
 		log -p i -t $FILE_NAME "*** IO_TWEAKS ***: enabled";
 	fi;
@@ -174,15 +169,6 @@ KERNEL_TWEAKS()
 			echo "0" > /proc/sys/vm/panic_on_oom;
 			echo "120" > /proc/sys/kernel/panic;
 		fi;
-
-#		echo "8192" > /proc/sys/kernel/msgmax;
-#		echo "5756" > /proc/sys/kernel/msgmni;
-#		echo "64" > /proc/sys/kernel/random/read_wakeup_threshold;
-#		echo "128" > /proc/sys/kernel/random/write_wakeup_threshold;
-#		echo "250 32000 32 128" > /proc/sys/kernel/sem;
-#		echo "2097152" > /proc/sys/kernel/shmall;
-#		echo "33554432" > /proc/sys/kernel/shmmax;
-#		echo "45832" > /proc/sys/kernel/threads-max;
 	
 		log -p i -t $FILE_NAME "*** KERNEL_TWEAKS ***: ${state} ***: enabled";
 	fi;
@@ -203,7 +189,7 @@ SYSTEM_TWEAKS()
 
 	# render UI with GPU
 	$PROP hwui.render_dirty_regions false;
-	$PROP windowsmgr.max_events_per_sec 180;
+	$PROP windowsmgr.max_events_per_sec 240;
 	$PROP profiler.force_disable_err_rpt 1;
 	$PROP profiler.force_disable_ulog 1;
 
@@ -216,24 +202,6 @@ SYSTEM_TWEAKS()
 	$PROP dalvik.vm.execution-mode int:jit;
 	$PROP persist.adb.notify 0;
 	$PROP pm.sleep_mode 1;
-
-	# =========
-	# Optimized Audio and Video Settings
-	# =========
-	$PROP ro.media.enc.jpeg.quality 100;
-	$PROP ro.media.dec.jpeg.memcap 8000000;
-	$PROP ro.media.enc.hprof.vid.bps 8000000;
-	$PROP ro.media.capture.maxres 8m;
-	$PROP ro.media.panorama.defres 3264x1840;
-	$PROP ro.media.panorama.frameres 1280x720;
-	$PROP ro.camcorder.videoModes true;
-	$PROP ro.media.enc.hprof.vid.fps 65;
-	$PROP media.stagefright.enable-player true;
-	$PROP media.stagefright.enable-meta true;
-	$PROP media.stagefright.enable-scan true;
-	$PROP media.stagefright.enable-http true;
-	$PROP media.stagefright.enable-rtsp=true;
-	$PROP media.stagefright.enable-record false;
 
 
 

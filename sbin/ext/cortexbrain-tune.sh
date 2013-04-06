@@ -23,7 +23,7 @@ PIDOFCORTEX=$$;
 IWCONFIG=/sbin/iwconfig;
 INTERFACE=wlan0;
 AWAKE_LAPTOP_MODE="0";
-SLEEP_LAPTOP_MODE="5";
+SLEEP_LAPTOP_MODE="0";
 BB=/sbin/busybox;
 PROP=/system/bin/setprop;
 sqlite=/sbin/sqlite3;
@@ -153,21 +153,30 @@ KERNEL_TWEAKS()
 		if [ "${state}" == "awake" ]; then
 			echo "1" > /proc/sys/vm/oom_kill_allocating_task;
 			echo "0" > /proc/sys/vm/panic_on_oom;
-			echo "120" > /proc/sys/kernel/panic;
+			echo "0" > /proc/sys/kernel/panic_on_oops;
+			echo "0" > /proc/sys/kernel/panic;
+                        echo "64" > /proc/sys/kernel/random/read_wakeup_threshold;
+                        echo "128" > /proc/sys/kernel/random/write_wakeup_threshold;
 			if [ "$cortexbrain_memory" == on ]; then
 				echo "32 32" > /proc/sys/vm/lowmem_reserve_ratio;
 			fi;
 		elif [ "${state}" == "sleep" ]; then
 			echo "0" > /proc/sys/vm/oom_kill_allocating_task;
 			echo "0" > /proc/sys/vm/panic_on_oom;
-			echo "60" > /proc/sys/kernel/panic;
+			echo "0" > /proc/sys/kernel/panic_on_oops;
+			echo "0" > /proc/sys/kernel/panic;
+                        echo "64" > /proc/sys/kernel/random/read_wakeup_threshold;
+                        echo "128" > /proc/sys/kernel/random/write_wakeup_threshold;
 			if [ "$cortexbrain_memory" == on ]; then
 				echo "64 64" > /proc/sys/vm/lowmem_reserve_ratio;
 			fi;
 		else
 			echo "1" > /proc/sys/vm/oom_kill_allocating_task;
 			echo "0" > /proc/sys/vm/panic_on_oom;
-			echo "120" > /proc/sys/kernel/panic;
+			echo "0" > /proc/sys/kernel/panic_on_oops;
+			echo "0" > /proc/sys/kernel/panic;
+			echo "64" > /proc/sys/kernel/random/read_wakeup_threshold;
+			echo "128" > /proc/sys/kernel/random/write_wakeup_threshold;
 		fi;
 	
 		log -p i -t $FILE_NAME "*** KERNEL_TWEAKS ***: ${state} ***: enabled";
@@ -377,9 +386,9 @@ MEMORY_TWEAKS()
 	if [ "$cortexbrain_memory" == on ]; then
 		echo "$dirty_background_ratio" > /proc/sys/vm/dirty_background_ratio; # default: 10
 		echo "$dirty_ratio" > /proc/sys/vm/dirty_ratio; # default: 20
-		echo "4" > /proc/sys/vm/min_free_order_shift; # default: 4
+		echo "2" > /proc/sys/vm/min_free_order_shift; # default: 4
 		echo "1" > /proc/sys/vm/overcommit_memory; # default: 0
-		echo "50" > /proc/sys/vm/overcommit_ratio; # default: 50
+		#echo "50" > /proc/sys/vm/overcommit_ratio; # default: 50
 		echo "32 32" > /proc/sys/vm/lowmem_reserve_ratio;
 		echo "3" > /proc/sys/vm/page-cluster; # default: 3
 		echo "8192" > /proc/sys/vm/min_free_kbytes;
@@ -854,9 +863,9 @@ KERNEL_SCHED()
 
 	# this is the correct order to input this settings, every value will be x2 after set
 	if [ "${state}" == "awake" ]; then
-		$BB sysctl -w kernel.sched_min_granularity_ns=200000 > /dev/null 2>&1;
-    		$BB sysctl -w kernel.sched_latency_ns=400000 > /dev/null 2>&1;
-    		$BB sysctl -w kernel.sched_wakeup_granularity_ns=100000 > /dev/null 2>&1;
+		$BB sysctl -w kernel.sched_min_granularity_ns=1 > /dev/null 2>&1;
+    		$BB sysctl -w kernel.sched_latency_ns=600000 > /dev/null 2>&1;
+    		$BB sysctl -w kernel.sched_wakeup_granularity_ns=400000 > /dev/null 2>&1;
 	elif [ "${state}" == "sleep" ]; then
 		$BB sysctl -w kernel.sched_wakeup_granularity_ns=1000000 > /dev/null 2>&1;
 		$BB sysctl -w kernel.sched_min_granularity_ns=750000 > /dev/null 2>&1;
@@ -932,9 +941,9 @@ VFS_CACHE_PRESSURE()
 	local sys_vfs_cache="/proc/sys/vm/vfs_cache_pressure";
 
 	if [ "${state}" == "awake" ]; then
-		echo "75" > $sys_vfs_cache;
-	elif [ "${state}" == "sleep" ]; then
 		echo "20" > $sys_vfs_cache;
+	elif [ "${state}" == "sleep" ]; then
+		echo "10" > $sys_vfs_cache;
 	fi;
 
 	log -p i -t $FILE_NAME "*** VFS_CACHE_PRESSURE: ${state} ***";

@@ -399,7 +399,7 @@ done
     </settingsPane>
   </settingsTab>
   
-  <settingsTab name="Audio">
+ <settingsTab name="Audio">
     <settingsPane description="Speaker Tuning Settings" name="Speaker Tuning">
       <checkbox description="Enable speaker equalizer for better bass response on main speakers" 
                 name="Speaker equalizer" 
@@ -492,6 +492,11 @@ done
       <seekBar  description="" 
 		name="Microphone level general"
                 action="generic /sys/class/misc/wolfson_control/mic_level_general" 
+                unit="" min="0" reversed="false" step="1" max="31"/>
+
+      <seekBar  description="" 
+		name="Microphone level during active camera"
+                action="generic /sys/class/misc/wolfson_control/mic_level_camera" 
                 unit="" min="0" reversed="false" step="1" max="31"/>
 
       <seekBar  description="" 
@@ -1138,12 +1143,7 @@ done
 
 		<button description="Update time via ntp-server" name="UPDATE TIME" action="push-actions/time_update" label="UPDATE TIME"/>
       <checkbox description="Enable or Disable Android Logger (needs reboot)" name="Android Logger" action="generic /tmp/logger" label="Android Logger"/>
-	        <spinner description="Notification LED Behavior" name="Notification LED Behavior" action="generic /sys/devices/virtual/sec/led/led_fade">
-             <spinnerItem name="ROM default" value="-1"/> 
-             <spinnerItem name="Blinking" value="0"/> 
-             <spinnerItem name="Fading" value="1"/> 
-      </spinner>
-	  
+
 		<spinner description="Change USB connection mode. Either leave it as default or force it to mass storage mode (you will see your sdcards as disks) or mtp"
 				 name="USB Mass Storage Mode" action="usb-mode">
 			 <spinnerItem name="Default" value="default"/>
@@ -1165,6 +1165,63 @@ done
     </settingsPane>
 	</settingsTab>
 	
+ <settingsTab name="LED">
+    <settingsPane description="The notification LED has two brightness modes, depending on the external brightness detected by the light sensor."
+		  name="Brightness">
+
+      <seekBar  description="LED brightness in low brightness environments."
+		name="Low light environment brightness"
+                action="generic /sys/class/sec/led/led_lowpower_current"
+                unit="" min="0" reversed="false" step="1" max="255"/>
+
+      <seekBar  description="LED brightness in high brightness environments."
+		name="Bright light environment brightness"
+                action="generic /sys/class/sec/led/led_highpower_current"
+                unit="" min="0" reversed="false" step="1" max="255"/>
+
+    </settingsPane>
+
+    <settingsPane description="Control the way the LED blinks. The LED controller has 4 type of slopes in its waveform, 2 rising slopes, and two falling slopes. The following configurables can control the blinking waveform."
+		  name="Blinking effect">
+
+      <seekBar  description="Sets the time period of the two rising slopes (1,2), one time-unit is equal to 0.5 seconds."
+		name="Fade-in time period"
+                action="generic /sys/class/sec/led/led_fade_in_time"
+                unit="" min="0" reversed="false" step="1" max="12"/>
+
+      <seekBar  description="Sets the time period of the two falling slopes (3,4), one time-unit is equal to 0.5 seconds."
+		name="Fade-out time period"
+                action="generic /sys/class/sec/led/led_fade_out_time"
+                unit="" min="0" reversed="false" step="1" max="12"/>
+
+      <checkbox  description="If disabled, ignores the below detention times and the blinking waveform has no slopes, i.e. it is square." 
+                name="Enable fading" 
+                action="generic01 /sys/class/sec/led/led_fade"
+                label="Enable LED fading"/>
+
+      <seekBar  description="The LED is controlled by PWM/pulse wave modulation, the detention time dictates how long the controller spends time on a single step in its slope. One time-unit is equivalent to 4ms."
+		name="Slope 1 detention time"
+                action="generic /sys/class/sec/led/led_fade_dt1"
+                unit="" min="0" reversed="false" step="1" max="4"/>
+
+      <seekBar  description=""
+		name="Slope 2 detention time"
+                action="generic /sys/class/sec/led/led_fade_dt2"
+                unit="" min="0" reversed="false" step="1" max="4"/>
+
+      <seekBar  description=""
+		name="Slope 3 detention time"
+                action="generic /sys/class/sec/led/led_fade_dt3"
+                unit="" min="0" reversed="false" step="1" max="4"/>
+
+      <seekBar  description=""
+		name="Slope 4 detention time"
+                action="generic /sys/class/sec/led/led_fade_dt4"
+                unit="" min="0" reversed="false" step="1" max="4"/>
+
+    </settingsPane>
+  </settingsTab>
+
 	<settingsTab name="I/O">
 		<settingsPane description="Here you can tune I/O settings managed by Kernel" name="I/O and OOM Tuning">	
 			<spinner description='Maximum number of kilobytes to read-ahead for filesystems on this block device. Maybe get better read-performance with higher value, but you will probably need to experiment and benchmark (e.g. with "SD Tools"-App) to find the best value for your sd-card / system and maybe you will have a higher overhead (less memory) with a higher value. Works only if "I/O-Tweaks" tweak is enabled! Default: 128'

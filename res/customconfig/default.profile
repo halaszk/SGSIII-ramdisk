@@ -348,5 +348,5 @@ led_fade_dt1=1
 led_fade_dt2=1
 led_fade_dt3=2
 led_fade_dt4=3
-intelli_plug_active=on
-eco_mode_active=off
+intelli_plug_active=1
+eco_mode_active=0

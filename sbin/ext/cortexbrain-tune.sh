@@ -326,8 +326,8 @@ CPU_GOV_TWEAKS()
 	echo "$cpu_online_bias_count_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_count;
 	echo "$cpu_online_bias_up_threshold_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_up_threshold;
 	echo "$cpu_online_bias_down_threshold_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_down_threshold;
-	echo "1" > /sys/module/intelli_plug/parameters/intelli_plug_active;
-	echo "1" > /sys/module/intelli_plug/parameters/eco_mode_active;
+	echo "$intelli_plug_active" > /sys/module/intelli_plug/parameters/intelli_plug_active;
+	echo "$eco_mode_active" > /sys/module/intelli_plug/parameters/eco_mode_active;
 	
 		# awake-settings
 	elif [ "${state}" == "awake" ]; then

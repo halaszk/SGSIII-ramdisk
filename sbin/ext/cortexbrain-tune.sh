@@ -326,6 +326,8 @@ CPU_GOV_TWEAKS()
 	echo "$cpu_online_bias_count_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_count;
 	echo "$cpu_online_bias_up_threshold_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_up_threshold;
 	echo "$cpu_online_bias_down_threshold_sleep" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_down_threshold;
+	echo "1" > /sys/module/intelli_plug/parameters/intelli_plug_active;
+	echo "1" > /sys/module/intelli_plug/parameters/eco_mode_active;
 	
 		# awake-settings
 	elif [ "${state}" == "awake" ]; then
@@ -363,6 +365,8 @@ CPU_GOV_TWEAKS()
 	echo "$cpu_online_bias_down_threshold" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/cpu_online_bias_down_threshold;
 	echo "$max_cpu_lock" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/max_cpu_lock;
 	echo "$lcdfreq" > /sys/devices/system/cpu/cpufreq/$SYSTEM_GOVERNOR/lcdfreq_enable;
+	echo "$intelli_plug_active" > /sys/module/intelli_plug/parameters/intelli_plug_active;
+	echo "$eco_mode_active" > /sys/module/intelli_plug/parameters/eco_mode_active;
 	
 	fi;
 
@@ -867,9 +871,9 @@ KERNEL_SCHED()
     		$BB sysctl -w kernel.sched_latency_ns=600000 > /dev/null 2>&1;
     		$BB sysctl -w kernel.sched_wakeup_granularity_ns=400000 > /dev/null 2>&1;
 	elif [ "${state}" == "sleep" ]; then
-		$BB sysctl -w kernel.sched_wakeup_granularity_ns=1000000 > /dev/null 2>&1;
-		$BB sysctl -w kernel.sched_min_granularity_ns=750000 > /dev/null 2>&1;
-		$BB sysctl -w kernel.sched_latency_ns=6000000 > /dev/null 2>&1;
+		$BB sysctl -w kernel.sched_min_granularity_ns=1 > /dev/null 2>&1;
+    		$BB sysctl -w kernel.sched_latency_ns=600000 > /dev/null 2>&1;
+    		$BB sysctl -w kernel.sched_wakeup_granularity_ns=400000 > /dev/null 2>&1;
 	fi;
 
 	log -p i -t $FILE_NAME "*** KERNEL_SCHED ***: ${state}";
@@ -1048,8 +1052,10 @@ AWAKE_MODE()
 	
 	SWAPPINESS;
 
+	if [ "$cortexbrain_lmkiller" == on ]; then
 	LOWMMKILLER "awake";
-
+	fi;
+	
 	log -p i -t $FILE_NAME "*** AWAKE Normal Mode ***";
 }
 
@@ -1130,8 +1136,10 @@ SLEEP_MODE()
 
 		DISABLE_NMI;
 
+		if [ "$cortexbrain_lmkiller" == on ]; then
 		LOWMMKILLER "sleep";
-
+		fi;
+		
 		NET "sleep";
 
 		KERNEL_TWEAKS "sleep";

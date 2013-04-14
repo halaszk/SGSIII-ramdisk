@@ -263,9 +263,12 @@ done;
 
 mount -o remount,rw /system;
 mount -o remount,rw /;
+
+if [ $cortexbrain_lmkiller == on ]; then
 # correct oom tuning, if changed by apps/rom
 $BB sh /res/uci.sh oom_config_screen_on $oom_config_screen_on;
 $BB sh /res/uci.sh oom_config_screen_off $oom_config_screen_off;
+fi;
 ##### init scripts #####
 
 if [ $init_d == on ]; then

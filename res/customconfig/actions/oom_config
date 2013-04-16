@@ -1,11 +1,14 @@
 #!/sbin/busybox sh
 
+PROFILE=`cat /data/.siyah/.active.profile`;
+. /data/.siyah/$PROFILE.profile;
+
 # $1 - "oom_config"
 # $2 - value=
 
 if [ "a$2" != "a" ]; then
 	oom_config=$2;
-
+if [ $cortexbrain_lmkiller == on ]; then 
 	case "${oom_config}" in
 	very_light)
 		echo "512,1024,1280,2048,3072,4096" > /sys/module/lowmemorykiller/parameters/minfree;
@@ -37,5 +40,5 @@ if [ "a$2" != "a" ]; then
 	;;
 	esac;
 fi;
-
+fi;
 echo ${oom_config};

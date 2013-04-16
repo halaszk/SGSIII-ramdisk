@@ -141,6 +141,9 @@ for i in $MMC; do
 		#echo SYNC_WAKEUPS > /sys/kernel/debug/sched_features;
 
 		log -p i -t $FILE_NAME "*** IO_TWEAKS ***: enabled";
+		return 0;
+	else
+		return 1;
 	fi;
 }
 IO_TWEAKS;
@@ -180,6 +183,9 @@ KERNEL_TWEAKS()
 		fi;
 	
 		log -p i -t $FILE_NAME "*** KERNEL_TWEAKS ***: ${state} ***: enabled";
+		return 0;
+	else
+		return 1;
 	fi;
 }
 KERNEL_TWEAKS;
@@ -215,9 +221,32 @@ SYSTEM_TWEAKS()
 
 
 		log -p i -t $FILE_NAME "*** SYSTEM_TWEAKS ***: enabled";
+		return 0;
+	else
+		return 1;
 	fi;
 }
 SYSTEM_TWEAKS;
+
+# ==============================================================
+# ECO-TWEAKS
+# ==============================================================
+ECO_TWEAKS()
+{
+	if [ "$cortexbrain_eco" == on ]; then
+		local LEVEL=$(cat /sys/class/power_supply/battery/capacity);
+		if [ "$LEVEL" == "$cortexbrain_eco_level" ] || [ "$LEVEL" -lt "$cortexbrain_eco_level" ]; then
+			CPU_GOV_TWEAKS "sleep";
+			TWEAK_HOTPLUG_ECO "sleep";
+		fi;
+
+		log -p i -t $FILE_NAME "*** ECO_TWEAKS ***: enabled";
+
+		return 0;
+	else
+		return 1;
+	fi;
+}
 
 # ==============================================================
 # BATTERY-TWEAKS
@@ -264,6 +293,9 @@ BATTERY_TWEAKS()
 		done;
 
 		log -p i -t $FILE_NAME "*** BATTERY_TWEAKS ***: enabled";
+		return 0;
+	else
+		return 1;
 	fi;
 }
 if [ "$cortexbrain_background_process" == 0 ]; then
@@ -398,33 +430,12 @@ MEMORY_TWEAKS()
 		echo "8192" > /proc/sys/vm/min_free_kbytes;
 
 		log -p i -t $FILE_NAME "*** MEMORY_TWEAKS ***: enabled";
+		return 0;
+	else
+		return 1;		
 	fi;
 }
 MEMORY_TWEAKS;
-
-MULTITASKFIX()
-{
-		if [ "$cortexbrain_multitaskingfix" == on ]; then
-		#Low memory killer tweaks
-		#ALL OPENED APPS IN LATEST 4 SECONDS ARE LOCKED IN MEMORY EVERY 4 SECONDS so the possibility of killed apps is now ridicolous! (0 battery drain!!)
-		#Better performance without any lags up to 12 apps running in same time (MAX 20 APPS RUNNING IN SAME TIME WITH A 301 APPS INSTALLED IN MY SCENARIO!)
-		#Optimized for multiwindow use!
-		#Minfree changed for best performaced and quick app load!
-		echo "2560,5120,6912,12800,15104,17152" > /sys/module/lowmemorykiller/parameters/minfree;
-(
-	MULTITASK_CHECK=`pgrep -f "/sbin/ext/multitaskfix.sh" | wc -l`;
-	if [ "$MULTITASK_CHECK" == 0 ]; then
-	nohup /sbin/ext/multitaskfix.sh > /dev/null 2>&1;
-	fi;
-)&
-		log -p i -t $FILE_NAME "*** MULTITASKFIX ***: enabled";
-		fi;
-		
-	if [ "$cortexbrain_multitaskingfix" == off ]; then
-	pkill -f "/sbin/ext/multitaskfix.sh";
-	fi;
-}
-MULTITASKFIX;
 # ==============================================================
 # TCP-TWEAKS
 # ==============================================================
@@ -527,6 +538,9 @@ TCP_TWEAKS()
 	echo "50" > /proc/sys/net/unix/max_dgram_qlen;
 
 		log -p i -t $FILE_NAME "*** TCP_TWEAKS ***: enabled";
+		return 0;
+	else
+		return 1;
 	fi;
 }
 TCP_TWEAKS;
@@ -543,6 +557,9 @@ FIREWALL_TWEAKS()
 		echo "1" > /proc/sys/net/ipv4/icmp_ignore_bogus_error_responses;
 
 		log -p i -t $FILE_NAME "*** FIREWALL_TWEAKS ***: enabled";
+		return 0;
+	else
+		return 1;
 	fi;
 }
 FIREWALL_TWEAKS;
@@ -619,7 +636,6 @@ GESTURES()
 # KSM-TWEAKS
 # ==============================================================
 if [ "$cortexbrain_ksm_control" == on ]; then
-	KSM_MONITOR_INTERVAL=60;
 	KSM_NPAGES_BOOST=300;
 	KSM_NPAGES_DECAY=50;
 
@@ -631,19 +647,23 @@ if [ "$cortexbrain_ksm_control" == on ]; then
 	KSM_THRES_COEF=30;
 	KSM_THRES_CONST=2048;
 
-	npages=0;
-	total=`awk '/^MemTotal:/ {print $2}' /proc/meminfo`;
-	thres=$(( $total * $KSM_THRES_COEF / 100 ));
-	if [ $KSM_THRES_CONST -gt $thres ]; then
-		thres=$KSM_THRES_CONST;
-	fi;
-	total=$(( $total / 1024 ));
-	sleep=$(( $KSM_SLEEP_MSEC * 16 * 1024 / $total ));
-	if [ $sleep -le $KSM_SLEEP_MIN ]; then
-		sleep=$KSM_SLEEP_MIN;
+	KSM_NPAGES=0;
+	KSM_TOTAL=$(awk '/^MemTotal:/ {print $2}' /proc/meminfo);
+	KSM_THRES=$(( $KSM_TOTAL * $KSM_THRES_COEF / 100 ));
+
+	if [ $KSM_THRES_CONST -gt $KSM_THRES ]; then
+		KSM_THRES=$KSM_THRES_CONST;
 	fi;
 
-	KSMCTL() {
+	KSM_TOTAL=$(( $KSM_TOTAL / 1024 ));
+	KSM_SLEEP=$(( $KSM_SLEEP_MSEC * 16 * 1024 / $KSM_TOTAL ));
+
+	if [ $KSM_SLEEP -le $KSM_SLEEP_MIN ]; then
+		KSM_SLEEP=$KSM_SLEEP_MIN;
+	fi;
+
+	KSMCTL()
+	{
 		case x${1} in
 			xstop)
 				log -p i -t $FILE_NAME "*** ksm: stop ***";
@@ -654,48 +674,48 @@ if [ "$cortexbrain_ksm_control" == on ]; then
 				echo ${2} > /sys/kernel/mm/ksm/pages_to_scan;
 				echo ${3} > /sys/kernel/mm/ksm/sleep_millisecs;
 				echo 1 > /sys/kernel/mm/ksm/run;
-				renice 10 -p "`pidof ksmd`";
+				renice -n 10 -p "$(pidof ksmd)";
 			;;
-		esac
+			esac
 	}
 
-	FREE_MEM() {
-		awk '/^(MemFree|Buffers|Cached):/ {free += $2}; END {print free}' /proc/meminfo;
-	}
-
-	INCREASE_NPAGES() {
+	INCREASE_NPAGES()
+	{
 		local delta=${1:-0};
-		npages=$(( $npages + $delta ));
-		if [ $npages -lt $KSM_NPAGES_MIN ]; then
-			npages=$KSM_NPAGES_MIN;
-		elif [ $npages -gt $KSM_NPAGES_MAX ]; then
-			npages=$KSM_NPAGES_MAX;
+
+		KSM_NPAGES=$(( $KSM_NPAGES + $delta ));
+		if [ $KSM_NPAGES -lt $KSM_NPAGES_MIN ]; then
+			KSM_NPAGES=$KSM_NPAGES_MIN;
+		elif [ $KSM_NPAGES -gt $KSM_NPAGES_MAX ]; then
+			KSM_NPAGES=$KSM_NPAGES_MAX;
 		fi;
-		echo $npages;
+
+		echo $KSM_NPAGES;
 	}
 
-	ADJUST_KSM() {
-		local free=`FREE_MEM`;
-		if [ $free -gt $thres ]; then
-			log -p i -t $FILE_NAME "*** ksm: $free > $thres ***";
-			npages=`INCREASE_NPAGES ${KSM_NPAGES_BOOST}`;
+	ADJUST_KSM()
+	{
+		local free=$(awk '/^(MemFree|Buffers|Cached):/ {free += $2}; END {print free}' /proc/meminfo);
+
+		if [ $free -gt $KSM_THRES ]; then
+			npages=$(INCREASE_NPAGES ${KSM_NPAGES_BOOST});
 			KSMCTL "stop";
+
+			log -p i -t $FILE_NAME "*** ksm: $free > $KSM_THRES ***";
+
 			return 1;
 		else
-			npages=`INCREASE_NPAGES $KSM_NPAGES_DECAY`;
-			log -p i -t $FILE_NAME "*** ksm: $free < $thres ***";
-			KSMCTL "start" $npages $sleep;
+			npages=$(INCREASE_NPAGES $KSM_NPAGES_DECAY);
+			KSMCTL "start" $KSM_NPAGES $KSM_SLEEP;
+
+			log -p i -t $FILE_NAME "*** ksm: $free < $KSM_THRES ***"
+
 			return 0;
 		fi;
 	}
-
-	(while [ 1 ]; do
-		cat /sys/power/wait_for_fb_wake;
-		sleep $KSM_MONITOR_INTERVAL &
-		wait $!;
-		ADJUST_KSM;
-	done &);
+	ADJUST_KSM;
 fi;
+
 
 WIFI_TIMEOUT_TWEAKS()
 {
@@ -801,38 +821,6 @@ if [ "$mali_resume_enable" == on ]; then
 echo "$gpu_res_freq" > /sys/module/mali/parameters/step0_clk;
 fi;
 log -p i -t $FILE_NAME "*** MEGA_BOOST_CPU_TWEAKS ***";
-fi;
-}
-
-
-# set less brightnes if battery is low
-# (works only without "auto_brightness" for now?!)
-SYNC_BRIGHTNESS()
-{
-if [ "$cortexbrain_auto_sync_brightness" == on ]; then
-LEVEL=`cat /sys/class/power_supply/battery/capacity`;
-MAX_BRIGHTNESS=`cat /sys/class/backlight/panel/max_brightness`;
-OLD_BRIGHTNESS=`cat /sys/class/backlight/panel/brightness`;
-NEW_BRIGHTNESS=$(( MAX_BRIGHTNESS*LEVEL/100 ));
-if [ "$NEW_BRIGHTNESS" -le "$OLD_BRIGHTNESS" ]; then
-echo "$NEW_BRIGHTNESS" > /sys/class/backlight/panel/brightness;
-fi;
-log -p i -t $FILE_NAME "*** SYNC_BRIGHTNESS ***";
-fi;
-}
-
-# set less brightnes
-# (works only without "auto_brightness" for now?!)
-LESS_BRIGHTNESS()
-{
-if [ "$cortexbrain_auto_less_brightness" == on ]; then
-MAX_BRIGHTNESS=`cat /sys/class/backlight/panel/max_brightness`;
-OLD_BRIGHTNESS=`cat /sys/class/backlight/panel/brightness`;
-NEW_BRIGHTNESS=$(( MAX_BRIGHTNESS-cortexbrain_less_brightness ));
-if [ "$NEW_BRIGHTNESS" -ge "0" ]; then
-echo "$NEW_BRIGHTNESS" > /sys/class/backlight/panel/brightness;
-fi;
-log -p i -t $FILE_NAME "*** LESS_BRIGHTNESS ***";
 fi;
 }
 # set swappiness in case that no root installed, and zram used or disk swap used
@@ -944,6 +932,7 @@ VFS_CACHE_PRESSURE()
 	local state="$1";
 	local sys_vfs_cache="/proc/sys/vm/vfs_cache_pressure";
 
+	if [ -e $sys_vfs_cache ]; then
 	if [ "${state}" == "awake" ]; then
 		echo "20" > $sys_vfs_cache;
 	elif [ "${state}" == "sleep" ]; then
@@ -951,8 +940,31 @@ VFS_CACHE_PRESSURE()
 	fi;
 
 	log -p i -t $FILE_NAME "*** VFS_CACHE_PRESSURE: ${state} ***";
+			return 0;
+	fi;
+
+	return 1;
 }
 
+TWEAK_HOTPLUG_ECO()
+{
+	local state="$1";
+	local sys_eco="/sys/module/intelli_plug/parameters/eco_mode_active";
+
+	if [ -e $sys_eco ]; then
+		if [ "${state}" == "awake" ]; then
+			echo "0" > $sys_eco;
+		elif [ "${state}" == "sleep" ]; then
+			echo "1" > $sys_eco;
+		fi;
+
+		log -p i -t $FILE_NAME "*** TWEAK_HOTPLUG_ECO: ${state} ***";
+
+		return 0;
+	fi;
+
+	return 1;
+}
 
 IO_SCHEDULER()
 {
@@ -991,9 +1003,9 @@ AWAKE_MODE()
 	MEGA_BOOST_CPU_TWEAKS;
 	
 	
-	if [ "$cortexbrain_ksm_control" == on ] && [ "$KSM_TOTAL" != "" ]; then
+		if [ "$cortexbrain_ksm_control" == on ] && [ "$KSM_TOTAL" != "" ]; then
 			ADJUST_KSM;
-	fi;
+		fi;
 
 	
 	GESTURES "awake";
@@ -1015,8 +1027,8 @@ AWAKE_MODE()
 	TUNE_IPV6;
 	
 	NET "awake";
-
-	CPU_GOV_TWEAKS "awake";
+	
+	TWEAK_HOTPLUG_ECO "awake";
 
 	IO_SCHEDULER "awake";
 	
@@ -1045,9 +1057,6 @@ AWAKE_MODE()
 
 	ENABLE_NMI;
 
-	SYNC_BRIGHTNESS;
-	LESS_BRIGHTNESS;
-
 	DONT_KILL_CORTEX;
 	
 	SWAPPINESS;
@@ -1056,7 +1065,13 @@ AWAKE_MODE()
 	LOWMMKILLER "awake";
 	fi;
 	
-	log -p i -t $FILE_NAME "*** AWAKE Normal Mode ***";
+		ECO_TWEAKS;
+		if [ "$?" == 1 ]; then
+			CPU_GOV_TWEAKS "awake";
+			log -p i -t $FILE_NAME "*** AWAKE: Normal-Mode ***";
+		else
+			log -p i -t $FILE_NAME "*** AWAKE: ECO-Mode ***";
+		fi;
 }
 
 # ==============================================================
@@ -1133,6 +1148,8 @@ SLEEP_MODE()
 		IO_SCHEDULER "sleep";
 
 		VFS_CACHE_PRESSURE "sleep";
+		
+		TWEAK_HOTPLUG_ECO "sleep";
 
 		DISABLE_NMI;
 

@@ -45,15 +45,6 @@ while read FREQ UVOLT; do
 done
 `
        </spinner>
-	<seekBar description="Maximum DEEP SLEEP CPU Speed. Default is Linux Kernel default value: 600000. Samsung default value is 800000. Setting this too low will stuck your device!"
-		name="scaling_max_suspend_freq" action="generic /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_suspend_freq"
-		unit="kHz" min="100000" reversed="false" step="100000" max="1000000"/>
-	<seekBar description="Minimum DEEP SLEEP CPU Speed (default is 200000)"
-		name="scaling_min_suspend_freq" action="generic /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_suspend_freq"
-		unit="kHz" min="100000" reversed="false" step="100000" max="1000000"/>
-	<seekBar description="Minimum Standby (music playing on screen off) CPU Speed. Default is 200000kHz. If music still shutter, rise to 300000/400000kHz"
-		name="scaling_min_standby_freq" action="generic /tmp/standby_freq"
-		unit="kHz" min="100000" reversed="false" step="100000" max="1000000"/>
 	<seekBar description="For developer debug only! You can add small delay to cortex wakeup/sleep script. This will delay all function changes and the wakeup! Default value is 0."
 		name="Cortex Wakeup Delay" action="generic /tmp/wakeup_delay"
 		unit="Sec" min="0" reversed="false" step="1" max="5"/>
@@ -77,10 +68,6 @@ done
 				  
 	<button description="Use this button to push all new changes to GOV core in real time! the sleep tuning will be auto added on screen off, to screen off gov." name="GOV Policy Install" action="push-actions/cpu_tuning_update" label="Push CPU Tuning To GOV Core"/>
         <spinner description="Sets the intelli_plug hotplugging mode (this functions overwrite all hotplug governors hotplugging mode" name="intelli_plug" action="generic /sys/module/intelli_plug/parameters/intelli_plug_active">
-             <spinnerItem name="Enable" value="1"/>
-             <spinnerItem name="Disable" value="0"/>
-      </spinner>
-          <spinner description="Sets the intelli_plug hotplugging ECO mode (this functions enabled battery frinedly hotplugging" name="eco_mode_active" action="generic /sys/module/intelli_plug/parameters/eco_mode_active">
              <spinnerItem name="Enable" value="1"/>
              <spinnerItem name="Disable" value="0"/>
       </spinner>
@@ -392,19 +379,6 @@ done
 		name="GPU Threshold 4-UP" action="gpu-thresh 4UP" unit="%" min="0" reversed="false" step="5" max="100"/>
       <seekBar description="GPU threshold to jump down from fifth to fourth step" 
 		name="GPU Threshold 5-DOWN" action="gpu-thresh 5DOWN" unit="%" min="0" reversed="false" step="5" max="100"/>
-    </settingsPane>
-	
-    <settingsPane description="The number of cycles that the GPU stays at the specific level. The defaults are all 0." name="GPU StayCount">
-      <seekBar description="GPU first step (for the lowest freq) StayCount" 
-		name="GPU StayCount1" action="gpu-staycount 1" unit=" sec" min="0" reversed="false" step="1" max="5"/>
-      <seekBar description="GPU second step StayCount" 
-		name="GPU StayCount2" action="gpu-staycount 2" unit=" sec" min="0" reversed="false" step="1" max="5"/>
-      <seekBar description="GPU third step StayCount" 
-		name="GPU StayCount3" action="gpu-staycount 3" unit=" sec" min="0" reversed="false" step="1" max="5"/>
-      <seekBar description="GPU fourth step StayCount" 
-		name="GPU StayCount4" action="gpu-staycount 4" unit=" sec" min="0" reversed="false" step="1" max="5"/>
-      <seekBar description="GPU fifth step (for the highest freq) StayCount"
-                name="GPU StayCount5" action="gpu-staycount 5" unit=" sec" min="0" reversed="false" step="1" max="5"/>
     </settingsPane>
   </settingsTab>
   
@@ -974,12 +948,6 @@ done
 
     </settingsPane>	
     <settingsPane description="Other screen related settings" name="Other Settings">
-		<checkbox description='Enable or Disable "sync brightnes with the battery discharge" (less battery = less brightnes). Depends on Cortexbrain-Background-Process!'
-			name="Sync-Brightness" action="generic_cortex /tmp/cortexbrain_auto_sync_brightness" label="Sync-Brightness"/>
-		<checkbox description='Enable or Disable "less set brightnes". Depends on Cortexbrain-Background-Process!'
-			name="Less-Brightness" action="generic_cortex /tmp/cortexbrain_auto_less_brightness" label="Less-Brightness"/>
-		<seekBar description='Here you can set a value for less brightnes. Works only if "Less-Brightness" tweak is Enabled!'
-			name="Set value (0 - 255)" action="generic /tmp/cortexbrain_less_brightness" unit="" min="0" reversed="false" step="5" max="255"/>
 			
 	    <checkbox description="Enable inverting the screen colors by quickly pressing Home button 4 times" name="mDNIe Negative Toggle" action="generic01 /sys/module/gpio_keys/parameters/mdnie_shortcut_enabled" label="mDNIe Negative Toggle"/>
 		
@@ -1305,6 +1273,20 @@ done
 		<spinnerItem name="DEBUG" value="debug"/>
 		<spinnerItem name="DISABLED" value="disabled"/>
 	</spinner>
+	
+		<checkbox description="Enable or Disable 'Eco-Tweaks' (reboot needed)."
+			name="Eco-Tweaks" action="generic_cortex /tmp/cortexbrain_eco" label="Eco-Tweaks"/>
+
+		<spinner description="From what percentage battery life, the eco-mode is activated? Depends on Eco-Tweaks!" 
+			name="Eco-Level" action="generic_cortex /tmp/cortexbrain_eco_level">
+			<spinnerItem name="2%" value="2"/> 
+			<spinnerItem name="5%" value="5"/> 
+			<spinnerItem name="10%" value="10"/> 
+			<spinnerItem name="20%" value="20"/> 
+			<spinnerItem name="30%" value="30"/> 
+			<spinnerItem name="40%" value="30"/> 
+			<spinnerItem name="50%" value="50"/> 
+		</spinner>
 	<checkbox description="If checked, Mass Storage SDCARDS will be Auto mounted when USB connected. then you can transfer files on high speed from PC to device. ON by Default."
 			name="Auto Mount USB Drives" action="generic_cortex /tmp/auto_mount_sd" label="Auto Mount USB Drives"/>
 		<checkbox description='Enable or Disable "Firewall-Tweaks". (To update after change REBOOT)'
